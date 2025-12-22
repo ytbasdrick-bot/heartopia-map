@@ -22,21 +22,18 @@
         #splash-video { max-width: 80%; max-height: 65%; border: 5px solid #d4af37; border-radius: 15px; }
         .click-hint { margin-top: 20px; padding: 12px 25px; background: #d4af37; color: #8b0000; font-weight: bold; border-radius: 50px; animation: pulse 2s infinite; }
 
-        /* --- CARTE & ICONS --- */
+        /* --- CARTE --- */
         #map { height: calc(100vh - 50px); width: 100vw; background: #5da0c2 !important; }
         .map-icon-style { filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.4)); transition: transform 0.2s; }
         .map-icon-style:hover { transform: scale(1.2) translateY(-5px); z-index: 2000 !important; }
 
-        /* --- ÉTIQUETTES --- */
         .label-ville {
             background: white !important; border: 2px solid #3498db !important; border-radius: 5px;
-            padding: 4px 10px; font-size: 12px; font-weight: bold;
-            white-space: nowrap; color: #2c3e50; box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            padding: 4px 10px; font-size: 12px; font-weight: bold; color: #2c3e50;
         }
         .label-eau {
             background: rgba(255, 255, 255, 0.9) !important; border: 2px solid #2980b9 !important; border-radius: 20px;
-            padding: 4px 12px; font-size: 11px; font-weight: bold;
-            color: #01579b; box-shadow: 0 0 10px rgba(41, 128, 185, 0.4);
+            padding: 4px 12px; font-size: 11px; font-weight: bold; color: #01579b;
         }
 
         .leaflet-control-layers {
@@ -51,14 +48,11 @@
             border-top: 3px solid #fff; display: flex; justify-content: center; align-items: center;
         }
         .wiki-link { text-decoration: none; color: white; font-weight: bold; }
-
-        /* Cache la vidéo de fond sonore */
-        #hidden-audio { display: none; }
     </style>
 </head>
 <body>
 
-    <video id="hidden-audio" playsinline>
+    <video id="bg-music" style="display:none;" playsinline>
         <source src="heartopia.mp4" type="video/mp4">
     </video>
 
@@ -77,6 +71,7 @@
     <div id="map"></div>
 
     <script>
+        // Effet de neige
         function createSnowflake() {
             const snow = document.getElementById('snow');
             const flake = document.createElement('div');
@@ -90,20 +85,23 @@
         setInterval(createSnowflake, 150);
 
         const splash = document.getElementById('splash-screen');
-        const splashVideo = document.getElementById('splash-video');
-        const bgMusic = document.getElementById('hidden-audio');
+        const music = document.getElementById('bg-music');
 
-        const entryAction = () => { 
+        // FONCTION D'ENTRÉE (DÉBLOQUE LE SON)
+        const closeSplash = () => { 
             splash.style.opacity = '0'; 
             setTimeout(() => splash.style.display = 'none', 1000); 
-            // On active le son et on lance la lecture au premier clic
-            bgMusic.muted = false;
-            bgMusic.play().catch(e => console.log("L'auto-play a été bloqué par le navigateur"));
+            
+            // Forcer la lecture du son
+            music.muted = false;
+            music.play().catch(error => {
+                console.log("Erreur lecture auto :", error);
+            });
         };
 
-        splashVideo.onended = entryAction; 
-        splash.onclick = entryAction;
+        splash.onclick = closeSplash;
 
+        // --- CONFIGURATION CARTE ---
         var map = L.map('map', { crs: L.CRS.Simple, minZoom: 0, maxZoom: 3, zoom: 1 });
         var bounds = [[-1000, 0], [0, 1000]];
         L.imageOverlay('carte.png', bounds).addTo(map);
@@ -114,8 +112,7 @@
 
         function createIcon(url, size = 70) {
             return L.icon({ 
-                iconUrl: url, 
-                iconSize: [size, size], 
+                iconUrl: url, iconSize: [size, size], 
                 iconAnchor: [size / 2, size], popupAnchor: [0, -size], 
                 className: 'map-icon-style' 
             });
