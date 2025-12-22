@@ -51,9 +51,16 @@
             border-top: 3px solid #fff; display: flex; justify-content: center; align-items: center;
         }
         .wiki-link { text-decoration: none; color: white; font-weight: bold; }
+
+        /* Cache la vidéo de fond sonore */
+        #hidden-audio { display: none; }
     </style>
 </head>
 <body>
+
+    <video id="hidden-audio" playsinline>
+        <source src="heartopia.mp4" type="video/mp4">
+    </video>
 
     <div id="splash-screen">
         <div class="snow-container" id="snow"></div>
@@ -83,13 +90,22 @@
         setInterval(createSnowflake, 150);
 
         const splash = document.getElementById('splash-screen');
-        const video = document.getElementById('splash-video');
-        const closeSplash = () => { splash.style.opacity = '0'; setTimeout(() => splash.style.display = 'none', 1000); };
-        video.onended = closeSplash; splash.onclick = closeSplash;
+        const splashVideo = document.getElementById('splash-video');
+        const bgMusic = document.getElementById('hidden-audio');
+
+        const entryAction = () => { 
+            splash.style.opacity = '0'; 
+            setTimeout(() => splash.style.display = 'none', 1000); 
+            // On active le son et on lance la lecture au premier clic
+            bgMusic.muted = false;
+            bgMusic.play().catch(e => console.log("L'auto-play a été bloqué par le navigateur"));
+        };
+
+        splashVideo.onended = entryAction; 
+        splash.onclick = entryAction;
 
         var map = L.map('map', { crs: L.CRS.Simple, minZoom: 0, maxZoom: 3, zoom: 1 });
         var bounds = [[-1000, 0], [0, 1000]];
-        // Ligne corrigée pour GitHub
         L.imageOverlay('carte.png', bounds).addTo(map);
         map.setView([-500, 500], 1);
 
