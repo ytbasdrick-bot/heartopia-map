@@ -7,125 +7,127 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
-        body { margin: 0; padding: 0; background: #5da0c2; overflow: hidden; position: relative; }
+        body { margin: 0; padding: 0; background: #000; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
         
-        /* Filigrane By Asdrick_TikTok */
-        .watermark-container {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 1; opacity: 0.2;
-            overflow: hidden; display: flex; flex-wrap: wrap; justify-content: space-around;
+        /* --- ACCUEIL --- */
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle, #2d5a27 0%, #1a3a16 40%, #8b0000 100%);
+            z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 1s ease-out; cursor: pointer;
         }
-        .watermark-box { display: flex; flex-direction: column; align-items: center; transform: rotate(-35deg); padding: 50px; user-select: none; }
-        .wm-user { font-family: 'Arial', sans-serif; color: black; font-size: 11px; font-weight: bold; }
-        .wm-heartopia {
-            font-family: 'Arial Black', sans-serif; font-size: 16px;
-            background: linear-gradient(to right, #ff6b6b, #f06292, #ba68c8);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
+        .snow-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+        .snowflake { position: absolute; top: -10px; color: white; font-size: 1.5em; animation: fall linear infinite; }
+        @keyframes fall { to { transform: translateY(110vh); } }
+        #splash-video { max-width: 80%; max-height: 65%; border: 5px solid #d4af37; border-radius: 15px; }
+        .click-hint { margin-top: 20px; padding: 12px 25px; background: #d4af37; color: #8b0000; font-weight: bold; border-radius: 50px; animation: pulse 2s infinite; }
 
-        #map { height: 100vh; width: 100vw; background: transparent !important; z-index: 10; }
+        /* --- CARTE & ICONS --- */
+        #map { height: calc(100vh - 50px); width: 100vw; background: #5da0c2 !important; }
+        .map-icon-style { filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.4)); transition: transform 0.2s; }
+        .map-icon-style:hover { transform: scale(1.2) translateY(-5px); z-index: 2000 !important; }
 
+        /* --- ÉTIQUETTES (Format Titre) --- */
         .label-ville {
-            background: transparent !important; border: none !important; box-shadow: none !important;
-            font-size: 11px; font-weight: bold; color: rgba(44, 62, 80, 0.9);
-            text-shadow: 1px 1px 2px white; text-transform: uppercase; white-space: nowrap;
+            background: white !important; border: 2px solid #3498db !important; border-radius: 5px;
+            padding: 4px 10px; font-size: 12px; font-weight: bold;
+            white-space: nowrap; color: #2c3e50; box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
+        .label-eau {
+            background: rgba(255, 255, 255, 0.9) !important; border: 2px solid #2980b9 !important; border-radius: 20px;
+            padding: 4px 12px; font-size: 11px; font-weight: bold;
+            color: #01579b; box-shadow: 0 0 10px rgba(41, 128, 185, 0.4);
+        }
+
+        .leaflet-control-layers {
+            position: fixed !important; left: 30px !important; top: 30px !important; width: 280px !important;
+            background: rgba(255, 255, 255, 0.95) !important; border-radius: 15px !important; padding: 15px !important;
+        }
+
+        .footer-wiki {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 50px; z-index: 2000;
+            background: linear-gradient(90deg, #8b0000 0%, #d4af37 50%, #8b0000 100%);
+            border-top: 3px solid #fff; display: flex; justify-content: center; align-items: center;
+        }
+        .wiki-link { text-decoration: none; color: white; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="watermark-container" id="watermark"></div>
+    <div id="splash-screen">
+        <div class="snow-container" id="snow"></div>
+        <video id="splash-video" autoplay muted playsinline>
+            <source src="file:///C:/Users/asdrick/Desktop/PROJET_HEARTOPIA/pere%20noel.mp4" type="video/mp4">
+        </video>
+        <div class="click-hint">✨ CLIQUER POUR ENTRER ✨</div>
+    </div>
+
+    <div class="footer-wiki">
+        <a href="https://jayibwi.wixsite.com/my-site-1" target="_blank" class="wiki-link">📖 ACCÉDER AU WIKI FR DE HEARTOPIA 📖</a>
+    </div>
+
     <div id="map"></div>
 
     <script>
-        // --- GÉNÉRATION DU FILIGRANE ---
-        const watermarkContainer = document.getElementById('watermark');
-        for (let i = 0; i < 80; i++) {
-            const box = document.createElement('div');
-            box.className = 'watermark-box';
-            box.innerHTML = `<span class="wm-user">By Asdrick_TikTok</span><span class="wm-heartopia">Heartopia</span>`;
-            watermarkContainer.appendChild(box);
+        function createSnowflake() {
+            const snow = document.getElementById('snow');
+            const flake = document.createElement('div');
+            flake.className = 'snowflake'; flake.innerHTML = '❄';
+            flake.style.left = Math.random() * 100 + 'vw';
+            flake.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            flake.style.opacity = Math.random();
+            snow.appendChild(flake);
+            setTimeout(() => flake.remove(), 5000);
         }
+        setInterval(createSnowflake, 150);
 
-        // --- CONFIGURATION DE LA CARTE ---
-        var map = L.map('map', {
-            crs: L.CRS.Simple,
-            minZoom: 0, 
-            maxZoom: 3, // Zoom maximum réduit ici
-            zoom: 1 
-        });
+        const splash = document.getElementById('splash-screen');
+        const video = document.getElementById('splash-video');
+        const closeSplash = () => { splash.style.opacity = '0'; setTimeout(() => splash.style.display = 'none', 1000); };
+        video.onended = closeSplash; splash.onclick = closeSplash;
 
+        var map = L.map('map', { crs: L.CRS.Simple, minZoom: 0, maxZoom: 3, zoom: 1 });
         var bounds = [[-1000, 0], [0, 1000]];
         L.imageOverlay('carte.png', bounds).addTo(map);
         map.setView([-500, 500], 1);
 
-        // --- GROUPES DE CALQUES ---
         var groupePNJ = L.layerGroup().addTo(map);
+        var groupeCommerces = L.layerGroup().addTo(map);
         var groupeLieux = L.layerGroup().addTo(map);
         var groupeBus = L.layerGroup().addTo(map);
-        var groupeCommerces = L.layerGroup().addTo(map);
+        var groupePoissons = L.layerGroup().addTo(map);
 
-        // --- GESTION DE LA VISIBILITÉ AU ZOOM ---
-        function updateVisibility() {
-            var z = map.getZoom();
-            if (z < 1) {
-                if (map.hasLayer(groupePNJ)) map.removeLayer(groupePNJ);
-                if (map.hasLayer(groupeBus)) map.removeLayer(groupeBus);
-                if (map.hasLayer(groupeCommerces)) map.removeLayer(groupeCommerces);
-            } else {
-                if (!map.hasLayer(groupePNJ)) map.addLayer(groupePNJ);
-                if (!map.hasLayer(groupeBus)) map.addLayer(groupeBus);
-                if (!map.hasLayer(groupeCommerces)) map.addLayer(groupeCommerces);
-            }
-        }
-        map.on('zoomend', updateVisibility);
-
-        // --- ICONS ET DONNÉES ---
-        function createIcon(url, size = 60) {
-            return L.icon({ iconUrl: url, iconSize: [size, size], iconAnchor: [size/2, size], popupAnchor: [0, -size] });
+        function createIcon(url, size = 70) {
+            return L.icon({ 
+                iconUrl: url, iconSize: [size, size], 
+                iconAnchor: [size / 2, size], popupAnchor: [0, -size], 
+                className: 'map-icon-style' 
+            });
         }
 
-        var icons = {
-            bob: 'bob.png', atara: 'atara.png', coll: 'collectioneur.png', doro: 'dorothée.png',
-            mass: 'massimo.png', anni: 'annie.png', kach: 'ka ching.png', andr: 'andrew.png',
-            eric: 'eric.png', vany: 'vanya.png', nani: 'niniwa.png', joan: 'joa.png',
-            bail: 'bayley.png', will: 'will.png', patti: 'patti.png', vernie: 'vernie.png',
-            bus: 'bus.png', coif: 'coiffeur.png', meub: 'Meuble.png', anim: 'chien.png',
-            vet: 'vetement.png', libr: 'Librairie.png'
-        };
-
+        // --- PNJ ---
         var pnjData = [
-            { pos: [-471, 501], name: "Bob", icon: icons.bob },
-            { pos: [-526, 499], name: "Atara", icon: icons.atara },
-            { pos: [-478, 493], name: "Le Collectionneur", icon: icons.coll },
-            { pos: [-469, 488], name: "Dorothée", icon: icons.doro },
-            { pos: [-446, 493], name: "Massimo", icon: icons.mass },
-            { pos: [-500, 500], name: "Annie", icon: icons.anni },
-            { pos: [-412, 418], name: "Ka Ching", icon: icons.kach },
-            { pos: [-399, 591], name: "Andrew", icon: icons.andr },
-            { pos: [-259, 522], name: "Eric", icon: icons.eric },
-            { pos: [-456, 549], name: "Vanya", icon: icons.vany },
-            { pos: [-502, 582], name: "Naniwa", icon: icons.nani },
-            { pos: [-502, 519], name: "Joan", icon: icons.joan },
-            { pos: [-498, 528], name: "Bailey", icon: icons.bail },
-            { pos: [-807, 419], name: "Will", icon: icons.will },
-            { pos: [-355, 809], name: "Patti", icon: icons.patti },
-            { pos: [-653, 225], name: "Vernie", icon: icons.vernie }
+            { pos: [-471, 501], name: "Bob", icon: 'bob.png' },
+            { pos: [-526, 499], name: "Atara", icon: 'atara.png' },
+            { pos: [-478, 493], name: "Le Collectionneur", icon: 'collectioneur.png' },
+            { pos: [-469, 488], name: "Dorothée", icon: 'dorothée.png' },
+            { pos: [-446, 493], name: "Massimo", icon: 'massimo.png' },
+            { pos: [-500, 500], name: "Annie", icon: 'annie.png' },
+            { pos: [-412, 418], name: "Ka Ching", icon: 'ka ching.png' },
+            { pos: [-399, 591], name: "Andrew", icon: 'andrew.png' },
+            { pos: [-259, 522], name: "Eric", icon: 'eric.png' },
+            { pos: [-456, 549], name: "Vanya", icon: 'vanya.png' },
+            { pos: [-502, 582], name: "Naniwa", icon: 'niniwa.png' },
+            { pos: [-502, 519], name: "Joan", icon: 'joa.png' },
+            { pos: [-498, 528], name: "Bailey", icon: 'bayley.png' },
+            { pos: [-807, 419], name: "Will", icon: 'will.png' },
+            { pos: [-355, 809], name: "Patti", icon: 'patti.png' },
+            { pos: [-653, 225], name: "Vernie", icon: 'vernie.png' }
         ];
-
         pnjData.forEach(p => L.marker(p.pos, {icon: createIcon(p.icon)}).addTo(groupePNJ).bindPopup(p.name));
 
-        var commerceData = [
-            { pos: [-470, 486], name: "Coiffeur", icon: icons.coif },
-            { pos: [-471, 504], name: "Magasin de meubles", icon: icons.meub },
-            { pos: [-497, 520], name: "Magasin d'animaux", icon: icons.anim },
-            { pos: [-470, 488], name: "Magasin de vêtements", icon: icons.vet },
-            { pos: [-438, 467], name: "Librairie", icon: icons.libr }
-        ];
-
-        commerceData.forEach(c => L.marker(c.pos, {icon: createIcon(c.icon, 35)}).addTo(groupeCommerces).bindPopup(c.name));
-
-        var busCoords = [
+        // --- BUS ---
+        var busData = [
             { pos: [-533, 340], name: "Banlieue Ouest" },
             { pos: [-519, 639], name: "Banlieue du village" },
             { pos: [-654, 479], name: "Village de pecheurs" },
@@ -135,30 +137,60 @@
             { pos: [-497, 481], name: "Place centrale" },
             { pos: [-500, 798], name: "Forêt" }
         ];
+        busData.forEach(b => L.marker(b.pos, {icon: createIcon('bus.png', 90)}).addTo(groupeBus).bindPopup(b.name));
 
-        busCoords.forEach(b => L.marker(b.pos, {icon: createIcon(icons.bus, 90)}).addTo(groupeBus).bindPopup(b.name));
-
-        function addLabel(coords, text) {
+        // --- LIEUX ET POINTS D'EAU (MAJUSCULE AU DÉBUT) ---
+        function addLabel(coords, text, className) {
             L.marker(coords, { opacity: 0 }).addTo(groupeLieux)
-             .bindTooltip(text, { permanent: true, direction: 'center', className: 'label-ville' });
+             .bindTooltip(text, { permanent: true, direction: 'center', className: className });
         }
-        addLabel([-538, 492], "PLACE CENTRALE");
-        addLabel([-666, 429], "QUAI");
-        addLabel([-539, 947], "MER DE L'EST");
-        addLabel([-535, 75], "MER DE BALEINE");
-        addLabel([-78, 499], "ANCIENNE MER");
-        addLabel([-783, 478], "MER CALME");
+        
+        // Zones Terrestres
+        addLabel([-538, 492], "Place Centrale", "label-ville");
+        addLabel([-692, 506], "Village de Pêcheurs", "label-ville");
+        addLabel([-438, 513], "Village", "label-ville");
+        addLabel([-649, 185], "Champ de Fleurs", "label-ville");
+        addLabel([-440, 184], "Montagne de Baleine", "label-ville");
+        addLabel([-184, 291], "Les Ruines", "label-ville");
+        addLabel([-223, 501], "Montagne Thermale", "label-ville");
+        addLabel([-228, 627], "Falaise Rocheuse", "label-ville");
+        addLabel([-531, 805], "Forêt de Chênes Spirituels", "label-ville");
+        addLabel([-494, 429], "Rue des Arts", "label-ville");
+        addLabel([-510, 558], "Rue du Jardin", "label-ville");
+        addLabel([-736, 602], "Quai Oriental", "label-ville");
+        addLabel([-690, 402], "Quai", "label-ville");
+        addLabel([-780, 387], "Phare", "label-ville");
+        addLabel([-691, 783], "Tremplin", "label-ville");
+        addLabel([-338, 933], "Île de la Forêt", "label-ville");
+        addLabel([-587, 406], "Banlieue", "label-ville");
+        addLabel([-725, 208], "Plage Violette", "label-ville");
+
+        // Zones Aquatiques
+        addLabel([-783, 478], "Mer Calme", "label-eau");
+        addLabel([-534, 92], "Mer de Baleine", "label-eau");
+        addLabel([-68, 497], "Ancienne Mer", "label-eau");
+        addLabel([-536, 232], "Lac dans la Prairie", "label-eau");
+        addLabel([-337, 319], "Rivière Aurore", "label-eau");
+        addLabel([-176, 394], "Lac Volcanique", "label-eau");
+        addLabel([-265, 537], "Lac de Montagne Thermale", "label-eau");
+        addLabel([-344, 652], "Rivière Peu Profonde", "label-eau");
+        addLabel([-598, 748], "Lac de la Forêt", "label-eau");
+        addLabel([-431, 774], "Lac de la Forêt (Haut)", "label-eau");
+        addLabel([-608, 481], "Lac de Banlieue", "label-eau");
+        addLabel([-669, 368], "Rivière Calme", "label-eau");
+        addLabel([-674, 627], "Fleuve d'Arbres Géants", "label-eau");
 
         var overlays = { 
-            "Personnages": groupePNJ, 
-            "Commerces": groupeCommerces, 
-            "Lieux": groupeLieux, 
-            "Bus": groupeBus
+            "👤 Personnages": groupePNJ, 
+            "🏪 Commerces": groupeCommerces, 
+            "📍 Lieux & Eaux": groupeLieux, 
+            "🚌 Bus": groupeBus, 
+            "🐟 Poissons": groupePoissons 
         };
         L.control.layers(null, overlays, {collapsed: false}).addTo(map);
 
-        map.on('click', e => {
-            L.popup().setLatLng(e.latlng).setContent("["+Math.round(e.latlng.lat)+", "+Math.round(e.latlng.lng)+"]").openOn(map);
+        map.on('click', e => { 
+            L.popup().setLatLng(e.latlng).setContent("["+Math.round(e.latlng.lat)+", "+Math.round(e.latlng.lng)+"]").openOn(map); 
         });
     </script>
 </body>
