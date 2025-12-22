@@ -27,7 +27,7 @@
         .map-icon-style { filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.4)); transition: transform 0.2s; }
         .map-icon-style:hover { transform: scale(1.2) translateY(-5px); z-index: 2000 !important; }
 
-        /* --- ÉTIQUETTES (Format Titre) --- */
+        /* --- ÉTIQUETTES --- */
         .label-ville {
             background: white !important; border: 2px solid #3498db !important; border-radius: 5px;
             padding: 4px 10px; font-size: 12px; font-weight: bold;
@@ -40,8 +40,9 @@
         }
 
         .leaflet-control-layers {
-            position: fixed !important; left: 30px !important; top: 30px !important; width: 280px !important;
+            position: fixed !important; left: 30px !important; top: 30px !important; width: 250px !important;
             background: rgba(255, 255, 255, 0.95) !important; border-radius: 15px !important; padding: 15px !important;
+            max-height: 80vh; overflow-y: auto;
         }
 
         .footer-wiki {
@@ -57,7 +58,7 @@
     <div id="splash-screen">
         <div class="snow-container" id="snow"></div>
         <video id="splash-video" autoplay muted playsinline>
-            <source src="file:///C:/Users/asdrick/Desktop/PROJET_HEARTOPIA/pere%20noel.mp4" type="video/mp4">
+            <source src="pere%20noel.mp4" type="video/mp4">
         </video>
         <div class="click-hint">✨ CLIQUER POUR ENTRER ✨</div>
     </div>
@@ -88,64 +89,65 @@
 
         var map = L.map('map', { crs: L.CRS.Simple, minZoom: 0, maxZoom: 3, zoom: 1 });
         var bounds = [[-1000, 0], [0, 1000]];
+        // Ligne corrigée pour GitHub
         L.imageOverlay('carte.png', bounds).addTo(map);
         map.setView([-500, 500], 1);
 
-        var groupePNJ = L.layerGroup().addTo(map);
-        var groupeCommerces = L.layerGroup().addTo(map);
         var groupeLieux = L.layerGroup().addTo(map);
         var groupeBus = L.layerGroup().addTo(map);
-        var groupePoissons = L.layerGroup().addTo(map);
 
         function createIcon(url, size = 70) {
             return L.icon({ 
-                iconUrl: url, iconSize: [size, size], 
+                iconUrl: url, 
+                iconSize: [size, size], 
                 iconAnchor: [size / 2, size], popupAnchor: [0, -size], 
                 className: 'map-icon-style' 
             });
         }
 
-        // --- PNJ ---
+        var overlays = {};
+        
         var pnjData = [
             { pos: [-471, 501], name: "Bob", icon: 'bob.png' },
             { pos: [-526, 499], name: "Atara", icon: 'atara.png' },
             { pos: [-478, 493], name: "Le Collectionneur", icon: 'collectioneur.png' },
             { pos: [-469, 488], name: "Dorothée", icon: 'dorothée.png' },
             { pos: [-446, 493], name: "Massimo", icon: 'massimo.png' },
-            { pos: [-500, 500], name: "Annie", icon: 'annie.png' },
             { pos: [-412, 418], name: "Ka Ching", icon: 'ka ching.png' },
             { pos: [-399, 591], name: "Andrew", icon: 'andrew.png' },
             { pos: [-259, 522], name: "Eric", icon: 'eric.png' },
             { pos: [-456, 549], name: "Vanya", icon: 'vanya.png' },
             { pos: [-502, 582], name: "Naniwa", icon: 'niniwa.png' },
             { pos: [-502, 519], name: "Joan", icon: 'joa.png' },
-            { pos: [-498, 528], name: "Bailey", icon: 'bayley.png' },
             { pos: [-807, 419], name: "Will", icon: 'will.png' },
             { pos: [-355, 809], name: "Patti", icon: 'patti.png' },
             { pos: [-653, 225], name: "Vernie", icon: 'vernie.png' }
         ];
-        pnjData.forEach(p => L.marker(p.pos, {icon: createIcon(p.icon)}).addTo(groupePNJ).bindPopup(p.name));
 
-        // --- BUS ---
+        pnjData.forEach(p => {
+            var g = L.layerGroup();
+            L.marker(p.pos, {icon: createIcon(p.icon)}).addTo(g).bindPopup(p.name);
+            overlays["👤 " + p.name] = g;
+            g.addTo(map);
+        });
+
         var busData = [
             { pos: [-533, 340], name: "Banlieue Ouest" },
-            { pos: [-519, 639], name: "Banlieue du village" },
-            { pos: [-654, 479], name: "Village de pecheurs" },
-            { pos: [-532, 218], name: "Champ de fleurs" },
-            { pos: [-222, 512], name: "Montagne thermale" },
-            { pos: [-373, 480], name: "Banlieue nord du village" },
-            { pos: [-497, 481], name: "Place centrale" },
+            { pos: [-519, 639], name: "Banlieue du Village" },
+            { pos: [-654, 479], name: "Village de Pêcheurs" },
+            { pos: [-532, 218], name: "Champ de Fleurs" },
+            { pos: [-222, 512], name: "Montagne Thermale" },
+            { pos: [-373, 480], name: "Banlieue Nord du Village" },
+            { pos: [-497, 481], name: "Place Centrale" },
             { pos: [-500, 798], name: "Forêt" }
         ];
         busData.forEach(b => L.marker(b.pos, {icon: createIcon('bus.png', 90)}).addTo(groupeBus).bindPopup(b.name));
 
-        // --- LIEUX ET POINTS D'EAU (MAJUSCULE AU DÉBUT) ---
         function addLabel(coords, text, className) {
             L.marker(coords, { opacity: 0 }).addTo(groupeLieux)
              .bindTooltip(text, { permanent: true, direction: 'center', className: className });
         }
         
-        // Zones Terrestres
         addLabel([-538, 492], "Place Centrale", "label-ville");
         addLabel([-692, 506], "Village de Pêcheurs", "label-ville");
         addLabel([-438, 513], "Village", "label-ville");
@@ -165,7 +167,6 @@
         addLabel([-587, 406], "Banlieue", "label-ville");
         addLabel([-725, 208], "Plage Violette", "label-ville");
 
-        // Zones Aquatiques
         addLabel([-783, 478], "Mer Calme", "label-eau");
         addLabel([-534, 92], "Mer de Baleine", "label-eau");
         addLabel([-68, 497], "Ancienne Mer", "label-eau");
@@ -180,13 +181,9 @@
         addLabel([-669, 368], "Rivière Calme", "label-eau");
         addLabel([-674, 627], "Fleuve d'Arbres Géants", "label-eau");
 
-        var overlays = { 
-            "👤 Personnages": groupePNJ, 
-            "🏪 Commerces": groupeCommerces, 
-            "📍 Lieux & Eaux": groupeLieux, 
-            "🚌 Bus": groupeBus, 
-            "🐟 Poissons": groupePoissons 
-        };
+        overlays["📍 Lieux & Eaux"] = groupeLieux;
+        overlays["🚌 Bus"] = groupeBus;
+
         L.control.layers(null, overlays, {collapsed: false}).addTo(map);
 
         map.on('click', e => { 
