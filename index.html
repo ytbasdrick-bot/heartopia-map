@@ -2,136 +2,163 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carte Interactive Heartopia</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
-        body { margin: 0; padding: 0; background: #5da0c2; }
-        #map { height: 100vh; width: 100vw; outline: none; }
+        body { margin: 0; padding: 0; background: #5da0c2; overflow: hidden; position: relative; }
+        
+        /* Filigrane By Asdrick_TikTok */
+        .watermark-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 1; opacity: 0.2;
+            overflow: hidden; display: flex; flex-wrap: wrap; justify-content: space-around;
+        }
+        .watermark-box { display: flex; flex-direction: column; align-items: center; transform: rotate(-35deg); padding: 50px; user-select: none; }
+        .wm-user { font-family: 'Arial', sans-serif; color: black; font-size: 11px; font-weight: bold; }
+        .wm-heartopia {
+            font-family: 'Arial Black', sans-serif; font-size: 16px;
+            background: linear-gradient(to right, #ff6b6b, #f06292, #ba68c8);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        #map { height: 100vh; width: 100vw; background: transparent !important; z-index: 10; }
+
+        .label-ville {
+            background: transparent !important; border: none !important; box-shadow: none !important;
+            font-size: 11px; font-weight: bold; color: rgba(44, 62, 80, 0.9);
+            text-shadow: 1px 1px 2px white; text-transform: uppercase; white-space: nowrap;
+        }
     </style>
 </head>
 <body>
+
+    <div class="watermark-container" id="watermark"></div>
     <div id="map"></div>
+
     <script>
+        // --- GÉNÉRATION DU FILIGRANE ---
+        const watermarkContainer = document.getElementById('watermark');
+        for (let i = 0; i < 80; i++) {
+            const box = document.createElement('div');
+            box.className = 'watermark-box';
+            box.innerHTML = `<span class="wm-user">By Asdrick_TikTok</span><span class="wm-heartopia">Heartopia</span>`;
+            watermarkContainer.appendChild(box);
+        }
+
+        // --- CONFIGURATION DE LA CARTE ---
         var map = L.map('map', {
             crs: L.CRS.Simple,
-            minZoom: -2,
-            maxZoom: 4, 
-            wheelDebounceTime: 10
+            minZoom: 0, 
+            maxZoom: 5,
+            zoom: 1 
         });
 
-        // 1. IMAGE DE FOND
-        var imageUrl = 'carte.png';
-        var w = 1000, h = 1000; 
-        var bounds = [[-h, 0], [0, w]];
+        var bounds = [[-1000, 0], [0, 1000]];
+        L.imageOverlay('carte.png', bounds).addTo(map);
+        map.setView([-500, 500], 1);
 
-        L.imageOverlay(imageUrl, bounds).addTo(map);
-        map.fitBounds(bounds);
-        map.setMaxBounds(bounds);
-
-        // 2. GROUPE DE PNJ
+        // --- GROUPES DE CALQUES ---
         var groupePNJ = L.layerGroup().addTo(map);
+        var groupeLieux = L.layerGroup().addTo(map);
+        var groupeBus = L.layerGroup().addTo(map);
+        var groupeCommerces = L.layerGroup().addTo(map);
 
-        // 3. CONFIGURATION DES ICÔNES (Taille augmentée à 60x60)
-        var pnjSize = [60, 60];
-        var pnjAnchor = [30, 60]; // Le bas au milieu
-        var pnjPopup = [0, -60];  // Le popup au-dessus du marqueur
+        // --- GESTION DU ZOOM (STABLE) ---
+        function updateVisibility() {
+            var z = map.getZoom();
+            if (z < 1) {
+                if (map.hasLayer(groupePNJ)) map.removeLayer(groupePNJ);
+                if (map.hasLayer(groupeBus)) map.removeLayer(groupeBus);
+                if (map.hasLayer(groupeCommerces)) map.removeLayer(groupeCommerces);
+            } else {
+                if (!map.hasLayer(groupePNJ)) map.addLayer(groupePNJ);
+                if (!map.hasLayer(groupeBus)) map.addLayer(groupeBus);
+                if (!map.hasLayer(groupeCommerces)) map.addLayer(groupeCommerces);
+            }
+        }
+        map.on('zoomend', updateVisibility);
 
-        var iconBob = L.icon({
-            iconUrl: 'https://cdn.discordapp.com/attachments/1369233801703587883/1452431048192557158/Screenshot_20251221_232054_Heartopia.png?ex=6949c952&is=694877d2&hm=1434a7825b3e287052060adb8fb6423562e754886e1dc8ec026e945b59f7f6bf&',
-            iconSize: pnjSize, iconAnchor: pnjAnchor, popupAnchor: pnjPopup
-        });
+        // --- ICONS ET DONNÉES ---
+        function createIcon(url, size = 60) {
+            return L.icon({ iconUrl: url, iconSize: [size, size], iconAnchor: [size/2, size], popupAnchor: [0, -size] });
+        }
 
-        var iconAtara = L.icon({
-            iconUrl: 'https://cdn.discordapp.com/attachments/1369233801703587883/1452431045709266978/Screenshot_20251221_232032_Heartopia.png?ex=6949c952&is=694877d2&hm=55e5c7972f1758562a6bca2d0b18f1369966d864fdd85deb7cec28411ee6e6e3&',
-            iconSize: pnjSize, iconAnchor: pnjAnchor, popupAnchor: pnjPopup
-        });
+        var icons = {
+            bob: 'bob.png', atara: 'atara.png', coll: 'collectioneur.png', doro: 'dorothée.png',
+            mass: 'massimo.png', anni: 'annie.png', kach: 'ka ching.png', andr: 'andrew.png',
+            eric: 'eric.png', vany: 'vanya.png', nani: 'niniwa.png', joan: 'joa.png',
+            bail: 'bayley.png', will: 'will.png', patti: 'patti.png', vernie: 'vernie.png',
+            bus: 'bus.png', coif: 'coiffeur.png', meub: 'Meuble.png', anim: 'chien.png',
+            vet: 'vetement.png', libr: 'Librairie.png'
+        };
 
-        var iconCollectionneur = L.icon({
-            iconUrl: 'https://cdn.discordapp.com/attachments/1369233801703587883/1452431046657445969/Screenshot_20251221_232041_Heartopia.png?ex=6949c952&is=694877d2&hm=9478437f4a50baa0e697e6ee9af7340d7a9f988d6602b74109547b484b3a0375&',
-            iconSize: pnjSize, iconAnchor: pnjAnchor, popupAnchor: pnjPopup
-        });
+        var pnjData = [
+            { pos: [-471, 501], name: "Bob", icon: icons.bob },
+            { pos: [-526, 499], name: "Atara", icon: icons.atara },
+            { pos: [-478, 493], name: "Le Collectionneur", icon: icons.coll },
+            { pos: [-469, 488], name: "Dorothée", icon: icons.doro },
+            { pos: [-446, 493], name: "Massimo", icon: icons.mass },
+            { pos: [-500, 500], name: "Annie", icon: icons.anni },
+            { pos: [-412, 418], name: "Ka Ching", icon: icons.kach },
+            { pos: [-399, 591], name: "Andrew", icon: icons.andr },
+            { pos: [-259, 522], name: "Eric", icon: icons.eric },
+            { pos: [-456, 549], name: "Vanya", icon: icons.vany },
+            { pos: [-502, 582], name: "Naniwa", icon: icons.nani },
+            { pos: [-502, 519], name: "Joan", icon: icons.joan },
+            { pos: [-498, 528], name: "Bailey", icon: icons.bail },
+            { pos: [-807, 419], name: "Will", icon: icons.will },
+            { pos: [-355, 809], name: "Patti", icon: icons.patti },
+            { pos: [-653, 225], name: "Vernie", icon: icons.vernie }
+        ];
 
-        var iconDorothee = L.icon({
-            iconUrl: 'https://cdn.discordapp.com/attachments/1369233801703587883/1452431047311491273/Screenshot_20251221_232045_Heartopia.png?ex=6949c952&is=694877d2&hm=c8f0bf997bdcdd6edf803f10a7fe85fcc54d0b23eccd10dab2982a3483135b17&',
-            iconSize: pnjSize, iconAnchor: pnjAnchor, popupAnchor: pnjPopup
-        });
+        pnjData.forEach(p => L.marker(p.pos, {icon: createIcon(p.icon)}).addTo(groupePNJ).bindPopup(p.name));
 
-        var iconMassimo = L.icon({
-            iconUrl: 'https://cdn.discordapp.com/attachments/1369233801703587883/1452431047743770724/Screenshot_20251221_232049_Heartopia.png?ex=6949c952&is=694877d2&hm=8f1c6d73f06512f6f74241dd8bdb187c04b4fc23ce1cc311ade616e4b1631d48&',
-            iconSize: pnjSize, iconAnchor: pnjAnchor, popupAnchor: pnjPopup
-        });
+        var commerceData = [
+            { pos: [-470, 486], name: "Coiffeur", icon: icons.coif },
+            { pos: [-471, 504], name: "Magasin de meubles", icon: icons.meub },
+            { pos: [-497, 520], name: "Magasin d'animaux", icon: icons.anim },
+            { pos: [-470, 488], name: "Magasin de vêtements", icon: icons.vet },
+            { pos: [-438, 467], name: "Librairie", icon: icons.libr }
+        ];
 
-        var iconAnnie = L.icon({
-            iconUrl: 'https://cdn.discordapp.com/attachments/1369233801703587883/1452431046091079860/Screenshot_20251221_232036_Heartopia.png?ex=6949c952&is=694877d2&hm=13d3e7fb432dede4439c2f924de74aa4d8722d2f953e01dd6addf4da15d2bd1b&',
-            iconSize: pnjSize, iconAnchor: pnjAnchor, popupAnchor: pnjPopup
-        });
+        commerceData.forEach(c => L.marker(c.pos, {icon: createIcon(c.icon, 35)}).addTo(groupeCommerces).bindPopup(c.name));
 
-        var iconKaChing = L.icon({
-            iconUrl: 'https://cdn.discordapp.com/attachments/1369233801703587883/1452431048834154651/Screenshot_20251221_232059_Heartopia.png?ex=6949c952&is=694877d2&hm=6f9e61607ba38cf92ee56b6352d323e2e166c55729a6e864b553d84090ceca4c&',
-            iconSize: pnjSize, iconAnchor: pnjAnchor, popupAnchor: pnjPopup
-        });
+        var busCoords = [
+            { pos: [-533, 340], name: "Banlieue Ouest" },
+            { pos: [-519, 639], name: "Banlieue du village" },
+            { pos: [-654, 479], name: "Village de pecheurs" },
+            { pos: [-532, 218], name: "Champ de fleurs" },
+            { pos: [-222, 512], name: "Montagne thermale" },
+            { pos: [-373, 480], name: "Banlieue nord du village" },
+            { pos: [-497, 481], name: "Place centrale" },
+            { pos: [-500, 798], name: "Forêt" }
+        ];
 
-        var iconAndrew = L.icon({
-            iconUrl: 'https://cdn.discordapp.com/attachments/1369233801703587883/1452431007750947007/Screenshot_20251221_232015_Heartopia.png?ex=6949c949&is=694877c9&hm=f1bf6e35a49347052bbda3e95536a0df292af7e98c969e06bafdba763631a129&',
-            iconSize: pnjSize, iconAnchor: pnjAnchor, popupAnchor: pnjPopup
-        });
+        busCoords.forEach(b => L.marker(b.pos, {icon: createIcon(icons.bus, 90)}).addTo(groupeBus).bindPopup(b.name));
 
-        var iconEric = L.icon({
-            iconUrl: 'https://cdn.discordapp.com/attachments/1369233801703587883/1452431080274657340/Screenshot_20251221_232112_Heartopia.png?ex=6949c95a&is=694877da&hm=07643566c2c227c6371ec8a38a7549d4c507d3a5ee39263b6d838963fddb1aa1&',
-            iconSize: pnjSize, iconAnchor: pnjAnchor, popupAnchor: pnjPopup
-        });
+        function addLabel(coords, text) {
+            L.marker(coords, { opacity: 0 }).addTo(groupeLieux)
+             .bindTooltip(text, { permanent: true, direction: 'center', className: 'label-ville' });
+        }
+        addLabel([-538, 492], "PLACE CENTRALE");
+        addLabel([-666, 429], "QUAI");
+        addLabel([-539, 947], "MER DE L'EST");
+        addLabel([-535, 75], "MER DE BALEINE");
+        addLabel([-78, 499], "ANCIENNE MER");
+        addLabel([-783, 478], "MER CALME");
 
-        var iconVanya = L.icon({
-            iconUrl: 'https://cdn.discordapp.com/attachments/1369233801703587883/1452431080979304468/Screenshot_20251221_232706_Heartopia.png?ex=6949c95a&is=694877da&hm=7e1ccbeadec2420207b467d55799c8bcdf1b117d399bcceeec0d26379df103b3&',
-            iconSize: pnjSize, iconAnchor: pnjAnchor, popupAnchor: pnjPopup
-        });
-
-        var iconNaniwa = L.icon({
-            iconUrl: 'https://cdn.discordapp.com/attachments/1369233801703587883/1452431007256150087/Screenshot_20251221_232010_Heartopia.png?ex=6949c948&is=694877c8&hm=6589e09fe0a7f47aa3d97ca1b043abc0179613f2a80ff1027aee23a6e430fa90&',
-            iconSize: pnjSize, iconAnchor: pnjAnchor, popupAnchor: pnjPopup
-        });
-
-        var iconJoan = L.icon({
-            iconUrl: 'https://cdn.discordapp.com/attachments/1369233801703587883/1452431045361275043/Screenshot_20251221_232027_Heartopia.png?ex=6949c952&is=694877d2&hm=09880fce31125adfa775ee8d51e325be33069ec57f12b39e6a9fc2d376083089&',
-            iconSize: pnjSize, iconAnchor: pnjAnchor, popupAnchor: pnjPopup
-        });
-
-        var iconBailey = L.icon({
-            iconUrl: 'https://cdn.discordapp.com/attachments/1369233801703587883/1452431044925063261/Screenshot_20251221_232020_Heartopia.png?ex=6949c951&is=694877d1&hm=c9bad96dd4bb05e5630b97a839c5aea7ae7f503500adf3b5df8b6ceff2996bde&',
-            iconSize: pnjSize, iconAnchor: pnjAnchor, popupAnchor: pnjPopup
-        });
-
-        var iconWill = L.icon({
-            iconUrl: 'https://cdn.discordapp.com/attachments/1369233801703587883/1452431005272113212/Screenshot_20251221_231941_Heartopia.png?ex=6949c948&is=694877c8&hm=ee2997160cfe971728fd62ba82de825f295c67df5778031f5fec5bbc45a69ba6&',
-            iconSize: pnjSize, iconAnchor: pnjAnchor, popupAnchor: pnjPopup
-        });
-
-        // 4. PLACEMENT DES MARQUEURS
-        L.marker([-471, 501], {icon: iconBob}).addTo(groupePNJ).bindPopup("<b>Bob</b>");
-        L.marker([-526, 499], {icon: iconAtara}).addTo(groupePNJ).bindPopup("<b>Atara</b>");
-        L.marker([-478, 493], {icon: iconCollectionneur}).addTo(groupePNJ).bindPopup("<b>Le Collectionneur</b>");
-        L.marker([-469, 488], {icon: iconDorothee}).addTo(groupePNJ).bindPopup("<b>Dorothée</b>");
-        L.marker([-446, 493], {icon: iconMassimo}).addTo(groupePNJ).bindPopup("<b>Massimo</b>");
-        L.marker([-500, 500], {icon: iconAnnie}).addTo(groupePNJ).bindPopup("<b>Annie</b>");
-        L.marker([-412, 418], {icon: iconKaChing}).addTo(groupePNJ).bindPopup("<b>Ka Ching</b>");
-        L.marker([-399, 591], {icon: iconAndrew}).addTo(groupePNJ).bindPopup("<b>Andrew</b>");
-        L.marker([-259, 522], {icon: iconEric}).addTo(groupePNJ).bindPopup("<b>Eric</b>");
-        L.marker([-456, 549], {icon: iconVanya}).addTo(groupePNJ).bindPopup("<b>Vanya</b>");
-        L.marker([-502, 582], {icon: iconNaniwa}).addTo(groupePNJ).bindPopup("<b>Naniwa</b>");
-        L.marker([-502, 519], {icon: iconJoan}).addTo(groupePNJ).bindPopup("<b>Joan</b>");
-        L.marker([-498, 528], {icon: iconBailey}).addTo(groupePNJ).bindPopup("<b>Bailey</b>");
-        L.marker([-807, 419], {icon: iconWill}).addTo(groupePNJ).bindPopup("<b>Will</b>");
-
-        // 5. MENU À COCHER
-        var overlays = { "Afficher les PNJ": groupePNJ };
+        var overlays = { 
+            "Personnages": groupePNJ, 
+            "Commerces": groupeCommerces, 
+            "Lieux": groupeLieux, 
+            "Bus": groupeBus
+        };
         L.control.layers(null, overlays, {collapsed: false}).addTo(map);
 
-        // 6. OUTIL COORDONNÉES
-        map.on('click', function(e) {
-            var lat = Math.round(e.latlng.lat);
-            var lng = Math.round(e.latlng.lng);
-            L.popup().setLatLng(e.latlng).setContent("Coordonnées : <b>[" + lat + ", " + lng + "]</b>").openOn(map);
+        map.on('click', e => {
+            L.popup().setLatLng(e.latlng).setContent("["+Math.round(e.latlng.lat)+", "+Math.round(e.latlng.lng)+"]").openOn(map);
         });
     </script>
 </body>
