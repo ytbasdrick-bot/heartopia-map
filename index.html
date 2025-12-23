@@ -2,12 +2,12 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Maptopia FR - Rex Edition</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
-        /* Modification : Ajout de ton fond Heartopia.jpg */
+        /* --- BASE & FOND --- */
         body { 
             margin: 0; 
             padding: 0; 
@@ -21,18 +21,27 @@
         #intro-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: black; z-index: 20000; display: flex; align-items: flex-end; justify-content: center; transition: opacity 1s ease; }
         .video-bg-blur { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; filter: blur(20px) brightness(0.4); }
         #intro-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; z-index: 2; border-left: 2px solid #d4af37; border-right: 2px solid #d4af37; }
+        
         .welcome-box { position: relative; bottom: 8%; width: 500px; padding: 30px; background: rgba(0, 0, 0, 0.85); border: 2px solid #d4af37; border-radius: 20px; color: white; z-index: 10; backdrop-filter: blur(10px); text-align: center; }
         .welcome-box h1 { margin: 0; font-size: 30px; letter-spacing: 3px; color: #fff; text-transform: uppercase; }
         .welcome-subtitle { color: #d4af37; font-size: 18px; margin: 15px 0 5px 0; display: block; font-weight: bold; }
         .tip-text { display: block; font-size: 13px; color: #ccc; margin-bottom: 20px; font-style: italic; }
+        
         #enter-button { padding: 15px 45px; background: linear-gradient(135deg, #8b0000, #d4af37); color: white; border: 1px solid white; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         #enter-button:hover { transform: scale(1.05); box-shadow: 0 0 15px #d4af37; }
 
-        /* --- CARTE (Transparente pour voir Heartopia.jpg) --- */
+        /* --- ADAPTATION MOBILE (Bouton Entrée) --- */
+        @media (max-width: 768px) {
+            .welcome-box { width: 85%; bottom: 12%; padding: 20px; }
+            .welcome-box h1 { font-size: 24px; }
+            #enter-button { width: 100%; padding: 20px 0; font-size: 20px; border-radius: 15px; }
+        }
+
+        /* --- CARTE --- */
         #map { height: 100vh; width: 100vw; opacity: 0; transition: opacity 2s ease; background: transparent !important; }
 
         /* --- MENU GAUCHE --- */
-        .leaflet-control-layers { left: 20px !important; top: 20px !important; width: 260px !important; background: rgba(255, 255, 255, 0.98) !important; border-radius: 15px !important; padding: 10px !important; max-height: 80vh; overflow-y: auto !important; border: none !important; box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important; scrollbar-width: thin; }
+        .leaflet-control-layers { left: 20px !important; top: 20px !important; width: 260px !important; background: rgba(255, 255, 255, 0.98) !important; border-radius: 15px !important; padding: 10px !important; max-height: 80vh; overflow-y: auto !important; border: none !important; box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important; }
         .accordion-title { color: white; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 5px; text-align: center; font-size: 12px; text-transform: uppercase; }
         .title-pnj { background: #8b0000; } 
         .title-bus { background: #2980b9; } 
@@ -47,24 +56,24 @@
         #overlay-fish { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 30000; display: none; align-items: center; justify-content: center; }
         .fish-card { display: flex; flex-direction: column; align-items: center; background: white; padding: 25px; border-radius: 20px; border: 3px solid #d4af37; width: 550px; max-width: 95%; }
         .fish-img-container { width: 100%; background: white; text-align: center; }
-        .fish-img-container img { width: 100%; height: auto; display: block; border: none !important; mix-blend-mode: multiply; margin: 0 auto; }
+        .fish-img-container img { width: 100%; height: auto; display: block; mix-blend-mode: multiply; margin: 0 auto; }
         #fish-name { margin: 0 0 15px 0; color: #333; font-size: 26px; text-transform: uppercase; font-weight: 800; }
 
         /* --- FOOTER & DISCORD --- */
-        .footer-wiki { position: fixed; bottom: 0; left: 0; width: 100%; height: 75px; z-index: 3000; background: linear-gradient(90deg, #8b0000, #d4af37, #8b0000); display: flex; align-items: center; justify-content: center; border-top: 3px solid white; box-shadow: 0 -5px 20px rgba(0,0,0,0.6); }
+        .footer-wiki { position: fixed; bottom: 0; left: 0; width: 100%; height: 75px; z-index: 3000; background: linear-gradient(90deg, #8b0000, #d4af37, #8b0000); display: flex; align-items: center; justify-content: center; border-top: 3px solid white; }
         .footer-wiki a { color: white; text-decoration: none; font-weight: 900; font-size: 24px; letter-spacing: 2px; text-transform: uppercase; }
         
         .discord-btn { position: fixed; bottom: 95px; right: 25px; z-index: 3001; transition: transform 0.3s; }
-        .discord-btn:hover { transform: scale(1.15); }
         .discord-btn img { width: 70px; height: 70px; filter: drop-shadow(0 0 15px rgba(114, 137, 218, 0.8)); }
 
-        /* --- NOTES & LABELS --- */
+        /* --- NOTES & LÉGENDE --- */
         .ping-legend { position: fixed; right: 20px; top: 20px; width: 220px; background: rgba(0,0,0,0.9); border: 2px solid #d4af37; border-radius: 15px; padding: 15px; color: white; z-index: 1000; max-height: 40vh; overflow-y: auto; }
-        .label-ville { background: white !important; border: 2px solid #3498db !important; border-radius: 5px; padding: 2px 8px; font-weight: bold; font-size: 11px; color: #2980b9; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .label-eau { background: rgba(41, 128, 185, 0.3) !important; border: 1px solid #2980b9 !important; border-radius: 5px; padding: 2px 8px; font-size: 10px; color: white; text-shadow: 1px 1px 2px black; font-weight: bold; }
+        .label-ville { background: white !important; border: 2px solid #3498db !important; border-radius: 5px; padding: 2px 8px; font-weight: bold; font-size: 11px; color: #2980b9; }
+        .label-eau { background: rgba(41, 128, 185, 0.3) !important; border: 1px solid #2980b9 !important; border-radius: 5px; padding: 2px 8px; font-size: 10px; color: white; font-weight: bold; }
+        
         .team-box { position: fixed; bottom: 95px; left: 20px; z-index: 3000; text-align: center; }
         .team-text { font-weight: 900; font-size: 18px; color: white; text-shadow: 0 0 10px #d4af37; margin-bottom: 5px; display: block; }
-        .team-img { width: 85px; height: 85px; border-radius: 15px; border: 2px solid #d4af37; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .team-img { width: 85px; height: 85px; border-radius: 15px; border: 2px solid #d4af37; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -135,7 +144,6 @@
     L.imageOverlay('carte.png', bounds).addTo(map);
     map.setView([-500, 500], 1);
 
-    // --- LOGIQUE ZOOM DYNAMIQUE ---
     var busLayer = L.layerGroup();
     var pnjLayer = L.layerGroup();
 
@@ -143,13 +151,11 @@
         var z = map.getZoom();
         var busSize = 45 + (z * 25);
         var pnjSize = 45 + (z * 20);
-
         busLayer.eachLayer(l => { if(l instanceof L.Marker) l.setIcon(L.icon({ iconUrl: 'bus.png', iconSize: [busSize, busSize], iconAnchor: [busSize/2, busSize] })); });
         pnjLayer.eachLayer(l => { if(l instanceof L.Marker && l.options.customImg) l.setIcon(L.icon({ iconUrl: l.options.customImg, iconSize: [pnjSize, pnjSize], iconAnchor: [pnjSize/2, pnjSize] })); });
     }
     map.on('zoomend', updateMarkerSizes);
 
-    // --- SYSTEME PINGS ---
     var userPings = JSON.parse(localStorage.getItem('maptopia_pings')) || [];
     var pingMarkers = {};
     const colors = { blue: '#3498db', red: '#e74c3c', green: '#2ecc71', yellow: '#f1c40f', purple: '#9b59b6' };
@@ -171,7 +177,7 @@
         pingMarkers[mid] = marker;
         var div = document.createElement('div');
         if (isNew) {
-            div.innerHTML = `<input type="text" id="in-${mid}" placeholder="Ta note..." style="width:120px;"><button onclick="confirmPing('${mid}',${latlng.lat},${latlng.lng})" style="display:block;width:100%;margin-top:5px;background:#27ae60;color:white;border:none;border-radius:3px;cursor:pointer;">OK</button>`;
+            div.innerHTML = `<input type="text" id="in-${mid}" placeholder="Note..." style="width:120px;"><button onclick="confirmPing('${mid}',${latlng.lat},${latlng.lng})" style="display:block;width:100%;margin-top:5px;background:#27ae60;color:white;border:none;border-radius:3px;cursor:pointer;">OK</button>`;
         } else {
             div.innerHTML = `<b>Note:</b><br>${text}<br><button onclick="removePing('${mid}')" style="background:#e74c3c;color:white;border:none;width:100%;margin-top:5px;border-radius:3px;cursor:pointer;">Supprimer</button>`;
         }
@@ -193,29 +199,19 @@
     userPings.forEach(p => createPing(p.latlng, p.text, p.color, false, p.id));
     updateLegend();
 
-    // --- REGISTRATION DONNEES ---
     var dataStorage = { pnj:[], bus:[], shop:[], lieux:[] };
     var currentActiveLayer = null;
 
     function register(cat, pos, name, img, opts = {}) {
-        let g;
-        if(cat === 'bus') g = busLayer;
-        else if(cat === 'pnj') g = pnjLayer;
-        else g = L.layerGroup();
-
-        if(opts.type) { 
-            L.marker(pos, {opacity:0}).addTo(g).bindTooltip(name, {permanent:true, direction:'center', className:opts.type}); 
-        } else { 
-            var s = (cat === 'shop') ? 60 : 70; 
-            L.marker(pos, {icon: L.icon({iconUrl:img, iconSize:[s,s], iconAnchor:[s/2,s]}), customImg: img}).addTo(g).bindPopup(name); 
-        }
+        let g = (cat === 'bus') ? busLayer : (cat === 'pnj' ? pnjLayer : L.layerGroup());
+        if(opts.type) { L.marker(pos, {opacity:0}).addTo(g).bindTooltip(name, {permanent:true, direction:'center', className:opts.type}); } 
+        else { var s = (cat === 'shop') ? 60 : 70; L.marker(pos, {icon: L.icon({iconUrl:img, iconSize:[s,s], iconAnchor:[s/2,s]}), customImg: img}).addTo(g).bindPopup(name); }
         if(opts.startOn) g.addTo(map);
         dataStorage[cat].push({name:name, pos:pos, layer:g, img:img, startOn: opts.startOn});
     }
 
-    // --- LISTES ---
+    // DONNÉES
     [ ["Bob",[-471,501],'pnj/bob.png'], ["Atara",[-526,499],'pnj/atara.png'], ["Collectionneur",[-478,493],'pnj/collectioneur.png'], ["Dorothée",[-469,488],'pnj/dorothée.png'], ["Massimo",[-446,493],'pnj/massimo.png'], ["Andrew",[-399,591],'pnj/andrew.png'], ["Eric",[-259,522],'pnj/eric.png'], ["Vanya",[-456,549],'pnj/vanya.png'], ["Naniwa",[-502,582],'pnj/niniwa.png'], ["Joan",[-502,519],'pnj/joa.png'], ["Will",[-807,419],'pnj/will.png'], ["Patti",[-355,809],'pnj/patti.png'], ["Vernie",[-653,225],'pnj/vernie.png'], ["Bayley",[-498,526],'pnj/bayley.png'] ].forEach(p => register('pnj', p[1], p[0], p[2]));
-    
     [ ["Banlieue Ouest",[-533,340]], ["Banlieue Village",[-519,639]], ["Village Pêcheurs",[-654,479]], ["Champ Fleurs",[-532,218]], ["Montagne Thermale",[-222,512]], ["Banlieue Nord",[-373,480]], ["Place Centrale",[-497,481]], ["Forêt",[-500,798]] ].forEach(b => register('bus', b[1], b[0], 'bus.png'));
     
     var lieux = [
