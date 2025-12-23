@@ -9,46 +9,56 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <style>
-        body { margin: 0; padding: 0; background: #000; overflow: hidden; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body { 
+            margin: 0; padding: 0; 
+            background: url('Heartopia.jpg') no-repeat center center fixed; 
+            background-size: cover; overflow: hidden; 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+        }
 
-        /* ACCUEIL CENTRE */
-        #intro-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: url('Heartopia.jpg') no-repeat center center; background-size: cover; z-index: 20000; display: flex; align-items: center; justify-content: center; transition: opacity 1s ease; }
+        #map { 
+            height: 100vh; width: 100vw; opacity: 0; transition: opacity 2s ease; 
+            background: url('Heartopia.jpg') no-repeat center center !important; 
+            background-size: cover !important;
+        }
+
+        #intro-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: url('Heartopia.jpg') no-repeat center center; background-size: cover; z-index: 20000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1s ease; }
         #intro-screen::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); }
         
+        .heartopia-title {
+            position: relative; font-size: 55px; font-weight: 900; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 5px;
+            background: linear-gradient(to bottom, #fff 20%, #d4af37 50%, #8b6b15 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.8)); font-family: 'Arial Black', sans-serif; z-index: 20001;
+        }
+
         .welcome-box { position: relative; width: 90%; max-width: 550px; padding: 40px; background: rgba(0, 0, 0, 0.85); border: 2px solid #d4af37; border-radius: 25px; color: white; text-align: center; box-shadow: 0 0 40px rgba(0,0,0,0.6); }
-        .welcome-box h1 { margin-top: 0; color: #d4af37; font-size: 32px; letter-spacing: 2px; }
         .details-list { text-align: left; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin: 25px 0; font-size: 14px; border-left: 4px solid #d4af37; line-height: 1.6; }
         
-        #enter-button { padding: 18px 60px; background: linear-gradient(135deg, #8b0000, #d4af37); color: white; border: 2px solid white; border-radius: 50px; font-size: 20px; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        #enter-button { padding: 18px 60px; background: linear-gradient(135deg, #8b0000, #d4af37); color: white; border: 2px solid white; border-radius: 50px; font-size: 20px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         #enter-button:hover { transform: scale(1.05); box-shadow: 0 0 20px #d4af37; }
 
-        /* UI CARTE */
-        #map { height: 100vh; width: 100vw; opacity: 0; transition: opacity 2s ease; background: transparent !important; }
+        .leaflet-container { background: transparent !important; }
         .leaflet-control-layers { left: 20px !important; top: 20px !important; width: 280px !important; background: rgba(255, 255, 255, 0.98) !important; border-radius: 15px !important; padding: 10px !important; max-height: 85vh; overflow-y: auto !important; border: none !important; box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important; }
         
-        /* PINGS PERSO LEGEND */
         .ping-legend { position: fixed; right: 20px; top: 20px; width: 240px; background: rgba(0,0,0,0.9); border: 2px solid #d4af37; border-radius: 15px; padding: 15px; color: white; z-index: 1000; max-height: 40vh; display: flex; flex-direction: column; }
         #legend-list { overflow-y: auto; margin-top: 10px; }
         .legend-item { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.1); margin-bottom: 5px; padding: 8px; border-radius: 6px; font-size: 12px; cursor: pointer; }
 
-        /* MENU ACCORDION */
         .accordion-title { color: white; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 5px; text-align: center; font-size: 12px; text-transform: uppercase; }
         .title-pnj { background: #8b0000; } .title-bus { background: #2980b9; } .title-shop { background: #9b59b6; } .title-lieux { background: #27ae60; } .title-poisson { background: #f39c12; }
         .accordion-content { display: none; margin-bottom: 10px; background: #fff; }
         .accordion-content.active { display: block; }
         .menu-item { padding: 10px 15px; cursor: pointer; font-size: 13px; border-bottom: 1px solid #eee; color: #333; }
 
-        /* LABELS */
         .label-ville { background: white !important; border: 2px solid #3498db !important; border-radius: 5px; padding: 2px 8px; font-weight: bold; font-size: 11px; color: #2980b9; white-space: nowrap; }
         .label-eau { background: rgba(41, 128, 185, 0.8) !important; border: 1px solid #fff !important; border-radius: 5px; padding: 2px 8px; font-size: 10px; color: white; font-weight: bold; white-space: nowrap; }
 
-        /* FOOTER & DISCORD */
         .footer-wiki { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; z-index: 3000; background: linear-gradient(90deg, #8b0000, #d4af37, #8b0000); display: flex; align-items: center; justify-content: center; border-top: 3px solid white; }
         .footer-wiki a { color: white; text-decoration: none; font-weight: 900; font-size: 20px; }
         #discord-link { position: fixed; bottom: 85px; right: 20px; z-index: 4000; }
         #discord-img { width: 60px; }
 
-        /* OVERLAY POISSON */
         #overlay-fish { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 30000; display: none; align-items: center; justify-content: center; }
         .fish-card { background: white; padding: 25px; border-radius: 20px; border: 3px solid #d4af37; width: 450px; text-align: center; }
     </style>
@@ -58,8 +68,8 @@
 <audio id="main-audio"><source src="sonheartopia.mp4" type="audio/mp4"></audio>
 
 <div id="intro-screen">
+    <h1 class="heartopia-title">MAPTOPIA FR</h1>
     <div class="welcome-box">
-        <h1>MAPTOPIA FR</h1>
         <p>Explorez la carte interactive officielle de la communauté française.</p>
         <div class="details-list">
             • <b>Navigation :</b> Utilisez le menu à gauche pour filtrer les éléments.<br>
@@ -71,9 +81,7 @@
     </div>
 </div>
 
-<a href="https://discord.gg/dc8eZwf2jq" target="_blank" id="discord-link">
-    <img src="Discord-Logo-PNG-Pic.png" id="discord-img" alt="Discord">
-</a>
+<a href="https://discord.gg/dc8eZwf2jq" target="_blank" id="discord-link"><img src="Discord-Logo-PNG-Pic.png" id="discord-img"></a>
 
 <div class="ping-legend">
     <div style="text-align:center; font-weight:bold; border-bottom:1px solid #d4af37; padding-bottom:5px;">📌 MES MARQUEURS</div>
@@ -104,18 +112,22 @@
         setTimeout(() => { document.getElementById('intro-screen').style.display = 'none'; }, 1000);
     }
 
-    var map = L.map('map', { crs: L.CRS.Simple, minZoom: 0, maxZoom: 3, zoom: 1, zoomControl: false });
-    L.imageOverlay('carte.png', [[-1000, 0], [0, 1000]]).addTo(map);
+    var bounds = [[-1000, 0], [0, 1000]];
+    var map = L.map('map', { 
+        crs: L.CRS.Simple, minZoom: 0, maxZoom: 3, zoom: 1, zoomControl: false,
+        maxBounds: bounds, maxBoundsViscosity: 1.0 
+    });
+
+    L.imageOverlay('carte.png', bounds).addTo(map);
     map.setView([-500, 500], 1);
 
-    // --- SYSTEME DE PING ORIGINAL ---
     var userPings = JSON.parse(localStorage.getItem('maptopia_pings')) || [];
     var pingMarkers = {};
     var tempPing = null;
 
     function createPing(latlng, text, color, icon, isNew, id) {
         var mid = id || "temp_" + Date.now();
-        var markerHtml = `<div style="background:${colors[color]};width:28px;height:28px;border:2px solid white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 5px rgba(0,0,0,0.4)">${icons[icon]}</div>`;
+        var markerHtml = `<div style="background:${colors[color]};width:28px;height:28px;border:2px solid white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;">${icons[icon]}</div>`;
         var marker = L.marker(latlng, {icon: L.divIcon({className:'', html:markerHtml, iconSize:[28,28], iconAnchor:[14,14]})}).addTo(map);
         
         if (isNew) {
@@ -123,28 +135,20 @@
             var div = document.createElement('div');
             div.style.minWidth = "180px";
             div.innerHTML = `
-                <input type="text" id="in-${mid}" placeholder="Nom du lieu..." style="width:100%; padding:5px; box-sizing:border-box; margin-bottom:10px;">
-                <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:5px; margin-bottom:10px;">
-                    ${Object.entries(icons).map(([k,v]) => `<button onclick="selectIcon('${k}',this)" style="padding:5px; cursor:pointer; background:white; border:1px solid #ccc;">${v}</button>`).join('')}
+                <input type="text" id="in-${mid}" placeholder="Nom..." style="width:100%; padding:5px; margin-bottom:10px;">
+                <div style="display:flex; gap:5px; margin-bottom:10px;">
+                    ${Object.entries(colors).map(([k,v]) => `<div style="background:${v}; width:20px; height:20px; border-radius:50%; cursor:pointer;" onclick="selectColor('${k}',this)"></div>`).join('')}
                 </div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                    ${Object.entries(colors).map(([k,v]) => `<div style="background:${v}; width:20px; height:20px; border-radius:50%; cursor:pointer; border:1px solid #666;" onclick="selectColor('${k}',this)"></div>`).join('')}
-                </div>
-                <div style="display:flex; gap:5px;">
-                    <button onclick="confirmPing('${mid}',${latlng.lat},${latlng.lng})" style="flex:1; background:#27ae60; color:white; border:none; padding:5px; border-radius:3px; cursor:pointer;">OK</button>
-                    <button onclick="cancelPing()" style="flex:1; background:#888; color:white; border:none; padding:5px; border-radius:3px; cursor:pointer;">Annuler</button>
-                </div>`;
+                <button onclick="confirmPing('${mid}',${latlng.lat},${latlng.lng})" style="width:100%; background:#27ae60; color:white; border:none; padding:5px; cursor:pointer;">VALIDER</button>`;
             marker.tempIcon = 'note'; marker.tempColor = 'bleu';
-            marker.bindPopup(div, {closeButton:false}).openPopup();
+            marker.bindPopup(div).openPopup();
         } else {
             pingMarkers[id] = marker;
-            marker.bindPopup(`<b>${icons[icon]} ${text}</b><br><button onclick="removeUserPing('${id}')" style="width:100%; margin-top:5px; cursor:pointer; background:#e74c3c; color:white; border:none; padding:3px;">Supprimer</button>`);
+            marker.bindPopup(`<b>${text}</b><br><button onclick="removeUserPing('${id}')" style="width:100%; background:#e74c3c; color:white; border:none; cursor:pointer;">Supprimer</button>`);
         }
     }
 
-    window.selectIcon = (i, el) => { tempPing.tempIcon = i; el.parentElement.querySelectorAll('button').forEach(b => b.style.border='1px solid #ccc'); el.style.border='2px solid #333'; };
     window.selectColor = (c, el) => { tempPing.tempColor = c; el.parentElement.querySelectorAll('div').forEach(d => d.style.transform='scale(1)'); el.style.transform='scale(1.3)'; };
-    window.cancelPing = () => { if(tempPing) map.removeLayer(tempPing); tempPing = null; };
     window.confirmPing = (t, lat, lng) => {
         var v = document.getElementById('in-'+t).value || "Lieu";
         var id = "id_"+Date.now();
@@ -153,55 +157,139 @@
         map.removeLayer(tempPing); createPing({lat,lng}, v, tempPing.tempColor, tempPing.tempIcon, false, id);
         updateUserLegend(); tempPing = null;
     };
+
     window.removeUserPing = (id) => { if(pingMarkers[id]) map.removeLayer(pingMarkers[id]); userPings = userPings.filter(p => p.id != id); localStorage.setItem('maptopia_pings', JSON.stringify(userPings)); updateUserLegend(); };
     function updateUserLegend() {
         const list = document.getElementById('legend-list'); list.innerHTML = "";
         userPings.forEach(p => {
             const div = document.createElement('div'); div.className='legend-item';
-            div.innerHTML = `<span onclick="map.flyTo([${p.latlng.lat},${p.latlng.lng}], 2)">${icons[p.icon]} ${p.text}</span><button onclick="removeUserPing('${p.id}')" style="background:none; border:none; color:white; font-weight:bold; cursor:pointer;">X</button>`;
+            div.innerHTML = `<span onclick="map.flyTo([${p.latlng.lat},${p.latlng.lng}], 2)">${icons[p.icon]} ${p.text}</span><button onclick="removeUserPing('${p.id}')" style="background:none; border:none; color:white; cursor:pointer;">X</button>`;
             list.appendChild(div);
         });
     }
 
     map.on('contextmenu', (e) => { if(tempPing) map.removeLayer(tempPing); createPing(e.latlng, "", "bleu", "note", true); });
 
-    // --- DONNÉES ---
     var dataStorage = { pnj:[], bus:[], shop:[], lieux:[] };
     var currentSingleMarker = null;
 
     function register(cat, pos, name, img, opts = {}) {
         let m;
-        if(opts.type) m = L.marker(pos, {opacity:0}).bindTooltip(name, {permanent:true, direction:'center', className:opts.type}).addTo(map);
-        else m = L.marker(pos, { icon: L.icon({ iconUrl: img, iconSize: (cat=='bus'?[85,85]:[60,60]), iconAnchor: (cat=='bus'?[42,85]:[30,60]) }) }).bindPopup(`<b>${name}</b>`);
+        if(opts.type) {
+            m = L.marker(pos, {opacity:0}).bindTooltip(name, {permanent:true, direction:'center', className:opts.type}).addTo(map);
+        } else {
+            m = L.marker(pos, { icon: L.icon({ iconUrl: img, iconSize: (cat=='bus'?[85,85]:[60,60]), iconAnchor: (cat=='bus'?[42,85]:[30,60]) }) }).bindPopup(`<b>${name}</b>`);
+        }
         dataStorage[cat].push({name, pos, marker:m, category:cat});
     }
 
-    // PNJ
+    // DONNÉES PNJ, BUS, SHOPS
     [[-471,501,"Bob","pnj/bob.png"],[-526,499,"Atara","pnj/atara.png"],[-478,493,"Collectionneur","pnj/collectioneur.png"],[-469,488,"Dorothée","pnj/dorothée.png"],[-446,493,"Massimo","pnj/massimo.png"],[-412,418,"Ka Ching","pnj/ka ching.png"],[-399,591,"Andrew","pnj/andrew.png"],[-259,522,"Eric","pnj/eric.png"],[-456,549,"Vanya","pnj/vanya.png"],[-502,582,"Naniwa","pnj/niniwa.png"],[-502,519,"Joan","pnj/joa.png"],[-807,419,"Will","pnj/will.png"],[-355,809,"Patti","pnj/patti.png"],[-653,225,"Vernie","pnj/vernie.png"],[-498,526,"Bayley","pnj/bayley.png"]].forEach(d => register('pnj', [d[0],d[1]], d[2], d[3]));
-    // BUS
     [["Banlieue Ouest",[-533,340]], ["Banlieue Village",[-519,639]], ["Village Pêcheurs",[-654,479]], ["Champ Fleurs",[-532,218]], ["Montagne Thermale",[-222,512]], ["Banlieue Nord",[-373,480]], ["Place Centrale",[-497,481]], ["Forêt",[-500,798]]].forEach(b => register('bus', b[1], b[0], 'bus.png'));
-    // MAGASINS
     [[-472,487,"Vêtements","vetement.png"],[-474,503,"Meubles","Meuble.png"],[-496,523,"Animaux","chien.png"],[-440,467,"Librairie","Librairie.png"]].forEach(s => register('shop', [s[0],s[1]], s[2], s[3]));
-    // TOUS LES LIEUX (Rivières, Lacs, Mers inclus)
-    [
-        {pos:[-538,492], name:"Place Centrale", type:"label-ville"}, {pos:[-692,506], name:"Village de Pêcheurs", type:"label-ville"}, 
-        {pos:[-445,455], name:"Rue des Habitants", type:"label-ville"}, {pos:[-494,429], name:"Rue des Arts", type:"label-ville"},
-        {pos:[-512,553], name:"Rue du Jardin", type:"label-ville"}, {pos:[-428,182], name:"Montagne de Baleine", type:"label-ville"}, 
-        {pos:[-185,290], name:"Les Ruines", type:"label-ville"}, {pos:[-224,639], name:"Falaise Rocheuse", type:"label-ville"}, 
-        {pos:[-367,808], name:"Tour Faon", type:"label-ville"}, {pos:[-649,185], name:"Champ de Fleurs", type:"label-ville"}, 
-        {pos:[-736,602], name:"Quai Oriental", type:"label-ville"}, {pos:[-780,387], name:"Phare", type:"label-ville"}, 
-        {pos:[-531,805], name:"Forêt de Chênes", type:"label-ville"}, {pos:[-227,508], name:"Source thermale", type:"label-ville"},
-        {pos:[-332,320], name:"Rivière Aurore", type:"label-eau"}, {pos:[-168,391], name:"Lac Volcanique", type:"label-eau"},
-        {pos:[-200,390], name:"Lac Montagne", type:"label-eau"}, {pos:[-262,534], name:"Lac Montagne", type:"label-eau"},
-        {pos:[-387,457], name:"Lac de banlieue", type:"label-eau"}, {pos:[-445,621], name:"Lac de banlieue", type:"label-eau"},
-        {pos:[-604,489], name:"Lac de banlieue", type:"label-eau"}, {pos:[-439,778], name:"Lac de la forêt", type:"label-eau"},
-        {pos:[-598,744], name:"Lac de la forêt", type:"label-eau"}, {pos:[-667,615], name:"Fleuve Géant", type:"label-eau"},
-        {pos:[-783,478], name:"Mer Calme", type:"label-eau"}, {pos:[-534,92], name:"Mer de Baleine", type:"label-eau"}, 
-        {pos:[-68,497], name:"Ancienne Mer", type:"label-eau"}
-    ].forEach(l => register('lieux', l.pos, l.name, '', {type:l.type}));
+    [{pos:[-538,492], name:"Place Centrale", type:"label-ville"}, {pos:[-692,506], name:"Village de Pêcheurs", type:"label-ville"}, {pos:[-445,455], name:"Rue des Habitants", type:"label-ville"}, {pos:[-494,429], name:"Rue des Arts", type:"label-ville"}, {pos:[-512,553], name:"Rue du Jardin", type:"label-ville"}, {pos:[-428,182], name:"Montagne de Baleine", type:"label-ville"}, {pos:[-185,290], name:"Les Ruines", type:"label-ville"}, {pos:[-224,639], name:"Falaise Rocheuse", type:"label-ville"}, {pos:[-367,808], name:"Tour Faon", type:"label-ville"}, {pos:[-649,185], name:"Champ de Fleurs", type:"label-ville"}, {pos:[-736,602], name:"Quai Oriental", type:"label-ville"}, {pos:[-780,387], name:"Phare", type:"label-ville"}, {pos:[-531,805], name:"Forêt de Chênes", type:"label-ville"}, {pos:[-227,508], name:"Source thermale", type:"label-ville"}, {pos:[-332,320], name:"Rivière Aurore", type:"label-eau"}, {pos:[-168,391], name:"Lac Volcanique", type:"label-eau"}, {pos:[-200,390], name:"Lac Montagne", type:"label-eau"}, {pos:[-262,534], name:"Lac Montagne", type:"label-eau"}, {pos:[-387,457], name:"Lac de banlieue", type:"label-eau"}, {pos:[-445,621], name:"Lac de banlieue", type:"label-eau"}, {pos:[-604,489], name:"Lac de banlieue", type:"label-eau"}, {pos:[-439,778], name:"Lac de la forêt", type:"label-eau"}, {pos:[-598,744], name:"Lac de la forêt", type:"label-eau"}, {pos:[-667,615], name:"Fleuve Géant", type:"label-eau"}, {pos:[-783,478], name:"Mer Calme", type:"label-eau"}, {pos:[-534,92], name:"Mer de Baleine", type:"label-eau"}, {pos:[-68,497], name:"Ancienne Mer", type:"label-eau"}].forEach(l => register('lieux', l.pos, l.name, '', {type:l.type}));
 
     const fishList = [
-        {name:"Ablette",bg:"poisson/ablette1.png",cond:"poisson/Lacs.png"},{name:"Acantharchus",bg:"poisson/Acantharchus_pomotis1.png",cond:"poisson/arcantharcus%20pomotis.png"},{name:"Aphyosemion",bg:"poisson/Aphyosemion%20striatum.png",cond:"poisson/Aphyosemion%20striatum1.png"},{name:"Barbeau",bg:"poisson/barbeau1.png",cond:"poisson/barbeau.png"},{name:"Barbillon",bg:"poisson/barbillon1.png",cond:"poisson/barbillon.png"},{name:"Baudroie",bg:"poisson/baudroie1.png",cond:"poisson/Baudroie.png"},{name:"Bonite",bg:"poisson/bonite1.png",cond:"poisson/bonite.png"},{name:"Carpe argentée",bg:"poisson/carpe_argentee1.png",cond:"poisson/carpe_argentee.png"},{name:"Carpe européenne",bg:"poisson/Carpe_europeenne1.png",cond:"poisson/Carpe_europeenne.png"},{name:"Carpe Papillon",bg:"poisson/carpe%20papillon1.png",cond:"poisson/carpe%20papillon.png"},{name:"Carpe noire",bg:"poisson/carpe%20noir.png",cond:"poisson/carpe%20noir1.png"},{name:"Chimère argentée",bg:"poisson/chimere%20argent1.pnj.avif",cond:"poisson/chimere%20argent%C3%A9.png"},{name:"Comète coussut",bg:"poisson/comete_coussut1.png",cond:"poisson/comete_coussut.png"},{name:"Crabe de ruisseau",bg:"poisson/Crabe_de_ruisseau1.png",cond:"poisson/crabe%20de%20ruisseau.png"},{name:"Crevette verte",bg:"poisson/crevette_verte1.png",cond:"poisson/crevette%20verte.png"},{name:"Tilapia",bg:"poisson/tilapia.png",cond:"talapia1.png"},{name:"Tanche dorée",bg:"poisson/tanche_doree.png",cond:"tanche_doree1.png"},{name:"Vairon",bg:"poisson/vairon.png",cond:"vairon1.png"},{name:"Saurel",bg:"poisson/saurel.png",cond:"saurel1.png"},{name:"Turbot",bg:"poisson/turbot.png",cond:"turbot1.png"},{name:"Seiche",bg:"poisson/seiche_europeenne.png",cond:"Seiche_europeenne1.png"},{name:"Zingel streber",bg:"poisson/zingel_streber.png",cond:"zingel_streber1.png"},{name:"Poisson épineux",bg:"poisson/poisson_epineux.png",cond:"poisson_epineux1.png"},{name:"Poisson yeux rouges",bg:"poisson/poisson_a_yeux_rouges.png",cond:"poisson_a_yeux_rouges1.png"},{name:"Plie européenne",bg:"poisson/plie_europeenne.png",cond:"plie_europeenne1.png"},{name:"Perche rivière",bg:"poisson/perche_de_riviere.png",cond:"perche_de_riviere1.png"},{name:"Pieuvre",bg:"poisson/pieuvre.png",cond:"Pieuvre1.png"},{name:"Rouget barbet",bg:"poisson/rouget_barbet.png",cond:"Rouget barbet1.png"},{name:"Perche de mer",bg:"poisson/perche_de_mer.png",cond:"perche_de_mer_1.png"},{name:"Saumon",bg:"poisson/saumon_atlantique.png",cond:"saumon_atlantique1.png"},{name:"Poisson-globe",bg:"poisson/poisson_globe.png",cond:"poisson-globe_de_riviere1.png"},{name:"Pieuvre naine",bg:"poisson/pieuvre_naine.png",cond:"Pieuvre_naine_atlantique1.png"}
+        // --- LACS ---
+        {name:"Ablette", bg:"condition/AA1.png", cond:"condition/Lacs.png"},
+        {name:"Carpe argentée", bg:"condition/AA1.png", cond:"condition/Lacs.png"},
+        {name:"Grenouille européenne", bg:"condition/AA1.png", cond:"condition/Lacs.png"},
+        {name:"Langouste européenne", bg:"condition/LL1.png", cond:"condition/Lacs.png"},
+
+        // --- LAC DE LA FORET ---
+        {name:"Acantharchus pomotis", bg:"condition/AA2.png", cond:"condition/Lac_de_la_foret.png"},
+        {name:"Barbillon", bg:"condition/AA1.png", cond:"condition/Lac_de_la_foret.png"},
+        {name:"Ecrevisse noble", bg:"condition/AA1.png", cond:"condition/Lac_de_la_foret.png"},
+        {name:"Ecrevisse noble bleue", bg:"condition/AA1.png", cond:"condition/Lac_de_la_foret.png"},
+        {name:"Grand black-basse", bg:"condition/GG1.png", cond:"condition/Lac_de_la_foret.png"},
+        {name:"Grande huître perlière", bg:"condition/AA1.png", cond:"condition/Lac_de_la_foret.png"},
+        {name:"Tanche dorée", bg:"condition/AA1.png", cond:"condition/Lac_de_la_foret.png"},
+
+        // --- LAC DANS LA PRAIRIE ---
+        {name:"Eperlan", bg:"condition/AA1.png", cond:"condition/Lac_dans_la_prairie.png"},
+        {name:"Poisson rouge", bg:"condition/AA1.png", cond:"condition/Lac_dans_la_prairie.png"},
+
+        // --- ANCIENNE MER ---
+        {name:"Plie européenne", bg:"condition/LL1.png", cond:"condition/Ancienne_mer.png"},
+        {name:"Poisson-clown", bg:"condition/AA1.png", cond:"condition/Ancienne_mer.png"},
+        {name:"Poisson épineux", bg:"condition/AA1.png", cond:"condition/Ancienne_mer.png"},
+        {name:"Poisson-globe de rivière", bg:"condition/LL4.png", cond:"condition/Ancienne_mer.png"},
+
+        // --- LACS DE BANLIEUE ---
+        {name:"Aphyosemion striatum", bg:"condition/AA4.png", cond:"condition/Lacs_de_banlieue.png"},
+        {name:"Barbeau", bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"},
+        {name:"Carpe noire", bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"},
+        {name:"Loche des rochers", bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"},
+        {name:"Moule", bg:"condition/CC3.png", cond:"condition/Lacs_de_banlieue.png"},
+        {name:"Omble chevalier", bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"},
+        {name:"Ombrine", bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"},
+        {name:"Poisson à yeux rouges", bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"},
+
+        // --- FLEUVE D'ARBRES GEANTS ---
+        {name:"Loche des fleurs", bg:"condition/AA1.png", cond:"condition/Fleuve_darbres_geants.png"},
+        {name:"POISSON-TIGRE à ventre rouge", bg:"condition/AA1.png", cond:"condition/Fleuve_darbres_geants.png"},
+        {name:"Sandre blanc", bg:"condition/GG1.png", cond:"condition/Fleuve_darbres_geants.png"},
+
+        // --- LACS MONTAGNE THERMALE ---
+        {name:"Perche de prunier", bg:"condition/LL4.png", cond:"condition/Lacs_montagne_thermale.png"},
+
+        // --- MER BALEINE ---
+        {name:"Hippocampe", bg:"condition/HH1.png", cond:"condition/Mer_baleine.png"},
+        {name:"Maquereau atlantique", bg:"condition/AA1.png", cond:"condition/Mer_baleine.png"},
+        {name:"Saumon atlantique", bg:"condition/MM1.png", cond:"condition/Mer_baleine.png"},
+        {name:"Saurel", bg:"condition/AA1.png", cond:"condition/Mer_baleine.png"},
+
+        // --- MER CALME ---
+        {name:"Pagellus bogaraveo", bg:"condition/AA1.png", cond:"condition/Mer_calme.png"},
+        {name:"Pieuvre naine atlantique", bg:"condition/AA1.png", cond:"condition/Mer_calme.png"},
+        {name:"Poisson ruban", bg:"condition/AA1.png", cond:"condition/Mer_calme.png"},
+
+        // --- MER DE L'EST ---
+        {name:"Bernard l'Hermite", bg:"condition/AA1.png", cond:"condition/Mer_de_lEst.png"},
+        {name:"Crevette de la mer", bg:"condition/AA1.png", cond:"condition/Mer_de_lEst.png"},
+        {name:"Eglefin", bg:"condition/AA1.png", cond:"condition/Mer_de_lEst.png"},
+        {name:"Gobie", bg:"condition/GG4.png", cond:"condition/Mer_de_lEst.png"},
+        {name:"Grondin perlon", bg:"condition/AA1.png", cond:"condition/Mer_de_lEst.png"},
+
+        // --- OCEAN ---
+        {name:"Bonite", bg:"condition/AA1.png", cond:"condition/Ocean.png"},
+        {name:"Chimère argentée", bg:"condition/AA1.png", cond:"condition/Ocean.png"},
+        {name:"Perche de mer", bg:"condition/AA1.png", cond:"condition/Ocean.png"},
+        {name:"Sardine", bg:"condition/AA1.png", cond:"condition/Ocean.png"},
+
+        // --- PECHE EN MER ---
+        {name:"Baudroie", bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"},
+        {name:"Carpe Papillon", bg:"condition/CC3.png", cond:"condition/Peche_en_mer.png"},
+        {name:"Pieuvre", bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"},
+        {name:"Régalec", bg:"condition/GG4.png", cond:"condition/Peche_en_mer.png"},
+        {name:"Rouget barbet", bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"},
+        {name:"Roussette", bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"},
+        {name:"Seiche européenne", bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"},
+        {name:"Turbot", bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"},
+
+        // --- RIVIERE AURORE ---
+        {name:"Blennie de rivière", bg:"condition/AA1.png", cond:"condition/Riviere_Aurore.png"},
+        {name:"Carpe européenne", bg:"condition/CC2.png", cond:"condition/Riviere_Aurore.png"},
+        {name:"Zingel streber", bg:"condition/AA1.png", cond:"condition/Riviere_Aurore.png"},
+
+        // --- RIVIERE CALME ---
+        {name:"Comète coussut", bg:"condition/AA1.png", cond:"condition/Riviere_calme.png"},
+        {name:"Lotte", bg:"condition/LL4.png", cond:"condition/Riviere_calme.png"},
+        {name:"Saumon kéta", bg:"condition/AA1.png", cond:"condition/Riviere_calme.png"},
+        {name:"Vairon", bg:"condition/AA1.png", cond:"condition/Riviere_calme.png"},
+
+        // --- RIVIERE PEU PROFONDE ---
+        {name:"Epinoche", bg:"condition/AA1.png", cond:"condition/Riviere_peu_profonde.png"},
+
+        // --- RIVIERES ---
+        {name:"Crevette verte", bg:"condition/AA1.png", cond:"condition/Rivieres.png"},
+        {name:"Perche de rivière", bg:"condition/AA1.png", cond:"condition/Rivieres.png"},
+        {name:"Tilapia", bg:"condition/AA1.png", cond:"condition/Rivieres.png"},
+
+        // --- SOURCE ET MONTAGNE THERMALE ---
+        {name:"Chabot", bg:"condition/AA1.png", cond:"condition/Source_et_montagne_thermale.png"},
+        {name:"Féra", bg:"condition/AA1.png", cond:"condition/Source_et_montagne_thermale.png"},
+        {name:"Têtard", bg:"condition/AA1.png", cond:"condition/Source_et_montagne_thermale.png"}
     ];
 
     var menuCtrl = L.control({position: 'topleft'});
@@ -221,11 +309,19 @@
             var box = document.getElementById('c-'+cat), content = box.querySelector('.accordion-content');
             dataStorage[cat].forEach(item => {
                 var el = document.createElement('div'); el.className = 'menu-item'; el.innerHTML = item.name;
-                el.onclick = () => { if(item.category!='bus' && currentSingleMarker) map.removeLayer(currentSingleMarker); if(item.category!='bus') currentSingleMarker=item.marker; item.marker.addTo(map); map.flyTo(item.pos, 2); };
+                el.onclick = () => { 
+                    if(item.category !== 'lieux') {
+                        if(item.category!='bus' && currentSingleMarker) map.removeLayer(currentSingleMarker); 
+                        if(item.category!='bus') currentSingleMarker=item.marker; 
+                        item.marker.addTo(map); 
+                    }
+                    map.flyTo(item.pos, 2); 
+                };
                 content.appendChild(el);
             });
             box.querySelector('.accordion-title').onclick = () => content.classList.toggle('active');
         });
+        
         var fCont = document.querySelector('#c-fish .accordion-content');
         fishList.forEach(f => {
             var el = document.createElement('div'); el.className = 'menu-item'; el.innerText = f.name;
@@ -233,6 +329,7 @@
             fCont.appendChild(el);
         });
         document.querySelector('#c-fish .accordion-title').onclick = () => fCont.classList.toggle('active');
+
         L.DomEvent.disableScrollPropagation(document.getElementById('main-menu'));
         L.DomEvent.disableClickPropagation(document.getElementById('main-menu'));
     }
