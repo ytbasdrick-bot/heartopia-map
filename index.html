@@ -119,9 +119,10 @@
         }
     }
 
-    // --- PINGS ---
+    // --- PINGS PERSO ---
     var userPings = JSON.parse(localStorage.getItem('maptopia_pings')) || [];
     var pingMarkers = {};
+    var tempPing = null; // Stocke le ping en cours d'édition
 
     function updateLegend() {
         const list = document.getElementById('legend-list');
@@ -136,60 +137,76 @@
     }
 
     function createPing(latlng, text, color, icon, isNew, id) {
-        var mid = id || "id_" + Date.now();
+        var mid = id || "temp_" + Date.now();
         var markerHtml = `<div style="background:${colors[color]};width:28px;height:28px;border:2px solid white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 5px rgba(0,0,0,0.4)">${icons[icon]}</div>`;
         var marker = L.marker(latlng, {icon: L.divIcon({className:'', html:markerHtml, iconSize:[28,28], iconAnchor:[14,14]})}).addTo(map);
-        pingMarkers[mid] = marker;
+        
         if (isNew) {
+            tempPing = marker;
             var div = document.createElement('div'); div.className = "ping-editor";
-            div.innerHTML = `<input type="text" id="in-${mid}" placeholder="Nom..." style="padding:6px;width:100%;box-sizing:border-box;"><div class="icon-grid">${Object.entries(icons).map(([k,v]) => `<div class="choice-btn ${k==='note'?'selected':''}" onclick="selectIcon('${mid}','${k}',this)">${v}</div>`).join('')}</div><div style="display:flex;justify-content:space-between;margin-top:5px;">${Object.entries(colors).map(([k,v]) => `<div class="color-dot ${k==='bleu'?'selected':''}" style="background:${v}" onclick="selectColor('${mid}','${k}',this)"></div>`).join('')}</div><button onclick="confirmPing('${mid}',${latlng.lat},${latlng.lng})" style="margin-top:8px;background:#27ae60;color:white;border:none;padding:8px;border-radius:4px;cursor:pointer;width:100%;">VALIDER</button>`;
-            marker.tempIcon = 'note'; marker.tempColor = 'bleu'; marker.bindPopup(div).openPopup();
+            div.innerHTML = `
+                <input type="text" id="in-${mid}" placeholder="Nom..." style="padding:6px;width:100%;box-sizing:border-box;">
+                <div class="icon-grid">${Object.entries(icons).map(([k,v]) => `<div class="choice-btn ${k==='note'?'selected':''}" onclick="selectIcon('${mid}','${k}',this)">${v}</div>`).join('')}</div>
+                <div style="display:flex;justify-content:space-between;margin-top:5px;">${Object.entries(colors).map(([k,v]) => `<div class="color-dot ${k==='bleu'?'selected':''}" style="background:${v}" onclick="selectColor('${mid}','${k}',this)"></div>`).join('')}</div>
+                <div style="display:flex;gap:5px;margin-top:8px;">
+                    <button onclick="confirmPing('${mid}',${latlng.lat},${latlng.lng})" style="background:#27ae60;color:white;border:none;padding:8px;border-radius:4px;cursor:pointer;flex:1;font-weight:bold;">VALIDER</button>
+                    <button onclick="cancelPing()" style="background:#888;color:white;border:none;padding:8px;border-radius:4px;cursor:pointer;flex:1;font-weight:bold;">ANNULER</button>
+                </div>`;
+            marker.tempIcon = 'note'; marker.tempColor = 'bleu'; 
+            marker.bindPopup(div, {closeOnClick: false, closeButton: false}).openPopup();
         } else {
-            marker.bindPopup(`<b>${icons[icon]} ${text}</b><br><button onclick="removePing('${mid}')" style="background:#e74c3c;color:white;border:none;width:100%;margin-top:8px;padding:5px;cursor:pointer;">Supprimer</button>`);
+            pingMarkers[id] = marker;
+            marker.bindPopup(`<b>${icons[icon]} ${text}</b><br><button onclick="removePing('${id}')" style="background:#e74c3c;color:white;border:none;width:100%;margin-top:8px;padding:5px;cursor:pointer;">Supprimer</button>`);
         }
     }
-    window.selectIcon = (id, i, el) => { pingMarkers[id].tempIcon = i; el.parentElement.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected')); el.classList.add('selected'); };
-    window.selectColor = (id, c, el) => { pingMarkers[id].tempColor = c; el.parentElement.querySelectorAll('.color-dot').forEach(b => b.classList.remove('selected')); el.classList.add('selected'); };
-    window.confirmPing = (id, lat, lng) => { 
-        var v = document.getElementById('in-'+id).value || "Note"; var icon = pingMarkers[id].tempIcon, color = pingMarkers[id].tempColor;
-        userPings.push({id, latlng:{lat,lng}, text:v, color, icon}); localStorage.setItem('maptopia_pings', JSON.stringify(userPings));
-        map.removeLayer(pingMarkers[id]); createPing({lat,lng}, v, color, icon, false, id); updateLegend();
+
+    window.selectIcon = (id, i, el) => { tempPing.tempIcon = i; el.parentElement.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected')); el.classList.add('selected'); };
+    window.selectColor = (id, c, el) => { tempPing.tempColor = c; el.parentElement.querySelectorAll('.color-dot').forEach(b => b.classList.remove('selected')); el.classList.add('selected'); };
+    
+    window.confirmPing = (tempId, lat, lng) => { 
+        var v = document.getElementById('in-'+tempId).value || "Note"; 
+        var icon = tempPing.tempIcon, color = tempPing.tempColor;
+        var finalId = "id_" + Date.now();
+        userPings.push({id: finalId, latlng:{lat,lng}, text:v, color, icon}); 
+        localStorage.setItem('maptopia_pings', JSON.stringify(userPings));
+        map.removeLayer(tempPing); 
+        tempPing = null;
+        createPing({lat,lng}, v, color, icon, false, finalId); 
+        updateLegend();
     };
+
+    window.cancelPing = () => { if(tempPing) { map.removeLayer(tempPing); tempPing = null; } };
     window.removePing = (id) => { if(pingMarkers[id]) map.removeLayer(pingMarkers[id]); userPings = userPings.filter(p => String(p.id) !== String(id)); localStorage.setItem('maptopia_pings', JSON.stringify(userPings)); updateLegend(); };
 
-    map.on('contextmenu', (e) => createPing(e.latlng, "", "bleu", "note", true));
+    map.on('contextmenu', (e) => { cancelPing(); createPing(e.latlng, "", "bleu", "note", true); });
     userPings.forEach(p => createPing(p.latlng, p.text, p.color, p.icon, false, p.id));
     updateLegend();
 
-    // --- GESTION DES MARQUEURS ACTIFS (PNJ, BUS, SHOP) ---
+    // --- MARQUEURS ACTIFS (PNJ, BUS, SHOP) ---
     var currentActiveMarker = null;
     var dataStorage = { pnj:[], bus:[], shop:[], lieux:[] };
 
     function register(cat, pos, name, img, opts = {}) {
         let marker;
         if(opts.type) {
-            // Pour les labels (Villes/Lacs), ils restent fixes
             marker = L.marker(pos, {opacity:0}).bindTooltip(name, {permanent:true, direction:'center', className:opts.type});
             if(opts.startOn) marker.addTo(map);
         } else {
-            // Pour les PNJ, Bus, Shop
             marker = L.marker(pos, {
                 icon: L.icon({
                     iconUrl: img, 
                     iconSize: [60, 60], 
-                    iconAnchor: [30, 60], // Le pied de l'image est sur le point
-                    popupAnchor: [0, -60] // Le popup s'affiche 60px au dessus de l'ancre
+                    iconAnchor: [30, 60],
+                    popupAnchor: [0, -60] 
                 })
             }).bindPopup(`<b>${name}</b>`);
         }
         dataStorage[cat].push({name, pos, marker});
     }
 
-    // LISTES DONNÉES
+    // DONNÉES
     [ {pos:[-471,501], name:"Bob", icon:'pnj/bob.png'}, {pos:[-526,499], name:"Atara", icon:'pnj/atara.png'}, {pos:[-478,493], name:"Le Collectionneur", icon:'pnj/collectioneur.png'}, {pos:[-469,488], name:"Dorothée", icon:'pnj/dorothée.png'}, {pos:[-446,493], name:"Massimo", icon:'pnj/massimo.png'}, {pos:[-412,418], name:"Ka Ching", icon:'pnj/ka ching.png'}, {pos:[-399,591], name:"Andrew", icon:'pnj/andrew.png'}, {pos:[-259,522], name:"Eric", icon:'pnj/eric.png'}, {pos:[-456,549], name:"Vanya", icon:'pnj/vanya.png'}, {pos:[-502,582], name:"Naniwa", icon:'pnj/niniwa.png'}, {pos:[-502,519], name:"Joan", icon:'pnj/joa.png'}, {pos:[-807,419], name:"Will", icon:'pnj/will.png'}, {pos:[-355,809], name:"Patti", icon:'pnj/patti.png'}, {pos:[-653,225], name:"Vernie", icon:'pnj/vernie.png'}, {pos:[-498,526], name:"Bayley", icon:'pnj/bayley.png'} ].forEach(p => register('pnj', p.pos, p.name, p.icon));
-
     [ ["Banlieue Ouest",[-533,340]], ["Banlieue Village",[-519,639]], ["Village Pêcheurs",[-654,479]], ["Champ Fleurs",[-532,218]], ["Montagne Thermale",[-222,512]], ["Banlieue Nord",[-373,480]], ["Place Centrale",[-497,481]], ["Forêt",[-500,798]] ].forEach(b => register('bus', b[1], b[0], 'bus.png'));
-
     var lieuxData = [
         { pos: [-538, 492], name: "Place Centrale", type: "label-ville", startOn: true }, { pos: [-692, 506], name: "Village de Pêcheurs", type: "label-ville", startOn: true }, { pos: [-438, 513], name: "Village", type: "label-ville", startOn: true }, { pos: [-649, 185], name: "Champ de Fleurs", type: "label-ville", startOn: true }, { pos: [-440, 184], name: "Montagne de Baleine", type: "label-ville", startOn: true }, { pos: [-184, 291], name: "Les Ruines", type: "label-ville", startOn: true }, { pos: [-223, 501], name: "Montagne Thermale", type: "label-ville", startOn: true }, { pos: [-228, 627], name: "Falaise Rocheuse", type: "label-ville", startOn: true }, { pos: [-531, 805], name: "Forêt de Chênes Spirituels", type: "label-ville", startOn: true }, { pos: [-494, 429], name: "Rue des Arts", type: "label-ville", startOn: true }, { pos: [-510, 558], name: "Rue du Jardin", type: "label-ville", startOn: true }, { pos: [-736, 602], name: "Quai Oriental", type: "label-ville", startOn: true }, { pos: [-690, 402], name: "Quai", type: "label-ville", startOn: true }, { pos: [-780, 387], name: "Phare", type: "label-ville", startOn: true }, { pos: [-691, 783], name: "Tremplin", type: "label-ville", startOn: true }, { pos: [-338, 933], name: "Île de la Forêt", type: "label-ville", startOn: true }, { pos: [-587, 406], name: "Banlieue", type: "label-ville", startOn: true }, { pos: [-725, 208], name: "Plage Violette", type: "label-ville", startOn: true }, { pos: [-783, 478], name: "Mer Calme", type: "label-eau", startOn: true }, { pos: [-534, 92], name: "Mer de Baleine", type: "label-eau", startOn: true }, { pos: [-68, 497], name: "Ancienne Mer", type: "label-eau", startOn: true }, { pos: [-536, 232], name: "Lac dans la Prairie", type: "label-eau", startOn: true }, { pos: [-337, 319], name: "Rivière Aurore", type: "label-eau", startOn: true }, { pos: [-176, 394], name: "Lac Volcanique", type: "label-eau", startOn: true }, { pos: [-265, 537], name: "Lac Thermale", type: "label-eau", startOn: true }, { pos: [-344, 652], name: "Rivière Peu Profonde", type: "label-eau", startOn: true }, { pos: [-598, 748], name: "Lac de la Forêt", type: "label-eau", startOn: true }, { pos: [-431, 774], name: "Lac de la Forêt (Haut)", type: "label-eau", startOn: true }, { pos: [-608, 481], name: "Lac de Banlieue", type: "label-eau", startOn: true }, { pos: [-669, 368], name: "Rivière Calme", type: "label-eau", startOn: true }, { pos: [-674, 627], name: "Fleuve d'Arbres Géants", type: "label-eau", startOn: true }, { pos: [-472, 487], name: "Magasin de Vêtement", icon: 'vetement.png', isShop: true }, { pos: [-474, 503], name: "Magasin de Meuble", icon: 'Meuble.png', isShop: true }, { pos: [-496, 523], name: "Magasin Animaux", icon: 'chien.png', isShop: true }, { pos: [-440, 467], name: "Librairie", icon: 'Librairie.png', isShop: true }
     ];
@@ -199,7 +216,7 @@
         { name: "Ablette", bg: "poisson/ablette1.png", cond: "poisson/Lacs.png" }, { name: "Acantharchus pomotis", bg: "poisson/Acantharchus_pomotis1.png", cond: "poisson/arcantharcus%20pomotis.png" }, { name: "Anguille européenne", bg: "VIDE", cond: "VIDE" }, { name: "Aphyosemion striatum", bg: "poisson/Aphyosemion%20striatum.png", cond: "poisson/Aphyosemion%20striatum1.png" }, { name: "Barbeau", bg: "poisson/barbeau1.png", cond: "poisson/barbeau.png" }, { name: "Barbillon", bg: "poisson/barbillon1.png", cond: "poisson/barbillon.png" }, { name: "Baudroie", bg: "poisson/baudroie1.png", cond: "poisson/Baudroie.png" }, { name: "Bernard l'Hermite", bg: "VIDE", cond: "poisson/bernardlhermite.png" }, { name: "Blennie de rivière", bg: "VIDE", cond: "poisson/bleniiedesrivieree.png" }, { name: "Bonite", bg: "poisson/bonite1.png", cond: "poisson/bonite.png" }, { name: "Carpe argentée", bg: "poisson/carpe_argentee1.png", cond: "poisson/carpe_argentee.png" }, { name: "Carpe européenne", bg: "poisson/Carpe_europeenne1.png", cond: "poisson/Carpe_europeenne.png" }, { name: "Carpe Papillon", bg: "poisson/carpe%20papillon1.png", cond: "poisson/carpe%20papillon.png" }, { name: "Carpe noire", bg: "poisson/carpe%20noir.png", cond: "poisson/carpe%20noir1.png" }, { name: "Chabot", bg: "VIDE", cond: "poisson/chabot.png" }, { name: "Chimère argentée", bg: "poisson/chimere%20argent1.pnj.avif", cond: "poisson/chimere%20argent%C3%A9.png" }, { name: "Comète coussut", bg: "poisson/comete_coussut1.png", cond: "poisson/comete_coussut.png" }, { name: "Crabe de ruisseau", bg: "poisson/Crabe_de_ruisseau1.png", cond: "poisson/crabe%20de%20ruisseau.png" }, { name: "Crevette de la mer", bg: "VIDE", cond: "VIDE" }, { name: "Crevette verte", bg: "poisson/crevette_verte1.png", cond: "poisson/crevette%20verte.png" }, { name: "Ecrevisse noble", bg: "VIDE", cond: "VIDE" }, { name: "Ecrevisse noble bleue", bg: "VIDE", cond: "VIDE" }, { name: "Eglefin", bg: "VIDE", cond: "VIDE" }, { name: "Eperlan", bg: "VIDE", cond: "VIDE" }, { name: "Epinoche", bg: "VIDE", cond: "VIDE" }, { name: "Espadon", bg: "VIDE", cond: "VIDE" }, { name: "Féra", bg: "VIDE", cond: "VIDE" }, { name: "Grand black-basse", bg: "VIDE", cond: "VIDE" }, { name: "Grande huître perlière", bg: "VIDE", cond: "VIDE" }, { name: "Grenouille européenne", bg: "VIDE", cond: "VIDE" }, { name: "Gobie", bg: "VIDE", cond: "VIDE" }, { name: "Grondin perlon", bg: "VIDE", cond: "VIDE" }, { name: "Hippocampe", bg: "VIDE", cond: "VIDE" }, { name: "Huchon", bg: "VIDE", cond: "VIDE" }, { name: "Langouste européenne", bg: "VIDE", cond: "VIDE" }, { name: "Loche des fleurs", bg: "VIDE", cond: "VIDE" }, { name: "Loche des rochers", bg: "VIDE", cond: "VIDE" }, { name: "Lotte", bg: "VIDE", cond: "VIDE" }, { name: "Maquereau atlantique", bg: "VIDE", cond: "VIDE" }, { name: "Moule", bg: "VIDE", cond: "VIDE" }, { name: "Omble", bg: "VIDE", cond: "VIDE" }, { name: "Omble chevalier", bg: "VIDE", cond: "VIDE" }, { name: "Ombrine", bg: "VIDE", cond: "VIDE" }, { name: "Oranda", bg: "VIDE", cond: "VIDE" }, { name: "Pagellus bogaraveo", bg: "VIDE", cond: "VIDE" }, { name: "Perche de mer", bg: "VIDE", cond: "VIDE" }, { name: "Perche de prunier", bg: "VIDE", cond: "VIDE" }, { name: "Perche de rivière", bg: "VIDE", cond: "VIDE" }, { name: "Pieuvre", bg: "VIDE", cond: "VIDE" }, { name: "Pieuvre naine atlantique", bg: "VIDE", cond: "VIDE" }, { name: "POISSON-TIGRE", bg: "VIDE", cond: "VIDE" }, { name: "Plie européenne", bg: "VIDE", cond: "VIDE" }, { name: "Poisson agrion", bg: "VIDE", cond: "VIDE" }, { name: "Poisson-clown", bg: "VIDE", cond: "VIDE" }, { name: "Poisson combattant", bg: "VIDE", cond: "VIDE" }, { name: "Poisson divin", bg: "VIDE", cond: "VIDE" }, { name: "Poisson épineux", bg: "VIDE", cond: "VIDE" }, { name: "Poisson-globe", bg: "VIDE", cond: "VIDE" }, { name: "Poisson-lion", bg: "VIDE", cond: "VIDE" }, { name: "Poisson lune", bg: "VIDE", cond: "VIDE" }, { name: "Poisson rouge", bg: "VIDE", cond: "VIDE" }, { name: "Poisson ruban", bg: "VIDE", cond: "VIDE" }, { name: "Poisson suspendu", bg: "VIDE", cond: "VIDE" }, { name: "Poisson à yeux rouges", bg: "VIDE", cond: "VIDE" }, { name: "Régalec", bg: "VIDE", cond: "VIDE" }, { name: "Requin baleine", bg: "VIDE", cond: "VIDE" }, { name: "Requin mako", bg: "VIDE", cond: "VIDE" }, { name: "Requin marteau", bg: "VIDE", cond: "VIDE" }, { name: "Rouget barbet", bg: "VIDE", cond: "VIDE" }, { name: "Roussette", bg: "VIDE", cond: "VIDE" }, { name: "Sandre blanc", bg: "VIDE", cond: "VIDE" }, { name: "Saumon atlantique", bg: "VIDE", cond: "VIDE" }, { name: "Saumon kéta", bg: "VIDE", cond: "VIDE" }, { name: "Saurel", bg: "VIDE", cond: "VIDE" }, { name: "Sardine", bg: "VIDE", cond: "VIDE" }, { name: "Seiche européenne", bg: "VIDE", cond: "VIDE" }, { name: "Silure européen", bg: "VIDE", cond: "VIDE" }, { name: "Tanche dorée", bg: "VIDE", cond: "VIDE" }, { name: "Têtard", bg: "VIDE", cond: "VIDE" }, { name: "Thon rouge", bg: "VIDE", cond: "VIDE" }, { name: "Tilapia", bg: "VIDE", cond: "VIDE" }, { name: "Tortue verte", bg: "VIDE", cond: "VIDE" }, { name: "Turbot", bg: "VIDE", cond: "VIDE" }, { name: "Vairon", bg: "VIDE", cond: "VIDE" }, { name: "Zingel streber", bg: "VIDE", cond: "VIDE" }
     ];
 
-    // --- INITIALISATION MENU ---
+    // --- MENU ---
     var menuCtrl = L.control({position: 'topleft'});
     menuCtrl.onAdd = () => {
         var div = L.DomUtil.create('div', 'leaflet-control-layers');
@@ -216,16 +233,11 @@
                 var el = document.createElement('div'); el.className = 'menu-item';
                 el.innerHTML = item.name;
                 el.onclick = () => {
-                    // Si ce n'est pas un label de ville (qui eux sont permanents)
                     if (!item.marker.options.tooltip) {
-                        // Supprime l'ancien marqueur actif s'il existe
                         if (currentActiveMarker) map.removeLayer(currentActiveMarker);
-                        
-                        // Affiche le nouveau et le mémorise
                         item.marker.addTo(map);
                         currentActiveMarker = item.marker;
                     }
-                    
                     map.flyTo(item.pos, 2);
                     if(item.marker.getPopup()) setTimeout(() => item.marker.openPopup(), 300);
                 };
