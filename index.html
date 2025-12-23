@@ -7,7 +7,15 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
-        body { margin: 0; padding: 0; background: black; overflow: hidden; font-family: 'Segoe UI', Roboto, sans-serif; }
+        /* Modification : Ajout de ton fond Heartopia.jpg */
+        body { 
+            margin: 0; 
+            padding: 0; 
+            background: url('Heartopia.jpg') no-repeat center center fixed; 
+            background-size: cover;
+            overflow: hidden; 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+        }
 
         /* --- ÉCRAN D'ACCUEIL --- */
         #intro-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: black; z-index: 20000; display: flex; align-items: flex-end; justify-content: center; transition: opacity 1s ease; }
@@ -20,8 +28,8 @@
         #enter-button { padding: 15px 45px; background: linear-gradient(135deg, #8b0000, #d4af37); color: white; border: 1px solid white; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         #enter-button:hover { transform: scale(1.05); box-shadow: 0 0 15px #d4af37; }
 
-        /* --- CARTE --- */
-        #map { height: 100vh; width: 100vw; opacity: 0; transition: opacity 2s ease; background: #0b1a2a !important; }
+        /* --- CARTE (Transparente pour voir Heartopia.jpg) --- */
+        #map { height: 100vh; width: 100vw; opacity: 0; transition: opacity 2s ease; background: transparent !important; }
 
         /* --- MENU GAUCHE --- */
         .leaflet-control-layers { left: 20px !important; top: 20px !important; width: 260px !important; background: rgba(255, 255, 255, 0.98) !important; border-radius: 15px !important; padding: 10px !important; max-height: 80vh; overflow-y: auto !important; border: none !important; box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important; scrollbar-width: thin; }
@@ -35,7 +43,7 @@
         .accordion-content.active { display: block; }
         .menu-item { display: flex; align-items: center; padding: 8px; cursor: pointer; font-size: 13px; border-bottom: 1px solid #eee; color: #333; }
 
-        /* --- SYSTÈME POISSON (SANS CADRE BLANC) --- */
+        /* --- SYSTÈME POISSON --- */
         #overlay-fish { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 30000; display: none; align-items: center; justify-content: center; }
         .fish-card { display: flex; flex-direction: column; align-items: center; background: white; padding: 25px; border-radius: 20px; border: 3px solid #d4af37; width: 550px; max-width: 95%; }
         .fish-img-container { width: 100%; background: white; text-align: center; }
@@ -77,7 +85,7 @@
 <div id="map"></div>
 
 <a href="https://discord.gg/Ysc7KBy6R4" target="_blank" class="discord-btn">
-    <img src="file:///C:/Users/asdrick/Desktop/PROJET_HEARTOPIA/Discord-Logo-PNG-Pic.png" alt="Discord">
+    <img src="Discord-Logo-PNG-Pic.png" alt="Discord">
 </a>
 
 <div class="ping-legend">
@@ -90,7 +98,9 @@
     <img src="groupefr.png" class="team-img" onclick="document.getElementById('overlay-team').style.display='flex'">
 </div>
 
-<div id="overlay-team" onclick="this.style.display='none'"><img src="groupefr.png" style="max-width:80%; border:4px solid #d4af37; border-radius:20px;"></div>
+<div id="overlay-team" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:40000; display:none; align-items:center; justify-content:center;" onclick="this.style.display='none'">
+    <img src="groupefr.png" style="max-width:80%; border:4px solid #d4af37; border-radius:20px;">
+</div>
 
 <div id="overlay-fish" onclick="this.style.display='none'">
     <div class="fish-card" onclick="event.stopPropagation()">
@@ -125,7 +135,7 @@
     L.imageOverlay('carte.png', bounds).addTo(map);
     map.setView([-500, 500], 1);
 
-    // --- LOGIQUE ZOOM DYNAMIQUE POUR BUS ET PNJ ---
+    // --- LOGIQUE ZOOM DYNAMIQUE ---
     var busLayer = L.layerGroup();
     var pnjLayer = L.layerGroup();
 
@@ -147,8 +157,8 @@
     function updateLegend() {
         const list = document.getElementById('legend-list'); list.innerHTML = "";
         userPings.forEach(p => {
-            const item = document.createElement('div'); item.className = 'legend-item';
-            item.innerHTML = `<span class="dot" style="background:${colors[p.color]||'blue'}"></span><span>${p.text}</span>`;
+            const item = document.createElement('div'); item.style.cursor="pointer";
+            item.innerHTML = `<span style="color:${colors[p.color]||'blue'}">●</span> <span>${p.text}</span>`;
             item.onclick = () => map.flyTo(p.latlng, 2);
             list.appendChild(item);
         });
@@ -203,7 +213,7 @@
         dataStorage[cat].push({name:name, pos:pos, layer:g, img:img, startOn: opts.startOn});
     }
 
-    // --- LISTES COMPLETES ---
+    // --- LISTES ---
     [ ["Bob",[-471,501],'pnj/bob.png'], ["Atara",[-526,499],'pnj/atara.png'], ["Collectionneur",[-478,493],'pnj/collectioneur.png'], ["Dorothée",[-469,488],'pnj/dorothée.png'], ["Massimo",[-446,493],'pnj/massimo.png'], ["Andrew",[-399,591],'pnj/andrew.png'], ["Eric",[-259,522],'pnj/eric.png'], ["Vanya",[-456,549],'pnj/vanya.png'], ["Naniwa",[-502,582],'pnj/niniwa.png'], ["Joan",[-502,519],'pnj/joa.png'], ["Will",[-807,419],'pnj/will.png'], ["Patti",[-355,809],'pnj/patti.png'], ["Vernie",[-653,225],'pnj/vernie.png'], ["Bayley",[-498,526],'pnj/bayley.png'] ].forEach(p => register('pnj', p[1], p[0], p[2]));
     
     [ ["Banlieue Ouest",[-533,340]], ["Banlieue Village",[-519,639]], ["Village Pêcheurs",[-654,479]], ["Champ Fleurs",[-532,218]], ["Montagne Thermale",[-222,512]], ["Banlieue Nord",[-373,480]], ["Place Centrale",[-497,481]], ["Forêt",[-500,798]] ].forEach(b => register('bus', b[1], b[0], 'bus.png'));
@@ -215,104 +225,7 @@
     lieux.forEach(l => register(l.isShop ? 'shop' : 'lieux', l.pos, l.name, l.icon || '', {type: l.type, startOn: l.startOn}));
 
     const fishList = [ 
-        { name: "Ablette", bg: "poisson/ablette1.png", cond: "poisson/Lacs.png" }, 
-        { name: "Acantharchus pomotis", bg: "poisson/Acantharchus_pomotis1.png", cond: "poisson/arcantharcus%20pomotis.png" }, 
-        { name: "Aphyosemion striatum", bg: "poisson/Aphyosemion%20striatum.png", cond: "poisson/Aphyosemion%20striatum1.png" }, 
-        { name: "Barbeau", bg: "poisson/barbeau1.png", cond: "poisson/barbeau.png" }, 
-        { name: "Barbillon", bg: "poisson/barbillon1.png", cond: "poisson/barbillon.png" }, 
-        { name: "Baudroie", bg: "poisson/baudroie1.png", cond: "poisson/Baudroie.png" }, 
-        { name: "Bernard l'Hermite", bg: "VIDE", cond: "poisson/bernardlhermite.png" }, 
-        { name: "Blennie de rivière", bg: "VIDE", cond: "poisson/bleniiedesrivieree.png" }, 
-        { name: "Bonite", bg: "poisson/bonite1.png", cond: "poisson/bonite.png" }, 
-        { name: "Carpe argentée", bg: "poisson/carpe_argentee1.png", cond: "poisson/carpe_argentee.png" }, 
-        { name: "Carpe européenne", bg: "poisson/Carpe_europeenne1.png", cond: "poisson/Carpe_europeenne.png" }, 
-        { name: "Carpe Papillon", bg: "poisson/carpe%20papillon1.png", cond: "poisson/carpe%20papillon.png" }, 
-        { name: "Carpe noire", bg: "poisson/carpe%20noir.png", cond: "poisson/carpe%20noir1.png" }, 
-        { name: "Chabot", bg: "VIDE", cond: "poisson/chabot.png" }, 
-        { name: "Chimère argentée", bg: "poisson/chimere%20argent1.pnj.avif", cond: "poisson/chimere%20argent%C3%A9.png" }, 
-        { name: "Comète coussut", bg: "poisson/comete_coussut1.png", cond: "poisson/comete_coussut.png" }, 
-        { name: "Crabe de ruisseau", bg: "poisson/Crabe_de_ruisseau1.png", cond: "poisson/crabe%20de%20ruisseau.png" }, 
-        { name: "Crevette verte", bg: "poisson/crevette_verte1.png", cond: "poisson/crevette%20verte.png" }, 
-        { name: "Cuvier", bg: "poisson/cuvier1.png", cond: "poisson/cuvier.png" }, 
-        { name: "Cyber-Poisson", bg: "poisson/Cyber-Poisson1.png", cond: "poisson/Cyber-Poisson.png" }, 
-        { name: "Cyprin doré", bg: "poisson/cyprin_dore1.png", cond: "poisson/cyprin_dore.png" }, 
-        { name: "Dario dario", bg: "poisson/dario_dario1.png", cond: "poisson/dario_dario.png" }, 
-        { name: "Dasyatis", bg: "poisson/dasyatis1.png", cond: "poisson/Dasyatis.png" }, 
-        { name: "Diodon", bg: "poisson/Diodon1.png", cond: "poisson/Diodon.png" }, 
-        { name: "Discus", bg: "poisson/discus1.png", cond: "poisson/discus.png" }, 
-        { name: "Dolly Varden", bg: "poisson/Dolly_Varden1.png", cond: "poisson/dolly%20varden.png" }, 
-        { name: "Dorade grise", bg: "poisson/dorade_grise1.png", cond: "poisson/dorade_grise.png" }, 
-        { name: "Ecrevisse", bg: "poisson/ecrevisse1.png", cond: "poisson/ecrevisse.png" }, 
-        { name: "Eperlan", bg: "poisson/eperlan1.png", cond: "poisson/eperlan.png" }, 
-        { name: "Esturgeon", bg: "poisson/esturgeon1.png", cond: "poisson/esturgeon.png" }, 
-        { name: "Gardon", bg: "poisson/gardon1.png", cond: "poisson/Gardon.png" }, 
-        { name: "Gobiidae", bg: "poisson/Gobiidae1.png", cond: "poisson/Gobiidae.png" }, 
-        { name: "Grand Blanc", bg: "poisson/grand_blanc1.png", cond: "poisson/grand_blanc.png" }, 
-        { name: "Grenouille", bg: "poisson/grenouille1.png", cond: "poisson/grenouille.png" }, 
-        { name: "Guitare de mer", bg: "poisson/guitare_de_mer1.png", cond: "poisson/guitare_de_mer.png" }, 
-        { name: "Guppy", bg: "poisson/guppy1.png", cond: "poisson/guppy.png" }, 
-        { name: "Hareng", bg: "poisson/hareng1.png", cond: "poisson/hareng.png" }, 
-        { name: "Hippocampe", bg: "poisson/hippocampe1.png", cond: "poisson/Hippocampe.png" }, 
-        { name: "Kijiki", bg: "poisson/kijiki1.png", cond: "poisson/Kijiki.png" }, 
-        { name: "Koi", bg: "poisson/koi1.png", cond: "poisson/koi.png" }, 
-        { name: "Lanceur", bg: "poisson/lanceur1.png", cond: "poisson/lanceur.png" }, 
-        { name: "Lievre de mer", bg: "poisson/lievre_de_mer1.png", cond: "poisson/lievre_de_mer.png" }, 
-        { name: "Limande", bg: "poisson/limande1.png", cond: "poisson/limande.png" }, 
-        { name: "Loche", bg: "poisson/loche1.png", cond: "poisson/loche.png" }, 
-        { name: "Loup", bg: "poisson/loup1.png", cond: "poisson/loup.png" }, 
-        { name: "Lune de mer", bg: "poisson/lune_de_mer1.png", cond: "poisson/lune_de_mer.png" }, 
-        { name: "Macropode", bg: "poisson/macropode1.png", cond: "poisson/macropode.png" }, 
-        { name: "Main de mer", bg: "poisson/main_de_mer1.png", cond: "poisson/main_de_mer.png" }, 
-        { name: "Makaire bleu", bg: "poisson/makaire_bleu1.png", cond: "poisson/makaire_bleu.png" }, 
-        { name: "Makaire noir", bg: "poisson/makaire_noir1.png", cond: "poisson/makaire_noir.png" }, 
-        { name: "Maquereau", bg: "poisson/maquereau1.png", cond: "poisson/maquereau.png" }, 
-        { name: "Meduse", bg: "poisson/meduse1.png", cond: "poisson/Meduse.png" }, 
-        { name: "Merlan", bg: "poisson/merlan1.png", cond: "poisson/merlan.png" }, 
-        { name: "Muge", bg: "poisson/muge1.png", cond: "poisson/Muge.png" }, 
-        { name: "Murène", bg: "poisson/murene1.png", cond: "poisson/Murene.png" }, 
-        { name: "Nase", bg: "poisson/nase1.png", cond: "poisson/Nase.png" }, 
-        { name: "Neon", bg: "poisson/neon1.png", cond: "poisson/neon.png" }, 
-        { name: "Ombre", bg: "poisson/ombre1.png", cond: "poisson/ombre.png" }, 
-        { name: "Omis", bg: "poisson/omis1.png", cond: "poisson/Omis.png" }, 
-        { name: "Oranda", bg: "poisson/oranda1.png", cond: "poisson/oranda.png" }, 
-        { name: "Oscars", bg: "poisson/oscars1.png", cond: "poisson/oscars.png" }, 
-        { name: "Pagre", bg: "poisson/pagre1.png", cond: "poisson/Pagre.png" }, 
-        { name: "Palourde", bg: "poisson/palourde1.png", cond: "poisson/Palourde.png" }, 
-        { name: "Panga", bg: "poisson/panga1.png", cond: "poisson/Panga.png" }, 
-        { name: "Papillon", bg: "poisson/papillon1.png", cond: "poisson/Papillon.png" }, 
-        { name: "Perche", bg: "poisson/perche1.png", cond: "poisson/perche.png" }, 
-        { name: "Pholade", bg: "poisson/pholade1.png", cond: "poisson/pholade.png" }, 
-        { name: "Piraya", bg: "poisson/piraya1.png", cond: "poisson/Piraya.png" }, 
-        { name: "Poisson-Ange", bg: "poisson/Poisson-Ange1.png", cond: "poisson/Poisson-Ange.png" }, 
-        { name: "Poisson-Balle", bg: "poisson/Poisson-Balle1.png", cond: "poisson/Poisson-Balle.png" }, 
-        { name: "Poisson-Chat", bg: "poisson/Poisson-Chat1.png", cond: "poisson/Poisson-Chat.png" }, 
-        { name: "Poisson-Chirurgien", bg: "poisson/Poisson-Chirurgien1.png", cond: "poisson/Poisson-Chirurgien.png" }, 
-        { name: "Poisson-Clown", bg: "poisson/Poisson-Clown1.png", cond: "poisson/Poisson-Clown.png" }, 
-        { name: "Poisson-Combattant", bg: "poisson/Poisson-Combattant1.png", cond: "poisson/Poisson-Combattant.png" }, 
-        { name: "Poisson-Couteau", bg: "poisson/Poisson-Couteau1.png", cond: "poisson/Poisson-Couteau.png" }, 
-        { name: "Poisson-Dragon", bg: "poisson/Poisson-Dragon1.png", cond: "poisson/Poisson-Dragon.png" }, 
-        { name: "Poisson-Globe", bg: "poisson/Poisson-Globe1.png", cond: "poisson/Poisson-Globe.png" }, 
-        { name: "Poisson-Hache", bg: "poisson/Poisson-Hache1.png", cond: "poisson/Poisson-Hache.png" }, 
-        { name: "Poisson-Lion", bg: "poisson/Poisson-Lion1.png", cond: "poisson/Poisson-Lion.png" }, 
-        { name: "Poisson-Lune", bg: "poisson/Poisson-Lune1.png", cond: "poisson/Poisson-Lune.png" }, 
-        { name: "Poisson-Mandarin", bg: "poisson/Poisson-Mandarin1.png", cond: "poisson/Poisson-Mandarin.png" }, 
-        { name: "Poisson-Perroquet", bg: "poisson/Poisson-Perroquet1.png", cond: "poisson/Poisson-Perroquet.png" }, 
-        { name: "Poisson-Pilote", bg: "poisson/Poisson-Pilote1.png", cond: "poisson/Poisson-Pilote.png" }, 
-        { name: "Poisson-Ruban", bg: "poisson/Poisson-Ruban1.png", cond: "poisson/Poisson-Ruban.png" }, 
-        { name: "Poisson-Scorpion", bg: "poisson/Poisson-Scorpion1.png", cond: "poisson/Poisson-Scorpion.png" }, 
-        { name: "Poisson-Tigre", bg: "poisson/Poisson-Tigre1.png", cond: "poisson/Poisson-Tigre.png" }, 
-        { name: "Poisson-Volant", bg: "poisson/Poisson-Volant1.png", cond: "poisson/Poisson-Volant.png" }, 
-        { name: "Poulpe", bg: "poisson/Poulpe1.png", cond: "poisson/Poulpe.png" }, 
-        { name: "Raie", bg: "poisson/Raie1.png", cond: "poisson/Raie.png" }, 
-        { name: "Rascasse", bg: "poisson/Rascasse1.png", cond: "poisson/Rascasse.png" }, 
-        { name: "Requin-Baleine", bg: "poisson/Requin-Baleine1.png", cond: "poisson/Requin-Baleine.png" }, 
-        { name: "Requin-Marteau", bg: "poisson/Requin-Marteau1.png", cond: "poisson/Requin-Marteau.png" }, 
-        { name: "Sardine", bg: "poisson/Sardine1.png", cond: "poisson/Sardine.png" }, 
-        { name: "Saumon", bg: "poisson/Saumon1.png", cond: "poisson/Saumon.png" }, 
-        { name: "Sole", bg: "poisson/Sole1.png", cond: "poisson/Sole.png" }, 
-        { name: "Tanche", bg: "poisson/Tanche1.png", cond: "poisson/Tanche.png" }, 
-        { name: "Thon", bg: "poisson/Thon1.png", cond: "poisson/Thon.png" }, 
-        { name: "Truite", bg: "poisson/Truite1.png", cond: "poisson/Truite.png" } 
+        { name: "Ablette", bg: "poisson/ablette1.png", cond: "poisson/Lacs.png" }, { name: "Acantharchus pomotis", bg: "poisson/Acantharchus_pomotis1.png", cond: "poisson/arcantharcus%20pomotis.png" }, { name: "Aphyosemion striatum", bg: "poisson/Aphyosemion%20striatum.png", cond: "poisson/Aphyosemion%20striatum1.png" }, { name: "Barbeau", bg: "poisson/barbeau1.png", cond: "poisson/barbeau.png" }, { name: "Barbillon", bg: "poisson/barbillon1.png", cond: "poisson/barbillon.png" }, { name: "Baudroie", bg: "poisson/baudroie1.png", cond: "poisson/Baudroie.png" }, { name: "Bernard l'Hermite", bg: "VIDE", cond: "poisson/bernardlhermite.png" }, { name: "Blennie de rivière", bg: "VIDE", cond: "poisson/bleniiedesrivieree.png" }, { name: "Bonite", bg: "poisson/bonite1.png", cond: "poisson/bonite.png" }, { name: "Carpe argentée", bg: "poisson/carpe_argentee1.png", cond: "poisson/carpe_argentee.png" }, { name: "Carpe européenne", bg: "poisson/Carpe_europeenne1.png", cond: "poisson/Carpe_europeenne.png" }, { name: "Carpe Papillon", bg: "poisson/carpe%20papillon1.png", cond: "poisson/carpe%20papillon.png" }, { name: "Carpe noire", bg: "poisson/carpe%20noir.png", cond: "poisson/carpe%20noir1.png" }, { name: "Chabot", bg: "VIDE", cond: "poisson/chabot.png" }, { name: "Chimère argentée", bg: "poisson/chimere%20argent1.pnj.avif", cond: "poisson/chimere%20argent%C3%A9.png" }, { name: "Comète coussut", bg: "poisson/comete_coussut1.png", cond: "poisson/comete_coussut.png" }, { name: "Crabe de ruisseau", bg: "poisson/Crabe_de_ruisseau1.png", cond: "poisson/crabe%20de%20ruisseau.png" }, { name: "Crevette verte", bg: "poisson/crevette_verte1.png", cond: "poisson/crevette%20verte.png" }, { name: "Cuvier", bg: "poisson/cuvier1.png", cond: "poisson/cuvier.png" }, { name: "Cyber-Poisson", bg: "poisson/Cyber-Poisson1.png", cond: "poisson/Cyber-Poisson.png" }, { name: "Cyprin doré", bg: "poisson/cyprin_dore1.png", cond: "poisson/cyprin_dore.png" }, { name: "Dario dario", bg: "poisson/dario_dario1.png", cond: "poisson/dario_dario.png" }, { name: "Dasyatis", bg: "poisson/dasyatis1.png", cond: "poisson/Dasyatis.png" }, { name: "Diodon", bg: "poisson/Diodon1.png", cond: "poisson/Diodon.png" }, { name: "Discus", bg: "poisson/discus1.png", cond: "poisson/discus.png" }, { name: "Dolly Varden", bg: "poisson/Dolly_Varden1.png", cond: "poisson/dolly%20varden.png" }, { name: "Dorade grise", bg: "poisson/dorade_grise1.png", cond: "poisson/dorade_grise.png" }, { name: "Ecrevisse", bg: "poisson/ecrevisse1.png", cond: "poisson/ecrevisse.png" }, { name: "Eperlan", bg: "poisson/eperlan1.png", cond: "poisson/eperlan.png" }, { name: "Esturgeon", bg: "poisson/esturgeon1.png", cond: "poisson/esturgeon.png" }, { name: "Gardon", bg: "poisson/gardon1.png", cond: "poisson/Gardon.png" }, { name: "Gobiidae", bg: "poisson/Gobiidae1.png", cond: "poisson/Gobiidae.png" }, { name: "Grand Blanc", bg: "poisson/grand_blanc1.png", cond: "poisson/grand_blanc.png" }, { name: "Grenouille", bg: "poisson/grenouille1.png", cond: "poisson/grenouille.png" }, { name: "Guitare de mer", bg: "poisson/guitare_de_mer1.png", cond: "poisson/guitare_de_mer.png" }, { name: "Guppy", bg: "poisson/guppy1.png", cond: "poisson/guppy.png" }, { name: "Hareng", bg: "poisson/hareng1.png", cond: "poisson/hareng.png" }, { name: "Hippocampe", bg: "poisson/hippocampe1.png", cond: "poisson/Hippocampe.png" }, { name: "Kijiki", bg: "poisson/kijiki1.png", cond: "poisson/Kijiki.png" }, { name: "Koi", bg: "poisson/koi1.png", cond: "poisson/koi.png" }, { name: "Lanceur", bg: "poisson/lanceur1.png", cond: "poisson/lanceur.png" }, { name: "Lievre de mer", bg: "poisson/lievre_de_mer1.png", cond: "poisson/lievre_de_mer.png" }, { name: "Limande", bg: "poisson/limande1.png", cond: "poisson/limande.png" }, { name: "Loche", bg: "poisson/loche1.png", cond: "poisson/loche.png" }, { name: "Loup", bg: "poisson/loup1.png", cond: "poisson/loup.png" }, { name: "Lune de mer", bg: "poisson/lune_de_mer1.png", cond: "poisson/lune_de_mer.png" }, { name: "Macropode", bg: "poisson/macropode1.png", cond: "poisson/macropode.png" }, { name: "Main de mer", bg: "poisson/main_de_mer1.png", cond: "poisson/main_de_mer.png" }, { name: "Makaire bleu", bg: "poisson/makaire_bleu1.png", cond: "poisson/makaire_bleu.png" }, { name: "Makaire noir", bg: "poisson/makaire_noir1.png", cond: "poisson/makaire_noir.png" }, { name: "Maquereau", bg: "poisson/maquereau1.png", cond: "poisson/maquereau.png" }, { name: "Meduse", bg: "poisson/meduse1.png", cond: "poisson/Meduse.png" }, { name: "Merlan", bg: "poisson/merlan1.png", cond: "poisson/merlan.png" }, { name: "Muge", bg: "poisson/muge1.png", cond: "poisson/Muge.png" }, { name: "Murène", bg: "poisson/murene1.png", cond: "poisson/Murene.png" }, { name: "Nase", bg: "poisson/nase1.png", cond: "poisson/Nase.png" }, { name: "Neon", bg: "poisson/neon1.png", cond: "poisson/neon.png" }, { name: "Ombre", bg: "poisson/ombre1.png", cond: "poisson/ombre.png" }, { name: "Omis", bg: "poisson/omis1.png", cond: "poisson/Omis.png" }, { name: "Oranda", bg: "poisson/oranda1.png", cond: "poisson/oranda.png" }, { name: "Oscars", bg: "poisson/oscars1.png", cond: "poisson/oscars.png" }, { name: "Pagre", bg: "poisson/pagre1.png", cond: "poisson/Pagre.png" }, { name: "Palourde", bg: "poisson/palourde1.png", cond: "poisson/Palourde.png" }, { name: "Panga", bg: "poisson/panga1.png", cond: "poisson/Panga.png" }, { name: "Papillon", bg: "poisson/papillon1.png", cond: "poisson/Papillon.png" }, { name: "Perche", bg: "poisson/perche1.png", cond: "poisson/perche.png" }, { name: "Pholade", bg: "poisson/pholade1.png", cond: "poisson/pholade.png" }, { name: "Piraya", bg: "poisson/piraya1.png", cond: "poisson/Piraya.png" }, { name: "Poisson-Ange", bg: "poisson/Poisson-Ange1.png", cond: "poisson/Poisson-Ange.png" }, { name: "Poisson-Balle", bg: "poisson/Poisson-Balle1.png", cond: "poisson/Poisson-Balle.png" }, { name: "Poisson-Chat", bg: "poisson/Poisson-Chat1.png", cond: "poisson/Poisson-Chat.png" }, { name: "Poisson-Chirurgien", bg: "poisson/Poisson-Chirurgien1.png", cond: "poisson/Poisson-Chirurgien.png" }, { name: "Poisson-Clown", bg: "poisson/Poisson-Clown1.png", cond: "poisson/Poisson-Clown.png" }, { name: "Poisson-Combattant", bg: "poisson/Poisson-Combattant1.png", cond: "poisson/Poisson-Combattant.png" }, { name: "Poisson-Couteau", bg: "poisson/Poisson-Couteau1.png", cond: "poisson/Poisson-Couteau.png" }, { name: "Poisson-Dragon", bg: "poisson/Poisson-Dragon1.png", cond: "poisson/Poisson-Dragon.png" }, { name: "Poisson-Globe", bg: "poisson/Poisson-Globe1.png", cond: "poisson/Poisson-Globe.png" }, { name: "Poisson-Hache", bg: "poisson/Poisson-Hache1.png", cond: "poisson/Poisson-Hache.png" }, { name: "Poisson-Lion", bg: "poisson/Poisson-Lion1.png", cond: "poisson/Poisson-Lion.png" }, { name: "Poisson-Lune", bg: "poisson/Poisson-Lune1.png", cond: "poisson/Poisson-Lune.png" }, { name: "Poisson-Mandarin", bg: "poisson/Poisson-Mandarin1.png", cond: "poisson/Poisson-Mandarin.png" }, { name: "Poisson-Perroquet", bg: "poisson/Poisson-Perroquet1.png", cond: "poisson/Poisson-Perroquet.png" }, { name: "Poisson-Pilote", bg: "poisson/Poisson-Pilote1.png", cond: "poisson/Poisson-Pilote.png" }, { name: "Poisson-Ruban", bg: "poisson/Poisson-Ruban1.png", cond: "poisson/Poisson-Ruban.png" }, { name: "Poisson-Scorpion", bg: "poisson/Poisson-Scorpion1.png", cond: "poisson/Poisson-Scorpion.png" }, { name: "Poisson-Tigre", bg: "poisson/Poisson-Tigre1.png", cond: "poisson/Poisson-Tigre.png" }, { name: "Poisson-Volant", bg: "poisson/Poisson-Volant1.png", cond: "poisson/Poisson-Volant.png" }, { name: "Poulpe", bg: "poisson/Poulpe1.png", cond: "poisson/Poulpe.png" }, { name: "Raie", bg: "poisson/Raie1.png", cond: "poisson/Raie.png" }, { name: "Rascasse", bg: "poisson/Rascasse1.png", cond: "poisson/Rascasse.png" }, { name: "Requin-Baleine", bg: "poisson/Requin-Baleine1.png", cond: "poisson/Requin-Baleine.png" }, { name: "Requin-Marteau", bg: "poisson/Requin-Marteau1.png", cond: "poisson/Requin-Marteau.png" }, { name: "Sardine", bg: "poisson/Sardine1.png", cond: "poisson/Sardine.png" }, { name: "Saumon", bg: "poisson/Saumon1.png", cond: "poisson/Saumon.png" }, { name: "Sole", bg: "poisson/Sole1.png", cond: "poisson/Sole.png" }, { name: "Tanche", bg: "poisson/Tanche1.png", cond: "poisson/Tanche.png" }, { name: "Thon", bg: "poisson/Thon1.png", cond: "poisson/Thon.png" }, { name: "Truite", bg: "poisson/Truite1.png", cond: "poisson/Truite.png" } 
     ];
 
     var menuCtrl = L.control({position: 'topleft'});
