@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Maptopia FR - Officiel</title>
+    <title>Maptopia FR - Officiel (Rex Full Restoration)</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
@@ -29,54 +29,47 @@
         .welcome-box h1 { margin: 0; font-size: 30px; letter-spacing: 3px; color: #fff; text-transform: uppercase; text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
         .welcome-subtitle { color: #d4af37; font-size: 18px; margin: 15px 0 5px 0; display: block; font-weight: bold; line-height: 1.4; }
         .dev-status { color: #cfcfcf; font-size: 13px; font-style: italic; margin-bottom: 25px; display: block; opacity: 0.8; }
-        
         #enter-button { padding: 15px 45px; background: linear-gradient(135deg, #8b0000, #d4af37); color: white; border: 1px solid white; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(139, 0, 0, 0.4); }
 
         /* --- CARTE --- */
         #map { height: 100vh; width: 100vw; opacity: 0; transition: opacity 2s ease; background: transparent !important; }
 
-        /* --- MENU --- */
+        /* --- MENU & SCROLL --- */
         .leaflet-control-layers {
-            left: 20px !important; top: 20px !important; width: 280px !important;
+            left: 20px !important; top: 20px !important; width: 300px !important;
             background: rgba(255, 255, 255, 0.98) !important; border-radius: 15px !important; 
             padding: 10px !important; box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
-            max-height: 65vh; overflow-y: auto; border: none !important; z-index: 1000;
+            max-height: 80vh; overflow-y: auto !important; border: none !important; z-index: 1000;
         }
-        .accordion-title { color: white; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 5px; text-align: center; font-size: 12px; text-transform: uppercase; }
+        .leaflet-control-layers::-webkit-scrollbar { width: 8px; }
+        .leaflet-control-layers::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        .leaflet-control-layers::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
+        
+        .accordion-title { color: white; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 5px; text-align: center; font-size: 13px; text-transform: uppercase; }
         .title-pnj { background: #8b0000; }
         .title-bus { background: #2980b9; }
         .title-shop { background: #9b59b6; }
         .title-lieux { background: #27ae60; }
         .title-poisson { background: #f39c12; }
-        .accordion-content { display: none; }
+        .accordion-content { display: none; padding: 5px 0; }
         .accordion-content.active { display: block; }
-        .menu-item { display: flex; align-items: center; padding: 10px; cursor: pointer; font-size: 13px; border-bottom: 1px solid #eee; justify-content: center; color: #333; }
-        .menu-icon { width: 24px; height: 24px; margin-right: 8px; object-fit: contain; }
+        .menu-item { display: flex; align-items: center; padding: 10px; cursor: pointer; font-size: 13px; border-bottom: 1px solid #eee; color: #333; }
+        .menu-icon { width: 24px; height: 24px; margin-right: 10px; object-fit: contain; }
 
         /* --- LABELS --- */
         .label-ville { background: white !important; border: 2px solid #3498db !important; border-radius: 5px; padding: 2px 8px; font-weight: bold; font-size: 11px; color: #2980b9; }
         .label-eau { background: rgba(41, 128, 185, 0.2) !important; border: 1px solid #2980b9 !important; border-radius: 5px; padding: 2px 8px; font-size: 10px; color: white; text-shadow: 1px 1px 2px black; }
 
-        /* --- TEAM --- */
-        .team-box { position: fixed; bottom: 60px; left: 20px; z-index: 3000; text-align: center; }
-        .team-text { font-weight: 900; font-size: 18px; margin-bottom: 5px; background: linear-gradient(to right, #ffffff, #d4af37, #ffffff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: block; }
+        /* --- UI ELEMENTS --- */
+        .team-box { position: fixed; bottom: 70px; left: 20px; z-index: 3000; text-align: center; }
+        .team-text { font-weight: 900; font-size: 18px; background: linear-gradient(to right, #ffffff, #d4af37, #ffffff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: block; margin-bottom: 5px; }
         .team-img { width: 90px; height: 90px; border-radius: 15px; border: 2px solid #d4af37; cursor: pointer; transition: 0.3s; object-fit: cover; }
-
-        /* --- DISCORD --- */
-        .discord-box { position: fixed; bottom: 65px; right: 20px; z-index: 3000; }
-        .discord-btn { background: #5865F2; color: white; padding: 12px 20px; border-radius: 15px; display: flex; align-items: center; text-decoration: none; font-weight: bold; transition: 0.3s; }
-        .discord-btn img { width: 30px; margin-right: 12px; }
-
-        /* --- FOOTER --- */
-        .footer-wiki { position: fixed; bottom: 0; left: 0; width: 100%; height: 50px; z-index: 3000; background: linear-gradient(90deg, #8b0000, #d4af37, #8b0000); display: flex; align-items: center; justify-content: center; border-top: 2px solid white; }
-        .wiki-link { text-decoration: none; color: white; font-weight: bold; }
-
-        /* --- OVERLAYS --- */
-        #overlay-fish, #overlay-team { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 30000; display: none; align-items: center; justify-content: center; cursor: pointer; }
-        #overlay-team img { max-width: 85%; max-height: 85%; border: 4px solid #d4af37; border-radius: 15px; }
-        .fish-display-wrapper { display: flex; flex-direction: column; align-items: center; width: 90%; max-width: 700px; }
-        .fish-img-main { width: 100%; border: 3px solid #d4af37; border-radius: 15px 15px 0 0; }
-        .fish-img-map { width: 100%; border: 3px solid #d4af37; border-top: none; border-radius: 0 0 15px 15px; }
+        .discord-box { position: fixed; bottom: 75px; right: 20px; z-index: 3000; }
+        .discord-btn { background: #5865F2; color: white; padding: 12px 20px; border-radius: 15px; display: flex; align-items: center; text-decoration: none; font-weight: bold; }
+        .discord-btn img { width: 30px; margin-right: 10px; }
+        .footer-wiki { position: fixed; bottom: 0; left: 0; width: 100%; height: 55px; z-index: 3000; background: linear-gradient(90deg, #8b0000, #d4af37, #8b0000); display: flex; align-items: center; justify-content: center; border-top: 2px solid white; }
+        #overlay-fish, #overlay-team { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 30000; display: none; align-items: center; justify-content: center; }
+        .fish-display-wrapper { display: flex; flex-direction: column; align-items: center; width: 90%; max-width: 700px; background: white; border-radius: 20px; overflow: hidden; border: 3px solid #d4af37; }
     </style>
 </head>
 <body>
@@ -88,8 +81,8 @@
     <video id="intro-video" autoplay muted loop playsinline><source src="pere noel.mp4" type="video/mp4"></video>
     <div class="welcome-box">
         <h1>MAPTOPIA FR</h1>
-        <span class="welcome-subtitle">Dominez le monde d'Heartopia avec notre guide interactif mis à jour en temps réel !</span>
-        <span class="dev-status">Carte interactive en cours de développement</span>
+        <span class="welcome-subtitle">L'outil ultime pour Heartopia.</span>
+        <span class="dev-status">Astuce : Fais un CLIC DROIT pour tes notes persos.</span>
         <button id="enter-button" onclick="startExperience()">🎄 ENTRER 🎄</button>
     </div>
 </div>
@@ -102,28 +95,17 @@
 </div>
 
 <div class="discord-box">
-    <a href="https://discord.gg/dc8eZwf2jq" target="_blank" class="discord-btn">
-        <img src="Discord-Logo-PNG-Pic.png" alt="Discord">
-        REJOINDRE LE DISCORD
-    </a>
+    <a href="https://discord.gg/dc8eZwf2jq" target="_blank" class="discord-btn"><img src="Discord-Logo-PNG-Pic.png"> REJOINDRE LE DISCORD</a>
 </div>
 
 <div id="overlay-team" onclick="this.style.display='none'"><img src="groupefr.png"></div>
-<div id="overlay-fish" onclick="this.style.display='none'">
-    <div class="fish-display-wrapper">
-        <img id="fish-main" class="fish-img-main" src="">
-        <img id="fish-cond" class="fish-img-map" src="">
-    </div>
-</div>
-
-<div class="footer-wiki">
-    <a href="https://jayibwi.wixsite.com/my-site-1" target="_blank" class="wiki-link">📖 ACCÉDER AU WIKI FR COMPLET 📖</a>
-</div>
+<div id="overlay-fish" onclick="this.style.display='none'"><div class="fish-display-wrapper"><img id="fish-main" style="width:100%"><img id="fish-cond" style="width:100%"></div></div>
+<div class="footer-wiki"><a href="https://jayibwi.wixsite.com/my-site-1" target="_blank" style="color:white; text-decoration:none; font-weight:bold; font-size:18px;">📖 ACCÉDER AU WIKI FR COMPLET 📖</a></div>
 
 <script>
     function startExperience() {
         var sound = document.getElementById('entry-sound');
-        sound.play().catch(e => console.log("Audio bloqué par le navigateur"));
+        sound.play().catch(e => console.log("Audio bloqué"));
         document.getElementById('intro-screen').style.opacity = '0';
         document.getElementById('map').style.opacity = '1';
         setTimeout(() => { document.getElementById('intro-screen').style.display = 'none'; }, 1000);
@@ -134,10 +116,52 @@
     L.imageOverlay('carte.png', bounds).addTo(map);
     map.setView([-500, 500], 1);
 
-    var currentActiveLayer = null;
-    var dataStorage = { pnj:[], bus:[], shop:[], lieux:[] };
+    // --- SYSTÈME DE PING ---
+    var userPings = JSON.parse(localStorage.getItem('maptopia_pings')) || [];
+    var pingMarkers = {};
 
-    function clearPrevious() { if(currentActiveLayer) { map.removeLayer(currentActiveLayer); currentActiveLayer = null; } }
+    function createPing(latlng, text, isNew) {
+        var id = isNew ? Date.now() : (latlng.lat.toFixed(2) + "_" + latlng.lng.toFixed(2));
+        var marker = L.marker(latlng).addTo(map);
+        pingMarkers[id] = marker;
+        var div = document.createElement('div');
+        div.className = "ping-popup-content";
+        if (isNew) {
+            div.innerHTML = `<input type="text" id="in-${id}" placeholder="Note..."><br>
+                             <button style="background:#27ae60;color:white;border:none;padding:5px;cursor:pointer;" onclick="confirmPing('${id}', ${latlng.lat}, ${latlng.lng})">OK</button>
+                             <button style="background:#e74c3c;color:white;border:none;padding:5px;cursor:pointer;" onclick="removePing('${id}', false)">Annuler</button>`;
+        } else {
+            div.innerHTML = `<b>Ma Note :</b><br>${text}<br>
+                             <button style="background:#e74c3c;color:white;border:none;padding:5px;cursor:pointer;" onclick="removePing('${id}', true)">Supprimer</button>`;
+        }
+        marker.bindPopup(div);
+        if (isNew) marker.openPopup();
+    }
+
+    window.confirmPing = function(id, lat, lng) {
+        var val = document.getElementById('in-' + id).value;
+        if (val) {
+            userPings.push({ id: id, latlng: {lat: lat, lng: lng}, text: val });
+            localStorage.setItem('maptopia_pings', JSON.stringify(userPings));
+            map.removeLayer(pingMarkers[id]);
+            createPing({lat: lat, lng: lng}, val, false);
+        }
+    };
+
+    window.removePing = function(id, fromStorage) {
+        if (pingMarkers[id]) map.removeLayer(pingMarkers[id]);
+        if (fromStorage) {
+            userPings = userPings.filter(p => p.id != id);
+            localStorage.setItem('maptopia_pings', JSON.stringify(userPings));
+        }
+    };
+
+    map.on('contextmenu', (e) => createPing(e.latlng, "", true));
+    userPings.forEach(p => createPing(p.latlng, p.text, false));
+
+    // --- DONNÉES ---
+    var dataStorage = { pnj:[], bus:[], shop:[], lieux:[] };
+    var currentActiveLayer = null;
 
     function register(cat, pos, name, img, options = {}) {
         var g = L.layerGroup();
@@ -151,25 +175,23 @@
         dataStorage[cat].push({name:name, pos:pos, layer:g, img:img, startOn: options.startOn});
     }
 
-    // --- TOUS LES PNJ ---
-    var pnjs = [
-        ["Bob",[-471,501],'pnj/bob.png'], ["Atara",[-526,499],'pnj/atara.png'], ["Le Collectionneur",[-478,493],'pnj/collectioneur.png'], 
+    // PNJ
+    [
+        ["Bob",[-471,501],'pnj/bob.png'], ["Atara",[-526,499],'pnj/atara.png'], ["Collectionneur",[-478,493],'pnj/collectioneur.png'], 
         ["Dorothée",[-469,488],'pnj/dorothée.png'], ["Massimo",[-446,493],'pnj/massimo.png'], ["Andrew",[-399,591],'pnj/andrew.png'], 
         ["Eric",[-259,522],'pnj/eric.png'], ["Vanya",[-456,549],'pnj/vanya.png'], ["Naniwa",[-502,582],'pnj/niniwa.png'], 
         ["Joan",[-502,519],'pnj/joa.png'], ["Will",[-807,419],'pnj/will.png'], ["Patti",[-355,809],'pnj/patti.png'], 
         ["Vernie",[-653,225],'pnj/vernie.png'], ["Bayley",[-498,526],'pnj/bayley.png']
-    ];
-    pnjs.forEach(p => register('pnj', p[1], p[0], p[2]));
+    ].forEach(p => register('pnj', p[1], p[0], p[2]));
 
-    // --- TOUS LES BUS ---
-    var buses = [
-        ["Banlieue Ouest",[-533,340]], ["Banlieue du Village",[-519,639]], ["Village de Pêcheurs",[-654,479]], 
-        ["Champ de Fleurs",[-532,218]], ["Montagne Thermale",[-222,512]], ["Banlieue Nord",[-373,480]], 
+    // BUS
+    [
+        ["Banlieue Ouest",[-533,340]], ["Banlieue Village",[-519,639]], ["Village Pêcheurs",[-654,479]], 
+        ["Champ Fleurs",[-532,218]], ["Montagne Thermale",[-222,512]], ["Banlieue Nord",[-373,480]], 
         ["Place Centrale",[-497,481]], ["Forêt",[-500,798]]
-    ];
-    buses.forEach(b => register('bus', b[1], b[0], 'bus.png'));
+    ].forEach(b => register('bus', b[1], b[0], 'bus.png'));
 
-    // --- TOUS LES LIEUX ET MAGASINS ---
+    // LIEUX (35)
     var lieuxData = [
         { pos: [-538, 492], name: "Place Centrale", type: "label-ville", startOn: true },
         { pos: [-692, 506], name: "Village de Pêcheurs", type: "label-ville", startOn: true },
@@ -209,7 +231,7 @@
     ];
     lieuxData.forEach(l => register(l.isShop ? 'shop' : 'lieux', l.pos, l.name, l.icon || '', {type: l.type, startOn: l.startOn}));
 
-    // --- TOUS LES POISSONS ---
+    // POISSONS (97)
     const fishList = [
         { name: "Ablette", bg: "poisson/ablette1.png", cond: "poisson/Lacs.png" },
         { name: "Acantharchus pomotis", bg: "poisson/Acantharchus_pomotis1.png", cond: "poisson/arcantharcus%20pomotis.png" },
@@ -231,54 +253,85 @@
         { name: "Crabe de ruisseau", bg: "poisson/Crabe_de_ruisseau1.png", cond: "poisson/crabe%20de%20ruisseau.png" },
         { name: "Crevette de la mer", bg: "VIDE", cond: "VIDE" },
         { name: "Crevette verte", bg: "poisson/crevette_verte1.png", cond: "poisson/crevette%20verte.png" },
-        { name: "Ecrevisse noble", bg: "VIDE", cond: "VIDE" }, { name: "Ecrevisse noble bleue", bg: "VIDE", cond: "VIDE" },
-        { name: "Eglefin", bg: "VIDE", cond: "VIDE" }, { name: "Eperlan", bg: "VIDE", cond: "VIDE" },
-        { name: "Epinoche", bg: "VIDE", cond: "VIDE" }, { name: "Espadon", bg: "VIDE", cond: "VIDE" },
-        { name: "Féra", bg: "VIDE", cond: "VIDE" }, { name: "Grand black-basse", bg: "VIDE", cond: "VIDE" },
-        { name: "Grande huître perlière", bg: "VIDE", cond: "VIDE" }, { name: "Grenouille européenne", bg: "VIDE", cond: "VIDE" },
-        { name: "Gobie", bg: "VIDE", cond: "VIDE" }, { name: "Grondin perlon", bg: "VIDE", cond: "VIDE" },
-        { name: "Hippocampe", bg: "VIDE", cond: "VIDE" }, { name: "Huchon", bg: "VIDE", cond: "VIDE" },
-        { name: "Langouste européenne", bg: "VIDE", cond: "VIDE" }, { name: "Loche des fleurs", bg: "VIDE", cond: "VIDE" },
-        { name: "Loche des rochers", bg: "VIDE", cond: "VIDE" }, { name: "Lotte", bg: "VIDE", cond: "VIDE" },
-        { name: "Maquereau atlantique", bg: "VIDE", cond: "VIDE" }, { name: "Moule", bg: "VIDE", cond: "VIDE" },
-        { name: "Omble", bg: "VIDE", cond: "VIDE" }, { name: "Omble chevalier", bg: "VIDE", cond: "VIDE" },
-        { name: "Ombrine", bg: "VIDE", cond: "VIDE" }, { name: "Oranda", bg: "VIDE", cond: "VIDE" },
-        { name: "Pagellus bogaraveo", bg: "VIDE", cond: "VIDE" }, { name: "Perche de mer", bg: "VIDE", cond: "VIDE" },
-        { name: "Perche de prunier", bg: "VIDE", cond: "VIDE" }, { name: "Perche de rivière", bg: "VIDE", cond: "VIDE" },
-        { name: "Pieuvre", bg: "VIDE", cond: "VIDE" }, { name: "Pieuvre naine atlantique", bg: "VIDE", cond: "VIDE" },
-        { name: "POISSON-TIGRE", bg: "VIDE", cond: "VIDE" }, { name: "Plie européenne", bg: "VIDE", cond: "VIDE" },
-        { name: "Poisson agrion", bg: "VIDE", cond: "VIDE" }, { name: "Poisson-clown", bg: "VIDE", cond: "VIDE" },
-        { name: "Poisson combattant", bg: "VIDE", cond: "VIDE" }, { name: "Poisson divin", bg: "VIDE", cond: "VIDE" },
-        { name: "Poisson épineux", bg: "VIDE", cond: "VIDE" }, { name: "Poisson-globe", bg: "VIDE", cond: "VIDE" },
-        { name: "Poisson-lion", bg: "VIDE", cond: "VIDE" }, { name: "Poisson lune", bg: "VIDE", cond: "VIDE" },
-        { name: "Poisson rouge", bg: "VIDE", cond: "VIDE" }, { name: "Poisson ruban", bg: "VIDE", cond: "VIDE" },
-        { name: "Poisson suspendu", bg: "VIDE", cond: "VIDE" }, { name: "Poisson à yeux rouges", bg: "VIDE", cond: "VIDE" },
-        { name: "Régalec", bg: "VIDE", cond: "VIDE" }, { name: "Requin baleine", bg: "VIDE", cond: "VIDE" },
-        { name: "Requin mako", bg: "VIDE", cond: "VIDE" }, { name: "Requin marteau", bg: "VIDE", cond: "VIDE" },
-        { name: "Rouget barbet", bg: "VIDE", cond: "VIDE" }, { name: "Roussette", bg: "VIDE", cond: "VIDE" },
-        { name: "Sandre blanc", bg: "VIDE", cond: "VIDE" }, { name: "Saumon atlantique", bg: "VIDE", cond: "VIDE" },
-        { name: "Saumon kéta", bg: "VIDE", cond: "VIDE" }, { name: "Saurel", bg: "VIDE", cond: "VIDE" },
-        { name: "Sardine", bg: "VIDE", cond: "VIDE" }, { name: "Seiche européenne", bg: "VIDE", cond: "VIDE" },
-        { name: "Silure européen", bg: "VIDE", cond: "VIDE" }, { name: "Tanche dorée", bg: "VIDE", cond: "VIDE" },
-        { name: "Têtard", bg: "VIDE", cond: "VIDE" }, { name: "Thon rouge", bg: "VIDE", cond: "VIDE" },
-        { name: "Tilapia", bg: "VIDE", cond: "VIDE" }, { name: "Tortue verte", bg: "VIDE", cond: "VIDE" },
-        { name: "Turbot", bg: "VIDE", cond: "VIDE" }, { name: "Vairon", bg: "VIDE", cond: "VIDE" },
+        { name: "Ecrevisse noble", bg: "VIDE", cond: "VIDE" },
+        { name: "Ecrevisse noble bleue", bg: "VIDE", cond: "VIDE" },
+        { name: "Eglefin", bg: "VIDE", cond: "VIDE" },
+        { name: "Eperlan", bg: "VIDE", cond: "VIDE" },
+        { name: "Epinoche", bg: "VIDE", cond: "VIDE" },
+        { name: "Espadon", bg: "VIDE", cond: "VIDE" },
+        { name: "Féra", bg: "VIDE", cond: "VIDE" },
+        { name: "Grand black-basse", bg: "VIDE", cond: "VIDE" },
+        { name: "Grande huître perlière", bg: "VIDE", cond: "VIDE" },
+        { name: "Grenouille européenne", bg: "VIDE", cond: "VIDE" },
+        { name: "Gobie", bg: "VIDE", cond: "VIDE" },
+        { name: "Grondin perlon", bg: "VIDE", cond: "VIDE" },
+        { name: "Hippocampe", bg: "VIDE", cond: "VIDE" },
+        { name: "Huchon", bg: "VIDE", cond: "VIDE" },
+        { name: "Langouste européenne", bg: "VIDE", cond: "VIDE" },
+        { name: "Loche des fleurs", bg: "VIDE", cond: "VIDE" },
+        { name: "Loche des rochers", bg: "VIDE", cond: "VIDE" },
+        { name: "Lotte", bg: "VIDE", cond: "VIDE" },
+        { name: "Maquereau atlantique", bg: "VIDE", cond: "VIDE" },
+        { name: "Moule", bg: "VIDE", cond: "VIDE" },
+        { name: "Omble", bg: "VIDE", cond: "VIDE" },
+        { name: "Omble chevalier", bg: "VIDE", cond: "VIDE" },
+        { name: "Ombrine", bg: "VIDE", cond: "VIDE" },
+        { name: "Oranda", bg: "VIDE", cond: "VIDE" },
+        { name: "Pagellus bogaraveo", bg: "VIDE", cond: "VIDE" },
+        { name: "Perche de mer", bg: "VIDE", cond: "VIDE" },
+        { name: "Perche de prunier", bg: "VIDE", cond: "VIDE" },
+        { name: "Perche de rivière", bg: "VIDE", cond: "VIDE" },
+        { name: "Pieuvre", bg: "VIDE", cond: "VIDE" },
+        { name: "Pieuvre naine atlantique", bg: "VIDE", cond: "VIDE" },
+        { name: "POISSON-TIGRE", bg: "VIDE", cond: "VIDE" },
+        { name: "Plie européenne", bg: "VIDE", cond: "VIDE" },
+        { name: "Poisson agrion", bg: "VIDE", cond: "VIDE" },
+        { name: "Poisson-clown", bg: "VIDE", cond: "VIDE" },
+        { name: "Poisson combattant", bg: "VIDE", cond: "VIDE" },
+        { name: "Poisson divin", bg: "VIDE", cond: "VIDE" },
+        { name: "Poisson épineux", bg: "VIDE", cond: "VIDE" },
+        { name: "Poisson-globe", bg: "VIDE", cond: "VIDE" },
+        { name: "Poisson-lion", bg: "VIDE", cond: "VIDE" },
+        { name: "Poisson lune", bg: "VIDE", cond: "VIDE" },
+        { name: "Poisson rouge", bg: "VIDE", cond: "VIDE" },
+        { name: "Poisson ruban", bg: "VIDE", cond: "VIDE" },
+        { name: "Poisson suspendu", bg: "VIDE", cond: "VIDE" },
+        { name: "Poisson à yeux rouges", bg: "VIDE", cond: "VIDE" },
+        { name: "Régalec", bg: "VIDE", cond: "VIDE" },
+        { name: "Requin baleine", bg: "VIDE", cond: "VIDE" },
+        { name: "Requin mako", bg: "VIDE", cond: "VIDE" },
+        { name: "Requin marteau", bg: "VIDE", cond: "VIDE" },
+        { name: "Rouget barbet", bg: "VIDE", cond: "VIDE" },
+        { name: "Roussette", bg: "VIDE", cond: "VIDE" },
+        { name: "Sandre blanc", bg: "VIDE", cond: "VIDE" },
+        { name: "Saumon atlantique", bg: "VIDE", cond: "VIDE" },
+        { name: "Saumon kéta", bg: "VIDE", cond: "VIDE" },
+        { name: "Saurel", bg: "VIDE", cond: "VIDE" },
+        { name: "Sardine", bg: "VIDE", cond: "VIDE" },
+        { name: "Seiche européenne", bg: "VIDE", cond: "VIDE" },
+        { name: "Silure européen", bg: "VIDE", cond: "VIDE" },
+        { name: "Tanche dorée", bg: "VIDE", cond: "VIDE" },
+        { name: "Têtard", bg: "VIDE", cond: "VIDE" },
+        { name: "Thon rouge", bg: "VIDE", cond: "VIDE" },
+        { name: "Tilapia", bg: "VIDE", cond: "VIDE" },
+        { name: "Tortue verte", bg: "VIDE", cond: "VIDE" },
+        { name: "Turbot", bg: "VIDE", cond: "VIDE" },
+        { name: "Vairon", bg: "VIDE", cond: "VIDE" },
         { name: "Zingel streber", bg: "VIDE", cond: "VIDE" }
     ];
 
-    // --- CONSTRUCTION DU MENU ---
+    // --- INTERFACE ---
     var customControl = L.control({position: 'topleft'});
     customControl.onAdd = function() {
         var div = L.DomUtil.create('div', 'leaflet-control-layers');
+        L.DomEvent.disableClickPropagation(div);
+        L.DomEvent.disableScrollPropagation(div);
         div.innerHTML = `
-            <div id="c-pnj"><div class="accordion-title title-pnj">PERSONNAGES</div><div class="accordion-content"></div></div>
-            <div id="c-bus"><div class="accordion-title title-bus">ARRÊTS DE BUS</div><div class="accordion-content"></div></div>
+            <div id="c-pnj"><div class="accordion-title title-pnj">PNJ</div><div class="accordion-content"></div></div>
+            <div id="c-bus"><div class="accordion-title title-bus">BUS</div><div class="accordion-content"></div></div>
             <div id="c-shop"><div class="accordion-title title-shop">MAGASINS</div><div class="accordion-content"></div></div>
             <div id="c-lieux"><div class="accordion-title title-lieux">LIEUX</div><div class="accordion-content"></div></div>
-            <div id="c-fish"><div class="accordion-title title-poisson">POISSONS</div><div class="accordion-content"></div></div>
-        `;
-        L.DomEvent.disableScrollPropagation(div);
-        L.DomEvent.disableClickPropagation(div);
+            <div id="c-fish"><div class="accordion-title title-poisson">POISSONS</div><div class="accordion-content"></div></div>`;
         return div;
     };
     customControl.addTo(map);
@@ -289,21 +342,23 @@
             dataStorage[cat].forEach(item => {
                 var el = document.createElement('div'); el.className = 'menu-item';
                 el.innerHTML = (item.img ? `<img src="${item.img}" class="menu-icon">` : '') + item.name;
-                el.onclick = () => { if(!item.startOn) { clearPrevious(); item.layer.addTo(map); currentActiveLayer = item.layer; } map.flyTo(item.pos, 2); };
+                el.onclick = () => { 
+                    if(!item.startOn) { if(currentActiveLayer) map.removeLayer(currentActiveLayer); item.layer.addTo(map); currentActiveLayer = item.layer; } 
+                    map.flyTo(item.pos, 2); 
+                };
                 content.appendChild(el);
             });
             title.onclick = () => content.classList.toggle('active');
         });
-        
         var fCont = document.querySelector('#c-fish .accordion-content'), fTit = document.querySelector('#c-fish .accordion-title');
         fishList.forEach(f => {
             var el = document.createElement('div'); el.className = 'menu-item'; el.innerHTML = f.name;
             el.onclick = () => { 
                 if(f.bg !== "VIDE") {
                     document.getElementById('fish-main').src = f.bg; 
-                    document.getElementById('fish-cond').src = f.cond === "VIDE" ? "" : f.cond; 
+                    document.getElementById('fish-cond').src = (f.cond !== "VIDE") ? f.cond : ""; 
                     document.getElementById('overlay-fish').style.display = 'flex'; 
-                }
+                } else { alert("Données bientôt disponibles"); }
             };
             fCont.appendChild(el);
         });
