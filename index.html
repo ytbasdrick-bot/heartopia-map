@@ -2,84 +2,79 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Maptopia FR - Mobile Fix</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Maptopia FR - Officiel</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
-        /* Correction pour éviter le défilement et gérer la hauteur réelle du mobile */
-        html, body { 
-            margin: 0; padding: 0; width: 100%; height: 100%;
+        body { 
+            margin: 0; padding: 0; 
             background: url('Heartopia.jpg') no-repeat center center fixed; 
             background-size: cover; overflow: hidden; font-family: 'Segoe UI', Roboto, sans-serif; 
         }
 
         /* --- ÉCRAN D'ACCUEIL --- */
         #intro-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: black; z-index: 20000; display: flex; align-items: center; /* Centré verticalement */
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: black; z-index: 20000; display: flex; align-items: flex-end; 
             justify-content: center; transition: opacity 1s ease;
         }
         .video-bg-blur { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; filter: blur(20px) brightness(0.4); }
         #intro-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; z-index: 2; border-left: 2px solid #d4af37; border-right: 2px solid #d4af37; }
-        
         .welcome-box { 
-            position: relative; 
-            width: 85%; max-width: 400px; padding: 20px; 
+            position: relative; bottom: 8%; width: 500px; padding: 30px; 
             background: rgba(0, 0, 0, 0.85); border: 2px solid #d4af37; border-radius: 20px; 
-            color: white; z-index: 10; backdrop-filter: blur(10px); text-align: center;
-            margin-top: 30vh; /* Remonte la boîte pour qu'elle soit bien visible sur téléphone */
+            color: white; z-index: 10; backdrop-filter: blur(10px); text-align: center; 
         }
-        #enter-button { 
-            padding: 15px 35px; background: linear-gradient(135deg, #8b0000, #d4af37); 
-            color: white; border: 1px solid white; border-radius: 50px; font-size: 17px; 
-            font-weight: bold; cursor: pointer; box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
-        }
+        .welcome-box h1 { margin: 0; font-size: 30px; letter-spacing: 3px; color: #fff; text-transform: uppercase; text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
+        .welcome-subtitle { color: #d4af37; font-size: 18px; margin: 15px 0 5px 0; display: block; font-weight: bold; line-height: 1.4; }
+        .dev-status { color: #cfcfcf; font-size: 13px; font-style: italic; margin-bottom: 25px; display: block; opacity: 0.8; }
+        
+        #enter-button { padding: 15px 45px; background: linear-gradient(135deg, #8b0000, #d4af37); color: white; border: 1px solid white; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(139, 0, 0, 0.4); }
+        #enter-button:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(212, 175, 55, 0.6); }
 
         /* --- CARTE --- */
-        #map { height: 100%; width: 100%; opacity: 0; transition: opacity 2s ease; background: transparent !important; }
+        #map { height: 100vh; width: 100vw; opacity: 0; transition: opacity 2s ease; background: transparent !important; }
 
-        /* --- MENU ACCORDÉON --- */
+        /* --- MENU --- */
         .leaflet-control-layers {
-            left: 10px !important; top: 10px !important; width: 250px !important;
+            left: 20px !important; top: 20px !important; width: 280px !important;
             background: rgba(255, 255, 255, 0.98) !important; border-radius: 15px !important; 
-            padding: 8px !important; box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
-            max-height: 60vh; overflow-y: auto; border: none !important; z-index: 1000;
+            padding: 10px !important; box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+            max-height: 75vh; overflow-y: auto; border: none !important; z-index: 1000;
         }
+        .accordion-title { color: white; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: bold; margin-bottom: 6px; display: flex; justify-content: center; align-items: center; font-size: 13px; text-transform: uppercase; position: relative; }
+        .accordion-title span { position: absolute; right: 15px; }
         
-        .accordion-title { 
-            color: white; padding: 10px; border-radius: 10px; cursor: pointer; 
-            font-weight: bold; margin-bottom: 5px; display: flex; justify-content: space-between; 
-            align-items: center; font-size: 12px; text-transform: uppercase;
-        }
         .title-pnj { background: #8b0000; }
         .title-bus { background: #2980b9; }
         .title-shop { background: #9b59b6; }
         .title-lieux { background: #27ae60; }
         .title-poisson { background: #f39c12; }
         
-        .accordion-content { display: none; background: white; border-radius: 0 0 10px 10px; border: 1px solid #eee; border-top: none; }
+        .accordion-content { display: none; background: white; border-radius: 0 0 10px 10px; }
         .accordion-content.active { display: block; }
         
-        .menu-item { display: flex; align-items: center; padding: 12px 15px; cursor: pointer; font-size: 14px; border-bottom: 1px solid #f0f0f0; color: #333; }
-        .menu-icon { width: 26px; height: 26px; margin-right: 12px; border-radius: 50%; object-fit: contain; }
+        .menu-item { 
+            display: flex; align-items: center; justify-content: center; 
+            padding: 12px 15px; cursor: pointer; font-size: 14px; 
+            border-bottom: 1px solid #f0f0f0; color: #333; text-align: center;
+        }
+        .menu-item:hover { background: #f9f9f9; }
+        .menu-icon { width: 26px; height: 26px; margin-right: 10px; border-radius: 50%; object-fit: contain; }
 
-        /* --- UI ELEMENTS --- */
-        .team-container { position: fixed; bottom: 65px; left: 10px; z-index: 4000; background: rgba(0,0,0,0.7); padding: 8px; border-radius: 12px; border: 2px solid #d4af37; cursor: pointer; text-align: center; transform: scale(0.85); transform-origin: left bottom; }
-        .team-name-label { color: #d4af37; font-weight: bold; font-size: 12px; margin-bottom: 3px; }
-        .team-logo { width: 130px; border-radius: 5px; }
-        .discord-btn { position: fixed; bottom: 65px; right: 10px; z-index: 4000; }
-        .discord-icon { width: 55px; }
+        /* --- LABELS STYLES --- */
+        .label-ville { background: white !important; border: 2px solid #3498db !important; border-radius: 5px; padding: 2px 8px; font-weight: bold; font-size: 11px; color: #2980b9; pointer-events: none; text-align: center; }
+        .label-eau { background: rgba(41, 128, 185, 0.2) !important; border: 1px solid #2980b9 !important; border-radius: 5px; padding: 2px 8px; font-weight: normal; font-size: 10px; color: white; text-shadow: 1px 1px 2px black; pointer-events: none; }
 
-        #overlay-fish, #overlay-group { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 30000; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        .full-img { max-width: 95%; max-height: 70vh; border: 3px solid #d4af37; border-radius: 10px; }
-        
-        .footer-wiki { position: fixed; bottom: 0; left: 0; width: 100%; height: 45px; z-index: 3000; background: linear-gradient(90deg, #8b0000, #d4af37, #8b0000); display: flex; justify-content: center; align-items: center; border-top: 1px solid white; }
-        .wiki-link { text-decoration: none; color: white; font-weight: bold; font-size: 12px; text-align: center; }
+        /* --- UI & OVERLAYS --- */
+        #overlay-fish { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 30000; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        .fish-display-wrapper { display: flex; flex-direction: column; align-items: center; width: 90%; max-width: 800px; }
+        .fish-img-main { width: 100%; height: auto; display: block; border: 3px solid #d4af37; border-bottom: none; border-radius: 20px 20px 0 0; }
+        .fish-img-map { width: 100%; height: auto; display: block; border: 3px solid #d4af37; border-radius: 0 0 20px 20px; }
 
-        /* Style des labels */
-        .label-ville { background: white !important; border: 2px solid #3498db !important; border-radius: 5px; padding: 2px 6px; font-weight: bold; font-size: 10px; color: #2980b9; pointer-events: none; }
-        .label-eau { background: rgba(255, 255, 255, 0.9) !important; border: 2px solid #2980b9 !important; border-radius: 20px; padding: 2px 8px; color: #01579b; font-size: 9px; font-weight: bold; pointer-events: none; }
+        .footer-wiki { position: fixed; bottom: 0; left: 0; width: 100%; height: 50px; z-index: 3000; background: linear-gradient(90deg, #8b0000, #d4af37, #8b0000); display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; border-top: 2px solid white; }
+        .wiki-link { text-decoration: none; color: white; font-weight: bold; text-align: center; }
     </style>
 </head>
 <body>
@@ -89,27 +84,25 @@
     <video id="intro-video" autoplay muted loop playsinline><source src="pere noel.mp4" type="video/mp4"></video>
     <div class="welcome-box">
         <h1>MAPTOPIA FR</h1>
-        <p>Explorez Heartopia sans limites.</p>
+        <span class="welcome-subtitle">Dominez le monde d'Heartopia avec notre guide interactif mis à jour en temps réel !</span>
+        <span class="dev-status">Carte interactive en cours de développement</span>
         <button id="enter-button" onclick="startExperience()">🎄 ENTRER 🎄</button>
     </div>
 </div>
 
 <div id="map"></div>
 
-<div class="team-container" onclick="showGroupImage()">
-    <div class="team-name-label">TEAM HEARTFR</div>
-    <img src="groupefr.png" class="team-logo">
+<div id="overlay-fish" onclick="this.style.display='none'">
+    <div class="fish-display-wrapper">
+        <img id="fish-main" class="fish-img-main" src="">
+        <img id="fish-cond" class="fish-img-map" src="">
+    </div>
 </div>
 
-<a href="https://discord.gg/dc8eZwf2jq" target="_blank" class="discord-btn">
-    <img src="https://cdn-icons-png.flaticon.com/512/3670/3670157.png" class="discord-icon">
-</a>
-
-<div id="overlay-group" onclick="this.style.display='none'"><img src="groupefr.png" class="full-img"></div>
-<div id="overlay-fish" onclick="this.style.display='none'"><img id="fish-main" class="full-img" style="border-bottom:none"><img id="fish-cond" class="full-img" style="border-top:none; background:white; max-height:150px; width:95%; object-fit:contain;"></div>
-
 <div class="footer-wiki">
-    <a href="https://jayibwi.wixsite.com/my-site-1" target="_blank" class="wiki-link">📖 WIKI FR COMPLET 📖</a>
+    <div style="color: white; font-size: 11px; padding-left: 15px;">rex Edition</div>
+    <a href="https://jayibwi.wixsite.com/my-site-1" target="_blank" class="wiki-link">📖 ACCÉDER AU WIKI FR COMPLET 📖</a>
+    <div></div>
 </div>
 
 <script>
@@ -119,15 +112,13 @@
         setTimeout(() => { document.getElementById('intro-screen').style.display = 'none'; }, 1000);
     }
 
-    function showGroupImage() { document.getElementById('overlay-group').style.display = 'flex'; }
-
     var bounds = [[-1000, 0], [0, 1000]];
     var map = L.map('map', { crs: L.CRS.Simple, minZoom: 0, maxZoom: 3, zoom: 1, maxBounds: bounds });
     L.imageOverlay('carte.png', bounds).addTo(map);
     map.setView([-500, 500], 1);
 
     var currentActiveLayer = null;
-    var dataStorage = {};
+    var dataStorage = { pnj:[], bus:[], shop:[], lieux:[] };
 
     function clearPrevious() { if(currentActiveLayer) { map.removeLayer(currentActiveLayer); currentActiveLayer = null; } }
 
@@ -136,23 +127,21 @@
         if(options.type) { 
             L.marker(pos, {opacity:0}).addTo(g).bindTooltip(name, {permanent:true, direction:'center', className:options.type}); 
         } else { 
-            var size = (cat === 'shop') ? 50 : 60;
+            var size = (cat === 'shop') ? 60 : 70;
             L.marker(pos, {icon: L.icon({iconUrl:img, iconSize:[size,size], iconAnchor:[size/2,size]})}).addTo(g).bindPopup(name); 
         }
-        if(options.startOn) { g.addTo(map); }
-        if(!dataStorage[cat]) dataStorage[cat] = [];
+        if(options.startOn) g.addTo(map);
         dataStorage[cat].push({name:name, pos:pos, layer:g, img:img, startOn: options.startOn});
     }
 
-    // --- PNJ ---
-    var pnjs = [["Bob",[-471,501],'pnj/bob.png'], ["Atara",[-526,499],'pnj/atara.png'], ["Le Collectionneur",[-478,493],'pnj/collectioneur.png'], ["Dorothée",[-469,488],'pnj/dorothée.png'], ["Massimo",[-446,493],'pnj/massimo.png'], ["Ka Ching",[-412,418],'pnj/ka ching.png'], ["Andrew",[-399,591],'pnj/andrew.png'], ["Eric",[-259,522],'pnj/eric.png'], ["Vanya",[-456,549],'pnj/vanya.png'], ["Naniwa",[-502,582],'pnj/niniwa.png'], ["Joan",[-502,519],'pnj/joa.png'], ["Will",[-807,419],'pnj/will.png'], ["Patti",[-355,809],'pnj/patti.png'], ["Vernie",[-653,225],'pnj/vernie.png'], ["Bayley",[-498,526],'pnj/bayley.png']];
+    // --- PNJS & BUS ---
+    var pnjs = [["Bob",[-471,501],'pnj/bob.png'], ["Atara",[-526,499],'pnj/atara.png'], ["Le Collectionneur",[-478,493],'pnj/collectioneur.png'], ["Dorothée",[-469,488],'pnj/dorothée.png'], ["Massimo",[-446,493],'pnj/massimo.png'], ["Andrew",[-399,591],'pnj/andrew.png'], ["Eric",[-259,522],'pnj/eric.png'], ["Vanya",[-456,549],'pnj/vanya.png'], ["Naniwa",[-502,582],'pnj/niniwa.png'], ["Joan",[-502,519],'pnj/joa.png'], ["Will",[-807,419],'pnj/will.png'], ["Patti",[-355,809],'pnj/patti.png'], ["Vernie",[-653,225],'pnj/vernie.png'], ["Bayley",[-498,526],'pnj/bayley.png']];
     pnjs.forEach(p => register('pnj', p[1], p[0], p[2]));
 
-    // --- BUS ---
     var buses = [["Banlieue Ouest",[-533,340]], ["Banlieue du Village",[-519,639]], ["Village de Pêcheurs",[-654,479]], ["Champ de Fleurs",[-532,218]], ["Montagne Thermale",[-222,512]], ["Banlieue Nord",[-373,480]], ["Place Centrale",[-497,481]], ["Forêt",[-500,798]]];
     buses.forEach(b => register('bus', b[1], b[0], 'bus.png'));
 
-    // --- LIEUX ET MAGASINS (Auto-affiche) ---
+    // --- LIEUX & MAGASINS ---
     var lieuxData = [
         { pos: [-538, 492], name: "Place Centrale", type: "label-ville", startOn: true },
         { pos: [-692, 506], name: "Village de Pêcheurs", type: "label-ville", startOn: true },
@@ -190,21 +179,120 @@
         { pos: [-496, 523], name: "Magasin Animaux", icon: 'chien.png', isShop: true, startOn: false },
         { pos: [-440, 467], name: "Librairie", icon: 'Librairie.png', isShop: true, startOn: false }
     ];
-
     lieuxData.forEach(l => register(l.isShop ? 'shop' : 'lieux', l.pos, l.name, l.icon || '', {type: l.type, startOn: l.startOn}));
 
-    var fishList = [{name:"Ablette", m:"poisson/ablette1.png", c:"poisson/Lacs.png"}];
+    // --- LES 97 POISSONS ---
+    const fishList = [
+        { name: "Ablette", bg: "poisson/ablette1.png", cond: "poisson/Lacs.png" },
+        { name: "Acantharchus pomotis", bg: "poisson/Acantharchus_pomotis1.png", cond: "poisson/arcantharcus%20pomotis.png" },
+        { name: "Aphyosemion striatum", bg: "poisson/Aphyosemion%20striatum.png", cond: "poisson/Aphyosemion%20striatum1.png" },
+        { name: "Barbeau", bg: "poisson/barbeau1.png", cond: "poisson/barbeau.png" },
+        { name: "Barbillon", bg: "poisson/barbillon1.png", cond: "poisson/barbillon.png" },
+        { name: "Baudroie", bg: "poisson/baudroie1.png", cond: "poisson/Baudroie.png" },
+        { name: "Bernard l'Hermite", bg: "poisson/bernard_bg.png", cond: "poisson/bernardlhermite.png" },
+        { name: "Blennie de rivière", bg: "poisson/blennie_bg.png", cond: "poisson/bleniiedesrivieree.png" },
+        { name: "Bonite", bg: "poisson/bonite1.png", cond: "poisson/bonite.png" },
+        { name: "Carpe argentée", bg: "poisson/carpe_argentee1.png", cond: "poisson/carpe_argentee.png" },
+        { name: "Carpe européenne", bg: "poisson/Carpe_europeenne1.png", cond: "poisson/Carpe_europeenne.png" },
+        { name: "Carpe Papillon", bg: "poisson/carpe%20papillon1.png", cond: "poisson/carpe%20papillon.png" },
+        { name: "Carpe noire", bg: "poisson/carpe%20noir.png", cond: "poisson/carpe%20noir1.png" },
+        { name: "Chabot", bg: "poisson/chabot_bg.png", cond: "poisson/chabot.png" },
+        { name: "Chimère argentée", bg: "poisson/chimere%20argent1.pnj.avif", cond: "poisson/chimere%20argent%C3%A9.png" },
+        { name: "Comète coussut", bg: "poisson/comete_coussut1.png", cond: "poisson/comete_coussut.png" },
+        { name: "Crabe de ruisseau", bg: "poisson/Crabe_de_ruisseau1.png", cond: "poisson/crabe%20de%20ruisseau.png" },
+        { name: "Crevette verte", bg: "poisson/crevette_verte1.png", cond: "poisson/crevette%20verte.png" },
+        { name: "Anguille européenne", bg: "poisson/anguille_bg.png", cond: "poisson/anguille_cond.png" },
+        { name: "Crevette de la mer", bg: "poisson/crevettemer_bg.png", cond: "poisson/crevettemer_cond.png" },
+        { name: "Ecrevisse noble", bg: "poisson/ecrevisse_bg.png", cond: "poisson/ecrevisse_cond.png" },
+        { name: "Ecrevisse noble bleue", bg: "poisson/ecrevissebleue_bg.png", cond: "poisson/ecrevissebleue_cond.png" },
+        { name: "Eglefin", bg: "poisson/eglefin_bg.png", cond: "poisson/eglefin_cond.png" },
+        { name: "Eperlan", bg: "poisson/eperlan_bg.png", cond: "poisson/eperlan_cond.png" },
+        { name: "Epinoche", bg: "poisson/epinoche_bg.png", cond: "poisson/epinoche_cond.png" },
+        { name: "Espadon", bg: "poisson/espadon_bg.png", cond: "poisson/espadon_cond.png" },
+        { name: "Féra", bg: "poisson/fera_bg.png", cond: "poisson/fera_cond.png" },
+        { name: "Grand black-basse", bg: "poisson/blackbass_bg.png", cond: "poisson/blackbass_cond.png" },
+        { name: "Grande huître perlière", bg: "poisson/huitre_bg.png", cond: "poisson/huitre_cond.png" },
+        { name: "Grenouille européenne", bg: "poisson/grenouille_bg.png", cond: "poisson/grenouille_cond.png" },
+        { name: "Gobie", bg: "poisson/gobie_bg.png", cond: "poisson/gobie_cond.png" },
+        { name: "Grondin perlon", bg: "poisson/grondin_bg.png", cond: "poisson/grondin_cond.png" },
+        { name: "Hippocampe", bg: "poisson/hippocampe_bg.png", cond: "poisson/hippocampe_cond.png" },
+        { name: "Huchon", bg: "poisson/huchon_bg.png", cond: "poisson/huchon_cond.png" },
+        { name: "Langouste européenne", bg: "poisson/langouste_bg.png", cond: "poisson/langouste_cond.png" },
+        { name: "Loche des fleurs", bg: "poisson/lochefleurs_bg.png", cond: "poisson/lochefleurs_cond.png" },
+        { name: "Loche des rochers", bg: "poisson/locheroches_bg.png", cond: "poisson/locheroches_cond.png" },
+        { name: "Lotte", bg: "poisson/lotte_bg.png", cond: "poisson/lotte_cond.png" },
+        { name: "Maquereau atlantique", bg: "poisson/maquereau_bg.png", cond: "poisson/maquereau_cond.png" },
+        { name: "Moule", bg: "poisson/moule_bg.png", cond: "poisson/moule_cond.png" },
+        { name: "Omble", bg: "poisson/omble_bg.png", cond: "poisson/omble_cond.png" },
+        { name: "Omble chevalier", bg: "poisson/omblechevalier_bg.png", cond: "poisson/omblechevalier_cond.png" },
+        { name: "Ombrine", bg: "poisson/ombrine_bg.png", cond: "poisson/ombrine_cond.png" },
+        { name: "Oranda", bg: "poisson/oranda_bg.png", cond: "poisson/oranda_cond.png" },
+        { name: "Pagellus bogaraveo", bg: "poisson/pagellus_bg.png", cond: "poisson/pagellus_cond.png" },
+        { name: "Perche de mer", bg: "poisson/perchemer_bg.png", cond: "poisson/perchemer_cond.png" },
+        { name: "Perche de prunier", bg: "poisson/percheprunier_bg.png", cond: "poisson/percheprunier_cond.png" },
+        { name: "Perche de rivière", bg: "poisson/percheriviere_bg.png", cond: "poisson/percheriviere_cond.png" },
+        { name: "Pieuvre", bg: "poisson/pieuvre_bg.png", cond: "poisson/pieuvre_cond.png" },
+        { name: "Pieuvre naine atlantique", bg: "poisson/pieuvrenaine_bg.png", cond: "poisson/pieuvrenaine_cond.png" },
+        { name: "POISSON-TIGRE", bg: "poisson/tigre_bg.png", cond: "poisson/tigre_cond.png" },
+        { name: "Plie européenne", bg: "poisson/plie_bg.png", cond: "poisson/plie_cond.png" },
+        { name: "Poisson agrion", bg: "poisson/agrion_bg.png", cond: "poisson/agrion_cond.png" },
+        { name: "Poisson-clown", bg: "poisson/clown_bg.png", cond: "poisson/clown_cond.png" },
+        { name: "Poisson combattant", bg: "poisson/combattant_bg.png", cond: "poisson/combattant_cond.png" },
+        { name: "Poisson divin", bg: "poisson/divin_bg.png", cond: "poisson/divin_cond.png" },
+        { name: "Poisson épineux", bg: "poisson/epineux_bg.png", cond: "poisson/epineux_cond.png" },
+        { name: "Poisson-globe", bg: "poisson/globe_bg.png", cond: "poisson/globe_cond.png" },
+        { name: "Poisson-lion", bg: "poisson/lion_bg.png", cond: "poisson/lion_cond.png" },
+        { name: "Poisson lune", bg: "poisson/lune_bg.png", cond: "poisson/lune_cond.png" },
+        { name: "Poisson rouge", bg: "poisson/rouge_bg.png", cond: "poisson/rouge_cond.png" },
+        { name: "Poisson ruban", bg: "poisson/ruban_bg.png", cond: "poisson/ruban_cond.png" },
+        { name: "Poisson suspendu", bg: "poisson/suspendu_bg.png", cond: "poisson/suspendu_cond.png" },
+        { name: "Poisson à yeux rouges", bg: "poisson/yeuxrouges_bg.png", cond: "poisson/yeuxrouges_cond.png" },
+        { name: "Régalec", bg: "poisson/regalec_bg.png", cond: "poisson/regalec_cond.png" },
+        { name: "Requin baleine", bg: "poisson/requinbaleine_bg.png", cond: "poisson/requinbaleine_cond.png" },
+        { name: "Requin mako", bg: "poisson/requinmako_bg.png", cond: "poisson/requinmako_cond.png" },
+        { name: "Requin marteau", bg: "poisson/requinmarteau_bg.png", cond: "poisson/requinmarteau_cond.png" },
+        { name: "Rouget barbet", bg: "poisson/rouget_bg.png", cond: "poisson/rouget_cond.png" },
+        { name: "Roussette", bg: "poisson/roussette_bg.png", cond: "poisson/roussette_cond.png" },
+        { name: "Sandre blanc", bg: "poisson/sandre_bg.png", cond: "poisson/sandre_cond.png" },
+        { name: "Saumon atlantique", bg: "poisson/saumonatl_bg.png", cond: "poisson/saumonatl_cond.png" },
+        { name: "Saumon kéta", bg: "poisson/saumonketa_bg.png", cond: "poisson/saumonketa_cond.png" },
+        { name: "Saurel", bg: "poisson/saurel_bg.png", cond: "poisson/saurel_cond.png" },
+        { name: "Sardine", bg: "poisson/sardine_bg.png", cond: "poisson/sardine_cond.png" },
+        { name: "Seiche européenne", bg: "poisson/seiche_bg.png", cond: "poisson/seiche_cond.png" },
+        { name: "Silure européen", bg: "poisson/silure_bg.png", cond: "poisson/silure_cond.png" },
+        { name: "Tanche dorée", bg: "poisson/tanche_bg.png", cond: "poisson/tanche_cond.png" },
+        { name: "Têtard", bg: "poisson/tetard_bg.png", cond: "poisson/tetard_cond.png" },
+        { name: "Thon rouge", bg: "poisson/thon_bg.png", cond: "poisson/thon_cond.png" },
+        { name: "Tilapia", bg: "poisson/tilapia_bg.png", cond: "poisson/tilapia_cond.png" },
+        { name: "Tortue verte", bg: "poisson/tortue_bg.png", cond: "poisson/tortue_cond.png" },
+        { name: "Turbot", bg: "poisson/turbot_bg.png", cond: "poisson/turbot_cond.png" },
+        { name: "Vairon", bg: "poisson/vairon_bg.png", cond: "poisson/vairon_cond.png" },
+        { name: "Zingel streber", bg: "poisson/zingel_bg.png", cond: "poisson/zingel_cond.png" },
+        { name: "Alose", bg: "poisson/alose_bg.png", cond: "poisson/alose_cond.png" },
+        { name: "Anchois", bg: "poisson/anchois_bg.png", cond: "poisson/anchois_cond.png" },
+        { name: "Brochet", bg: "poisson/brochet_bg.png", cond: "poisson/brochet_cond.png" },
+        { name: "Cabillaud", bg: "poisson/cabillaud_bg.png", cond: "poisson/cabillaud_cond.png" },
+        { name: "Dorade Royale", bg: "poisson/dorade_bg.png", cond: "poisson/dorade_cond.png" },
+        { name: "Esturgeon", bg: "poisson/esturgeon_bg.png", cond: "poisson/esturgeon_cond.png" },
+        { name: "Hareng", bg: "poisson/hareng_bg.png", cond: "poisson/hareng_cond.png" },
+        { name: "Lieu Jaune", bg: "poisson/lieu_bg.png", cond: "poisson/lieu_cond.png" },
+        { name: "Mulet", bg: "poisson/mulet_bg.png", cond: "poisson/mulet_cond.png" },
+        { name: "Raie", bg: "poisson/raie_bg.png", cond: "poisson/raie_cond.png" },
+        { name: "Sole", bg: "poisson/sole_bg.png", cond: "poisson/sole_cond.png" },
+        { name: "Truite", bg: "poisson/truite_bg.png", cond: "poisson/truite_cond.png" },
+        { name: "Poisson de lune", bg: "poisson/poissondelune_bg.png", cond: "poisson/poissondelune_cond.png" }
+    ];
 
-    // --- MENU ---
+    // --- LOGIQUE MENU ---
     var customControl = L.control({position: 'topleft'});
     customControl.onAdd = function() {
         var div = L.DomUtil.create('div', 'leaflet-control-layers');
         div.innerHTML = `
-            <div id="c-pnj"><div class="accordion-title title-pnj">👥 PNJ <span>▼</span></div><div class="accordion-content"></div></div>
-            <div id="c-bus"><div class="accordion-title title-bus">🚌 BUS <span>▼</span></div><div class="accordion-content"></div></div>
-            <div id="c-shop"><div class="accordion-title title-shop">🛍️ MAGASINS <span>▼</span></div><div class="accordion-content"></div></div>
-            <div id="c-lieux"><div class="accordion-title title-lieux">📍 LIEUX <span>▼</span></div><div class="accordion-content"></div></div>
-            <div id="c-fish"><div class="accordion-title title-poisson">🐟 PÊCHE <span>▼</span></div><div class="accordion-content"></div></div>
+            <div id="c-pnj"><div class="accordion-title title-pnj">PERSONNAGES <span>▼</span></div><div class="accordion-content"></div></div>
+            <div id="c-bus"><div class="accordion-title title-bus">ARRÊTS DE BUS <span>▼</span></div><div class="accordion-content"></div></div>
+            <div id="c-shop"><div class="accordion-title title-shop">MAGASINS <span>▼</span></div><div class="accordion-content"></div></div>
+            <div id="c-lieux"><div class="accordion-title title-lieux">LIEUX <span>▼</span></div><div class="accordion-content"></div></div>
+            <div id="c-fish"><div class="accordion-title title-poisson">POISSONS <span>▼</span></div><div class="accordion-content"></div></div>
         `;
         return div;
     };
@@ -215,24 +303,24 @@
             var box = document.getElementById('c-'+cat), content = box.querySelector('.accordion-content'), title = box.querySelector('.accordion-title');
             dataStorage[cat].forEach(item => {
                 var el = document.createElement('div'); el.className = 'menu-item';
-                el.innerHTML = (item.img ? `<img src="${item.img}" class="menu-icon">` : '📍 ') + item.name;
-                el.onclick = () => {
-                    if(!item.startOn) { clearPrevious(); item.layer.addTo(map); currentActiveLayer = item.layer; }
-                    map.flyTo(item.pos, 2, {duration: 1.2});
-                    content.classList.remove('active'); title.querySelector('span').innerHTML = '▼';
-                };
+                el.innerHTML = (item.img ? `<img src="${item.img}" class="menu-icon">` : '') + item.name;
+                el.onclick = () => { if(!item.startOn) { clearPrevious(); item.layer.addTo(map); currentActiveLayer = item.layer; } map.flyTo(item.pos, 2); };
                 content.appendChild(el);
             });
-            title.onclick = () => { content.classList.toggle('active'); title.querySelector('span').innerHTML = content.classList.contains('active') ? '▲' : '▼'; };
+            title.onclick = () => content.classList.toggle('active');
         });
         
         var fCont = document.querySelector('#c-fish .accordion-content'), fTit = document.querySelector('#c-fish .accordion-title');
         fishList.forEach(f => {
-            var el = document.createElement('div'); el.className = 'menu-item'; el.innerHTML = '🐟 ' + f.name;
-            el.onclick = () => { document.getElementById('fish-main').src = f.m; document.getElementById('fish-cond').src = f.c; document.getElementById('overlay-fish').style.display = 'flex'; };
+            var el = document.createElement('div'); el.className = 'menu-item'; el.innerHTML = f.name;
+            el.onclick = () => { 
+                document.getElementById('fish-main').src = f.bg; 
+                document.getElementById('fish-cond').src = f.cond; 
+                document.getElementById('overlay-fish').style.display = 'flex'; 
+            };
             fCont.appendChild(el);
         });
-        fTit.onclick = () => { fCont.classList.toggle('active'); fTit.querySelector('span').innerHTML = fCont.classList.contains('active') ? '▲' : '▼'; };
+        fTit.onclick = () => fCont.classList.toggle('active');
     }
     setTimeout(initMenu, 300);
 </script>
