@@ -28,20 +28,28 @@
         .tip-text { display: block; font-size: 13px; color: #ccc; margin-bottom: 20px; font-style: italic; }
         
         #enter-button { padding: 15px 45px; background: linear-gradient(135deg, #8b0000, #d4af37); color: white; border: 1px solid white; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        #enter-button:hover { transform: scale(1.05); box-shadow: 0 0 15px #d4af37; }
-
-        /* --- ADAPTATION MOBILE (Bouton Entrée) --- */
-        @media (max-width: 768px) {
-            .welcome-box { width: 85%; bottom: 12%; padding: 20px; }
-            .welcome-box h1 { font-size: 24px; }
-            #enter-button { width: 100%; padding: 20px 0; font-size: 20px; border-radius: 15px; }
-        }
 
         /* --- CARTE --- */
         #map { height: 100vh; width: 100vw; opacity: 0; transition: opacity 2s ease; background: transparent !important; }
 
-        /* --- MENU GAUCHE --- */
-        .leaflet-control-layers { left: 20px !important; top: 20px !important; width: 260px !important; background: rgba(255, 255, 255, 0.98) !important; border-radius: 15px !important; padding: 10px !important; max-height: 80vh; overflow-y: auto !important; border: none !important; box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important; }
+        /* --- MENU GAUCHE (ACCORDÉON) --- */
+        .leaflet-control-layers { 
+            left: 20px !important; 
+            top: 20px !important; 
+            width: 260px !important; 
+            background: rgba(255, 255, 255, 0.98) !important; 
+            border-radius: 15px !important; 
+            padding: 10px !important; 
+            max-height: 80vh; 
+            overflow-y: auto !important; 
+            border: none !important; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important; 
+            transition: transform 0.4s ease;
+        }
+        
+        /* Bouton flèche pour mobile */
+        #menu-toggle { display: none; position: fixed; left: 0; top: 50%; transform: translateY(-50%); background: #8b0000; color: white; padding: 15px 10px; border-radius: 0 10px 10px 0; z-index: 4000; border: 1px solid #d4af37; border-left: none; cursor: pointer; }
+
         .accordion-title { color: white; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 5px; text-align: center; font-size: 12px; text-transform: uppercase; }
         .title-pnj { background: #8b0000; } 
         .title-bus { background: #2980b9; } 
@@ -52,6 +60,33 @@
         .accordion-content.active { display: block; }
         .menu-item { display: flex; align-items: center; padding: 8px; cursor: pointer; font-size: 13px; border-bottom: 1px solid #eee; color: #333; }
 
+        /* --- ADAPTATION MOBILE --- */
+        @media (max-width: 768px) {
+            .welcome-box { width: 85%; bottom: 12%; padding: 20px; }
+            .welcome-box h1 { font-size: 24px; }
+            #enter-button { width: 100%; padding: 20px 0; font-size: 20px; border-radius: 15px; }
+
+            /* Menu réduit et caché par défaut sur le côté */
+            .leaflet-control-layers { 
+                position: fixed !important;
+                left: -280px !important; /* Caché à gauche */
+                top: 10% !important;
+                width: 220px !important; /* Moins large */
+                z-index: 3500 !important;
+                transition: left 0.4s ease;
+            }
+            .leaflet-control-layers.open { left: 10px !important; } /* On l'affiche */
+            
+            #menu-toggle { display: block; } /* On montre la flèche */
+
+            .menu-item { padding: 12px 8px; font-size: 14px; } /* Plus facile à cliquer */
+            .accordion-title { padding: 12px; font-size: 11px; }
+            
+            .discord-btn img { width: 50px; height: 50px; }
+            .team-box { bottom: 85px; left: 10px; scale: 0.8; }
+            .ping-legend { width: 150px; font-size: 12px; top: 10px; right: 10px; }
+        }
+
         /* --- SYSTÈME POISSON --- */
         #overlay-fish { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 30000; display: none; align-items: center; justify-content: center; }
         .fish-card { display: flex; flex-direction: column; align-items: center; background: white; padding: 25px; border-radius: 20px; border: 3px solid #d4af37; width: 550px; max-width: 95%; }
@@ -60,25 +95,26 @@
         #fish-name { margin: 0 0 15px 0; color: #333; font-size: 26px; text-transform: uppercase; font-weight: 800; }
 
         /* --- FOOTER & DISCORD --- */
-        .footer-wiki { position: fixed; bottom: 0; left: 0; width: 100%; height: 75px; z-index: 3000; background: linear-gradient(90deg, #8b0000, #d4af37, #8b0000); display: flex; align-items: center; justify-content: center; border-top: 3px solid white; }
-        .footer-wiki a { color: white; text-decoration: none; font-weight: 900; font-size: 24px; letter-spacing: 2px; text-transform: uppercase; }
+        .footer-wiki { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; z-index: 3000; background: linear-gradient(90deg, #8b0000, #d4af37, #8b0000); display: flex; align-items: center; justify-content: center; border-top: 3px solid white; }
+        .footer-wiki a { color: white; text-decoration: none; font-weight: 900; font-size: 20px; letter-spacing: 1px; text-transform: uppercase; }
         
-        .discord-btn { position: fixed; bottom: 95px; right: 25px; z-index: 3001; transition: transform 0.3s; }
-        .discord-btn img { width: 70px; height: 70px; filter: drop-shadow(0 0 15px rgba(114, 137, 218, 0.8)); }
+        .discord-btn { position: fixed; bottom: 85px; right: 20px; z-index: 3001; transition: transform 0.3s; }
+        .discord-btn img { width: 60px; height: 60px; filter: drop-shadow(0 0 10px rgba(114, 137, 218, 0.8)); }
 
-        /* --- NOTES & LÉGENDE --- */
-        .ping-legend { position: fixed; right: 20px; top: 20px; width: 220px; background: rgba(0,0,0,0.9); border: 2px solid #d4af37; border-radius: 15px; padding: 15px; color: white; z-index: 1000; max-height: 40vh; overflow-y: auto; }
+        .ping-legend { position: fixed; right: 20px; top: 20px; width: 220px; background: rgba(0,0,0,0.9); border: 2px solid #d4af37; border-radius: 15px; padding: 15px; color: white; z-index: 1000; max-height: 35vh; overflow-y: auto; }
         .label-ville { background: white !important; border: 2px solid #3498db !important; border-radius: 5px; padding: 2px 8px; font-weight: bold; font-size: 11px; color: #2980b9; }
         .label-eau { background: rgba(41, 128, 185, 0.3) !important; border: 1px solid #2980b9 !important; border-radius: 5px; padding: 2px 8px; font-size: 10px; color: white; font-weight: bold; }
         
-        .team-box { position: fixed; bottom: 95px; left: 20px; z-index: 3000; text-align: center; }
-        .team-text { font-weight: 900; font-size: 18px; color: white; text-shadow: 0 0 10px #d4af37; margin-bottom: 5px; display: block; }
-        .team-img { width: 85px; height: 85px; border-radius: 15px; border: 2px solid #d4af37; cursor: pointer; }
+        .team-box { position: fixed; bottom: 85px; left: 20px; z-index: 3000; text-align: center; }
+        .team-text { font-weight: 900; font-size: 16px; color: white; text-shadow: 0 0 10px #d4af37; margin-bottom: 5px; display: block; }
+        .team-img { width: 70px; height: 70px; border-radius: 15px; border: 2px solid #d4af37; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <audio id="main-audio"><source src="sonheartopia.mp4" type="audio/mp4"></audio>
+
+<div id="menu-toggle" onclick="toggleMobileMenu()">▶</div>
 
 <div id="intro-screen">
     <video class="video-bg-blur" autoplay muted loop playsinline><source src="pere noel.mp4" type="video/mp4"></video>
@@ -98,7 +134,7 @@
 </a>
 
 <div class="ping-legend">
-    <h3 style="text-align:center; color:#d4af37; font-size:14px; margin-top:0;">📌 MES NOTES</h3>
+    <h3 style="text-align:center; color:#d4af37; font-size:13px; margin-top:0;">📌 MES NOTES</h3>
     <div id="legend-list"></div>
 </div>
 
@@ -130,6 +166,24 @@
         document.getElementById('intro-screen').style.opacity = '0';
         document.getElementById('map').style.opacity = '1';
         setTimeout(() => { document.getElementById('intro-screen').style.display = 'none'; }, 1000);
+    }
+
+    // Fonction pour ouvrir/fermer le menu mobile
+    function toggleMobileMenu() {
+        const menu = document.querySelector('.leaflet-control-layers');
+        const btn = document.getElementById('menu-toggle');
+        menu.classList.toggle('open');
+        btn.innerText = menu.classList.contains('open') ? "◀" : "▶";
+    }
+
+    // Fonction pour fermer le menu mobile quand on clique sur un item
+    function closeMenuOnSelect() {
+        if (window.innerWidth <= 768) {
+            const menu = document.querySelector('.leaflet-control-layers');
+            const btn = document.getElementById('menu-toggle');
+            menu.classList.remove('open');
+            btn.innerText = "▶";
+        }
     }
 
     var bounds = [[-1000, 0], [0, 1000]];
@@ -165,7 +219,7 @@
         userPings.forEach(p => {
             const item = document.createElement('div'); item.style.cursor="pointer";
             item.innerHTML = `<span style="color:${colors[p.color]||'blue'}">●</span> <span>${p.text}</span>`;
-            item.onclick = () => map.flyTo(p.latlng, 2);
+            item.onclick = () => { map.flyTo(p.latlng, 2); closeMenuOnSelect(); };
             list.appendChild(item);
         });
     }
@@ -245,7 +299,11 @@
             dataStorage[cat].forEach(item => {
                 var el = document.createElement('div'); el.className = 'menu-item';
                 el.innerHTML = (item.img ? `<img src="${item.img}" style="width:24px;margin-right:8px;">` : '') + item.name;
-                el.onclick = () => { if(!item.startOn){ if(currentActiveLayer) map.removeLayer(currentActiveLayer); item.layer.addTo(map); currentActiveLayer = item.layer; } map.flyTo(item.pos, 2); };
+                el.onclick = () => { 
+                    if(!item.startOn){ if(currentActiveLayer) map.removeLayer(currentActiveLayer); item.layer.addTo(map); currentActiveLayer = item.layer; } 
+                    map.flyTo(item.pos, 2); 
+                    closeMenuOnSelect(); // Cache le menu sur mobile
+                };
                 content.appendChild(el);
             });
             box.querySelector('.accordion-title').onclick = () => content.classList.toggle('active');
@@ -258,6 +316,7 @@
                 document.getElementById('fish-main').src = f.bg; 
                 document.getElementById('fish-cond').src = (f.cond !== "VIDE") ? f.cond : ""; 
                 document.getElementById('overlay-fish').style.display = 'flex'; 
+                closeMenuOnSelect(); // Cache le menu sur mobile
             };
             fCont.appendChild(el);
         });
