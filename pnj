@@ -1,0 +1,18 @@
+// --- DONNÉES PNJ (Lien avec ton dossier /pnj/ sur GitHub) ---
+    var pnjData = [
+        { pos: [-471, 501], name: "Bob", icon: 'pnj/bob.png' },
+        { pos: [-526, 499], name: "Atara", icon: 'pnj/atara.png' },
+        { pos: [-478, 493], name: "Le Collectionneur", icon: 'pnj/collectioneur.png' },
+        { pos: [-469, 488], name: "Dorothée", icon: 'pnj/dorothée.png' },
+        { pos: [-446, 493], name: "Massimo", icon: 'pnj/massimo.png' },
+        { pos: [-412, 418], name: "Ka Ching", icon: 'pnj/ka ching.png' },
+        { pos: [-399, 591], name: "Andrew", icon: 'pnj/andrew.png' },
+        { pos: [-259, 522], name: "Eric", icon: 'pnj/eric.png' },
+        { pos: [-456, 549], name: "Vanya", icon: 'pnj/vanya.png' },
+        { pos: [-502, 582], name: "Naniwa", icon: 'pnj/niniwa.png' },
+        { pos: [-502, 519], name: "Joan", icon: 'pnj/joa.png' },
+        { pos: [-807, 419], name: "Will", icon: 'pnj/will.png' },
+        { pos: [-355, 809], name: "Patti", icon: 'pnj/patti.png' },
+        { pos: [-653, 225], name: "Vernie", icon: 'pnj/vernie.png' },
+        { pos: [-498, 526], name: "Bayley", icon: 'pnj/bayley.png' }
+    ];
