@@ -57,36 +57,31 @@
         .label-ville { background: white !important; border: 2px solid #3498db !important; border-radius: 5px; padding: 2px 8px; font-weight: bold; font-size: 11px; color: #2980b9; }
         .label-eau { background: rgba(41, 128, 185, 0.2) !important; border: 1px solid #2980b9 !important; border-radius: 5px; padding: 2px 8px; font-size: 10px; color: white; text-shadow: 1px 1px 2px black; }
 
-        /* --- TEAM (BAS GAUCHE) --- */
+        /* --- TEAM --- */
         .team-box { position: fixed; bottom: 60px; left: 20px; z-index: 3000; text-align: center; }
-        .team-text { 
-            font-weight: 900; font-size: 18px; margin-bottom: 5px;
-            background: linear-gradient(to right, #ffffff, #d4af37, #ffffff);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5); display: block;
-        }
-        .team-img { width: 90px; height: 90px; border-radius: 15px; border: 2px solid #d4af37; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.6); object-fit: cover; }
-        .team-img:hover { transform: scale(1.1); }
+        .team-text { font-weight: 900; font-size: 18px; margin-bottom: 5px; background: linear-gradient(to right, #ffffff, #d4af37, #ffffff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: block; }
+        .team-img { width: 90px; height: 90px; border-radius: 15px; border: 2px solid #d4af37; cursor: pointer; transition: 0.3s; object-fit: cover; }
 
-        /* --- DISCORD (BAS DROITE) --- */
+        /* --- DISCORD --- */
         .discord-box { position: fixed; bottom: 65px; right: 20px; z-index: 3000; }
-        .discord-btn { background: #5865F2; color: white; padding: 12px 20px; border-radius: 15px; display: flex; align-items: center; text-decoration: none; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.4); transition: 0.3s; }
-        .discord-btn:hover { background: #4752C4; transform: translateY(-3px); }
+        .discord-btn { background: #5865F2; color: white; padding: 12px 20px; border-radius: 15px; display: flex; align-items: center; text-decoration: none; font-weight: bold; transition: 0.3s; }
         .discord-btn img { width: 30px; margin-right: 12px; }
 
         /* --- FOOTER --- */
         .footer-wiki { position: fixed; bottom: 0; left: 0; width: 100%; height: 50px; z-index: 3000; background: linear-gradient(90deg, #8b0000, #d4af37, #8b0000); display: flex; align-items: center; justify-content: center; border-top: 2px solid white; }
-        .wiki-link { text-decoration: none; color: white; font-weight: bold; letter-spacing: 1px; }
+        .wiki-link { text-decoration: none; color: white; font-weight: bold; }
 
         /* --- OVERLAYS --- */
         #overlay-fish, #overlay-team { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 30000; display: none; align-items: center; justify-content: center; cursor: pointer; }
-        #overlay-team img { max-width: 85%; max-height: 85%; border: 4px solid #d4af37; border-radius: 15px; box-shadow: 0 0 30px rgba(212, 175, 55, 0.5); }
+        #overlay-team img { max-width: 85%; max-height: 85%; border: 4px solid #d4af37; border-radius: 15px; }
         .fish-display-wrapper { display: flex; flex-direction: column; align-items: center; width: 90%; max-width: 700px; }
         .fish-img-main { width: 100%; border: 3px solid #d4af37; border-radius: 15px 15px 0 0; }
         .fish-img-map { width: 100%; border: 3px solid #d4af37; border-top: none; border-radius: 0 0 15px 15px; }
     </style>
 </head>
 <body>
+
+<video id="entry-sound" style="display:none;"><source src="sonheartopia.mp4" type="video/mp4"></video>
 
 <div id="intro-screen">
     <video class="video-bg-blur" autoplay muted loop playsinline><source src="pere noel.mp4" type="video/mp4"></video>
@@ -103,7 +98,7 @@
 
 <div class="team-box">
     <span class="team-text">TEAM HEART FR</span>
-    <img src="groupefr.png" class="team-img" onclick="document.getElementById('overlay-team').style.display='flex'" alt="Team">
+    <img src="groupefr.png" class="team-img" onclick="document.getElementById('overlay-team').style.display='flex'">
 </div>
 
 <div class="discord-box">
@@ -113,10 +108,7 @@
     </a>
 </div>
 
-<div id="overlay-team" onclick="this.style.display='none'">
-    <img src="groupefr.png">
-</div>
-
+<div id="overlay-team" onclick="this.style.display='none'"><img src="groupefr.png"></div>
 <div id="overlay-fish" onclick="this.style.display='none'">
     <div class="fish-display-wrapper">
         <img id="fish-main" class="fish-img-main" src="">
@@ -130,6 +122,8 @@
 
 <script>
     function startExperience() {
+        var sound = document.getElementById('entry-sound');
+        sound.play().catch(e => console.log("Audio bloqué par le navigateur"));
         document.getElementById('intro-screen').style.opacity = '0';
         document.getElementById('map').style.opacity = '1';
         setTimeout(() => { document.getElementById('intro-screen').style.display = 'none'; }, 1000);
@@ -157,13 +151,25 @@
         dataStorage[cat].push({name:name, pos:pos, layer:g, img:img, startOn: options.startOn});
     }
 
-    // --- DONNÉES ---
-    var pnjs = [["Bob",[-471,501],'pnj/bob.png'], ["Atara",[-526,499],'pnj/atara.png'], ["Le Collectionneur",[-478,493],'pnj/collectioneur.png'], ["Dorothée",[-469,488],'pnj/dorothée.png'], ["Massimo",[-446,493],'pnj/massimo.png'], ["Andrew",[-399,591],'pnj/andrew.png'], ["Eric",[-259,522],'pnj/eric.png'], ["Vanya",[-456,549],'pnj/vanya.png'], ["Naniwa",[-502,582],'pnj/niniwa.png'], ["Joan",[-502,519],'pnj/joa.png'], ["Will",[-807,419],'pnj/will.png'], ["Patti",[-355,809],'pnj/patti.png'], ["Vernie",[-653,225],'pnj/vernie.png'], ["Bayley",[-498,526],'pnj/bayley.png']];
+    // --- TOUS LES PNJ ---
+    var pnjs = [
+        ["Bob",[-471,501],'pnj/bob.png'], ["Atara",[-526,499],'pnj/atara.png'], ["Le Collectionneur",[-478,493],'pnj/collectioneur.png'], 
+        ["Dorothée",[-469,488],'pnj/dorothée.png'], ["Massimo",[-446,493],'pnj/massimo.png'], ["Andrew",[-399,591],'pnj/andrew.png'], 
+        ["Eric",[-259,522],'pnj/eric.png'], ["Vanya",[-456,549],'pnj/vanya.png'], ["Naniwa",[-502,582],'pnj/niniwa.png'], 
+        ["Joan",[-502,519],'pnj/joa.png'], ["Will",[-807,419],'pnj/will.png'], ["Patti",[-355,809],'pnj/patti.png'], 
+        ["Vernie",[-653,225],'pnj/vernie.png'], ["Bayley",[-498,526],'pnj/bayley.png']
+    ];
     pnjs.forEach(p => register('pnj', p[1], p[0], p[2]));
 
-    var buses = [["Banlieue Ouest",[-533,340]], ["Banlieue du Village",[-519,639]], ["Village de Pêcheurs",[-654,479]], ["Champ de Fleurs",[-532,218]], ["Montagne Thermale",[-222,512]], ["Banlieue Nord",[-373,480]], ["Place Centrale",[-497,481]], ["Forêt",[-500,798]]];
+    // --- TOUS LES BUS ---
+    var buses = [
+        ["Banlieue Ouest",[-533,340]], ["Banlieue du Village",[-519,639]], ["Village de Pêcheurs",[-654,479]], 
+        ["Champ de Fleurs",[-532,218]], ["Montagne Thermale",[-222,512]], ["Banlieue Nord",[-373,480]], 
+        ["Place Centrale",[-497,481]], ["Forêt",[-500,798]]
+    ];
     buses.forEach(b => register('bus', b[1], b[0], 'bus.png'));
 
+    // --- TOUS LES LIEUX ET MAGASINS ---
     var lieuxData = [
         { pos: [-538, 492], name: "Place Centrale", type: "label-ville", startOn: true },
         { pos: [-692, 506], name: "Village de Pêcheurs", type: "label-ville", startOn: true },
@@ -203,7 +209,7 @@
     ];
     lieuxData.forEach(l => register(l.isShop ? 'shop' : 'lieux', l.pos, l.name, l.icon || '', {type: l.type, startOn: l.startOn}));
 
-    // --- LISTE POISSONS (97) ---
+    // --- TOUS LES POISSONS ---
     const fishList = [
         { name: "Ablette", bg: "poisson/ablette1.png", cond: "poisson/Lacs.png" },
         { name: "Acantharchus pomotis", bg: "poisson/Acantharchus_pomotis1.png", cond: "poisson/arcantharcus%20pomotis.png" },
@@ -225,74 +231,42 @@
         { name: "Crabe de ruisseau", bg: "poisson/Crabe_de_ruisseau1.png", cond: "poisson/crabe%20de%20ruisseau.png" },
         { name: "Crevette de la mer", bg: "VIDE", cond: "VIDE" },
         { name: "Crevette verte", bg: "poisson/crevette_verte1.png", cond: "poisson/crevette%20verte.png" },
-        { name: "Ecrevisse noble", bg: "VIDE", cond: "VIDE" },
-        { name: "Ecrevisse noble bleue", bg: "VIDE", cond: "VIDE" },
-        { name: "Eglefin", bg: "VIDE", cond: "VIDE" },
-        { name: "Eperlan", bg: "VIDE", cond: "VIDE" },
-        { name: "Epinoche", bg: "VIDE", cond: "VIDE" },
-        { name: "Espadon", bg: "VIDE", cond: "VIDE" },
-        { name: "Féra", bg: "VIDE", cond: "VIDE" },
-        { name: "Grand black-basse", bg: "VIDE", cond: "VIDE" },
-        { name: "Grande huître perlière", bg: "VIDE", cond: "VIDE" },
-        { name: "Grenouille européenne", bg: "VIDE", cond: "VIDE" },
-        { name: "Gobie", bg: "VIDE", cond: "VIDE" },
-        { name: "Grondin perlon", bg: "VIDE", cond: "VIDE" },
-        { name: "Hippocampe", bg: "VIDE", cond: "VIDE" },
-        { name: "Huchon", bg: "VIDE", cond: "VIDE" },
-        { name: "Langouste européenne", bg: "VIDE", cond: "VIDE" },
-        { name: "Loche des fleurs", bg: "VIDE", cond: "VIDE" },
-        { name: "Loche des rochers", bg: "VIDE", cond: "VIDE" },
-        { name: "Lotte", bg: "VIDE", cond: "VIDE" },
-        { name: "Maquereau atlantique", bg: "VIDE", cond: "VIDE" },
-        { name: "Moule", bg: "VIDE", cond: "VIDE" },
-        { name: "Omble", bg: "VIDE", cond: "VIDE" },
-        { name: "Omble chevalier", bg: "VIDE", cond: "VIDE" },
-        { name: "Ombrine", bg: "VIDE", cond: "VIDE" },
-        { name: "Oranda", bg: "VIDE", cond: "VIDE" },
-        { name: "Pagellus bogaraveo", bg: "VIDE", cond: "VIDE" },
-        { name: "Perche de mer", bg: "VIDE", cond: "VIDE" },
-        { name: "Perche de prunier", bg: "VIDE", cond: "VIDE" },
-        { name: "Perche de rivière", bg: "VIDE", cond: "VIDE" },
-        { name: "Pieuvre", bg: "VIDE", cond: "VIDE" },
-        { name: "Pieuvre naine atlantique", bg: "VIDE", cond: "VIDE" },
-        { name: "POISSON-TIGRE", bg: "VIDE", cond: "VIDE" },
-        { name: "Plie européenne", bg: "VIDE", cond: "VIDE" },
-        { name: "Poisson agrion", bg: "VIDE", cond: "VIDE" },
-        { name: "Poisson-clown", bg: "VIDE", cond: "VIDE" },
-        { name: "Poisson combattant", bg: "VIDE", cond: "VIDE" },
-        { name: "Poisson divin", bg: "VIDE", cond: "VIDE" },
-        { name: "Poisson épineux", bg: "VIDE", cond: "VIDE" },
-        { name: "Poisson-globe", bg: "VIDE", cond: "VIDE" },
-        { name: "Poisson-lion", bg: "VIDE", cond: "VIDE" },
-        { name: "Poisson lune", bg: "VIDE", cond: "VIDE" },
-        { name: "Poisson rouge", bg: "VIDE", cond: "VIDE" },
-        { name: "Poisson ruban", bg: "VIDE", cond: "VIDE" },
-        { name: "Poisson suspendu", bg: "VIDE", cond: "VIDE" },
-        { name: "Poisson à yeux rouges", bg: "VIDE", cond: "VIDE" },
-        { name: "Régalec", bg: "VIDE", cond: "VIDE" },
-        { name: "Requin baleine", bg: "VIDE", cond: "VIDE" },
-        { name: "Requin mako", bg: "VIDE", cond: "VIDE" },
-        { name: "Requin marteau", bg: "VIDE", cond: "VIDE" },
-        { name: "Rouget barbet", bg: "VIDE", cond: "VIDE" },
-        { name: "Roussette", bg: "VIDE", cond: "VIDE" },
-        { name: "Sandre blanc", bg: "VIDE", cond: "VIDE" },
-        { name: "Saumon atlantique", bg: "VIDE", cond: "VIDE" },
-        { name: "Saumon kéta", bg: "VIDE", cond: "VIDE" },
-        { name: "Saurel", bg: "VIDE", cond: "VIDE" },
-        { name: "Sardine", bg: "VIDE", cond: "VIDE" },
-        { name: "Seiche européenne", bg: "VIDE", cond: "VIDE" },
-        { name: "Silure européen", bg: "VIDE", cond: "VIDE" },
-        { name: "Tanche dorée", bg: "VIDE", cond: "VIDE" },
-        { name: "Têtard", bg: "VIDE", cond: "VIDE" },
-        { name: "Thon rouge", bg: "VIDE", cond: "VIDE" },
-        { name: "Tilapia", bg: "VIDE", cond: "VIDE" },
-        { name: "Tortue verte", bg: "VIDE", cond: "VIDE" },
-        { name: "Turbot", bg: "VIDE", cond: "VIDE" },
-        { name: "Vairon", bg: "VIDE", cond: "VIDE" },
+        { name: "Ecrevisse noble", bg: "VIDE", cond: "VIDE" }, { name: "Ecrevisse noble bleue", bg: "VIDE", cond: "VIDE" },
+        { name: "Eglefin", bg: "VIDE", cond: "VIDE" }, { name: "Eperlan", bg: "VIDE", cond: "VIDE" },
+        { name: "Epinoche", bg: "VIDE", cond: "VIDE" }, { name: "Espadon", bg: "VIDE", cond: "VIDE" },
+        { name: "Féra", bg: "VIDE", cond: "VIDE" }, { name: "Grand black-basse", bg: "VIDE", cond: "VIDE" },
+        { name: "Grande huître perlière", bg: "VIDE", cond: "VIDE" }, { name: "Grenouille européenne", bg: "VIDE", cond: "VIDE" },
+        { name: "Gobie", bg: "VIDE", cond: "VIDE" }, { name: "Grondin perlon", bg: "VIDE", cond: "VIDE" },
+        { name: "Hippocampe", bg: "VIDE", cond: "VIDE" }, { name: "Huchon", bg: "VIDE", cond: "VIDE" },
+        { name: "Langouste européenne", bg: "VIDE", cond: "VIDE" }, { name: "Loche des fleurs", bg: "VIDE", cond: "VIDE" },
+        { name: "Loche des rochers", bg: "VIDE", cond: "VIDE" }, { name: "Lotte", bg: "VIDE", cond: "VIDE" },
+        { name: "Maquereau atlantique", bg: "VIDE", cond: "VIDE" }, { name: "Moule", bg: "VIDE", cond: "VIDE" },
+        { name: "Omble", bg: "VIDE", cond: "VIDE" }, { name: "Omble chevalier", bg: "VIDE", cond: "VIDE" },
+        { name: "Ombrine", bg: "VIDE", cond: "VIDE" }, { name: "Oranda", bg: "VIDE", cond: "VIDE" },
+        { name: "Pagellus bogaraveo", bg: "VIDE", cond: "VIDE" }, { name: "Perche de mer", bg: "VIDE", cond: "VIDE" },
+        { name: "Perche de prunier", bg: "VIDE", cond: "VIDE" }, { name: "Perche de rivière", bg: "VIDE", cond: "VIDE" },
+        { name: "Pieuvre", bg: "VIDE", cond: "VIDE" }, { name: "Pieuvre naine atlantique", bg: "VIDE", cond: "VIDE" },
+        { name: "POISSON-TIGRE", bg: "VIDE", cond: "VIDE" }, { name: "Plie européenne", bg: "VIDE", cond: "VIDE" },
+        { name: "Poisson agrion", bg: "VIDE", cond: "VIDE" }, { name: "Poisson-clown", bg: "VIDE", cond: "VIDE" },
+        { name: "Poisson combattant", bg: "VIDE", cond: "VIDE" }, { name: "Poisson divin", bg: "VIDE", cond: "VIDE" },
+        { name: "Poisson épineux", bg: "VIDE", cond: "VIDE" }, { name: "Poisson-globe", bg: "VIDE", cond: "VIDE" },
+        { name: "Poisson-lion", bg: "VIDE", cond: "VIDE" }, { name: "Poisson lune", bg: "VIDE", cond: "VIDE" },
+        { name: "Poisson rouge", bg: "VIDE", cond: "VIDE" }, { name: "Poisson ruban", bg: "VIDE", cond: "VIDE" },
+        { name: "Poisson suspendu", bg: "VIDE", cond: "VIDE" }, { name: "Poisson à yeux rouges", bg: "VIDE", cond: "VIDE" },
+        { name: "Régalec", bg: "VIDE", cond: "VIDE" }, { name: "Requin baleine", bg: "VIDE", cond: "VIDE" },
+        { name: "Requin mako", bg: "VIDE", cond: "VIDE" }, { name: "Requin marteau", bg: "VIDE", cond: "VIDE" },
+        { name: "Rouget barbet", bg: "VIDE", cond: "VIDE" }, { name: "Roussette", bg: "VIDE", cond: "VIDE" },
+        { name: "Sandre blanc", bg: "VIDE", cond: "VIDE" }, { name: "Saumon atlantique", bg: "VIDE", cond: "VIDE" },
+        { name: "Saumon kéta", bg: "VIDE", cond: "VIDE" }, { name: "Saurel", bg: "VIDE", cond: "VIDE" },
+        { name: "Sardine", bg: "VIDE", cond: "VIDE" }, { name: "Seiche européenne", bg: "VIDE", cond: "VIDE" },
+        { name: "Silure européen", bg: "VIDE", cond: "VIDE" }, { name: "Tanche dorée", bg: "VIDE", cond: "VIDE" },
+        { name: "Têtard", bg: "VIDE", cond: "VIDE" }, { name: "Thon rouge", bg: "VIDE", cond: "VIDE" },
+        { name: "Tilapia", bg: "VIDE", cond: "VIDE" }, { name: "Tortue verte", bg: "VIDE", cond: "VIDE" },
+        { name: "Turbot", bg: "VIDE", cond: "VIDE" }, { name: "Vairon", bg: "VIDE", cond: "VIDE" },
         { name: "Zingel streber", bg: "VIDE", cond: "VIDE" }
     ];
 
-    // --- MENU ---
+    // --- CONSTRUCTION DU MENU ---
     var customControl = L.control({position: 'topleft'});
     customControl.onAdd = function() {
         var div = L.DomUtil.create('div', 'leaflet-control-layers');
