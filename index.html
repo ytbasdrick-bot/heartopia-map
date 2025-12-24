@@ -48,14 +48,15 @@
         .menu-item { padding: 8px 10px; cursor: pointer; font-size: 12px; border-bottom: 1px solid #eee; color: #333; transition: background 0.2s; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .menu-item:hover { background: #f9f9f9; }
 
-        /* Légende MODIFIÉE pour accueillir le compteur */
+        /* Légende */
         .ping-legend { position: fixed; right: 20px; top: 20px; width: 220px; background: rgba(0,0,0,0.9); border: 2px solid #d4af37; border-radius: 15px; padding: 15px; color: white; z-index: 1000; max-height: 65vh; display: flex; flex-direction: column; }
         #legend-list { overflow-y: auto; margin-top: 10px; flex-grow: 1; }
         .legend-item { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.1); margin-bottom: 5px; padding: 8px; border-radius: 6px; font-size: 12px; cursor: pointer; }
 
-        /* Zone du Compteur de visites */
+        /* Zone du Compteur (Épurée) */
         .visit-counter { margin-top: 15px; padding-top: 10px; border-top: 1px solid #d4af37; text-align: center; }
         .visit-counter p { font-size: 9px; color: #d4af37; margin-bottom: 8px; letter-spacing: 1px; font-weight: bold; }
+        #compteur-container { display: inline-block; }
 
         /* Labels fixes */
         .label-ville { background: white !important; border: 2px solid #3498db !important; border-radius: 5px; padding: 2px 8px; font-weight: bold; font-size: 11px; color: #2980b9; white-space: nowrap; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
@@ -102,8 +103,9 @@
     <div class="visit-counter">
         <p>AUDIENCE TOTALE</p>
         <div id="compteur-container">
-            <script type="text/javascript" src="https://counter11.optistats.ovh/private/counter.js?c=8e8vjwy4nxu9z2z9v7f9d8m6u1n8z9z9&down=async" async></script>
-            <noscript><a href="https://www.freecounterstat.com" title="page counter"><img src="https://counter11.optistats.ovh/private/freecounterstat.php?c=8e8vjwy4nxu9z2z9v7f9d8m6u1n8z9z9" border="0" title="page counter" alt="page counter"></a></noscript>
+            <a href="https://www.freecounterstat.com" title="page counter">
+                <img src="https://counter11.optistats.ovh/private/freecounterstat.php?c=8e8vjwy4nxu9z2z9v7f9d8m6u1n8z9z9" border="0" title="page counter" alt="page counter">
+            </a>
         </div>
     </div>
 </div>
