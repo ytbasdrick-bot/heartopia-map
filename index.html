@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Maptopia FR - Rex System</title>
+    <title>Maptopia - Rex System</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -15,61 +15,45 @@
         /* Écran d'accueil */
         #intro-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: url('Heartopia.jpg') no-repeat center center; background-size: cover; z-index: 20000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1s ease; }
         #intro-screen::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); }
+        
+        .lang-picker { position: relative; display: flex; justify-content: center; gap: 20px; margin-bottom: 15px; z-index: 20002; }
+        .flag { font-size: 35px; cursor: pointer; filter: grayscale(1); transition: 0.3s; padding: 5px; border-radius: 10px; }
+        .flag.active { filter: grayscale(0); transform: scale(1.2); border: 2px solid #d4af37; background: rgba(212, 175, 55, 0.2); }
+
         .heartopia-title { position: relative; font-size: 55px; font-weight: 900; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 5px; background: linear-gradient(to bottom, #fff 20%, #d4af37 50%, #8b6b15 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.8)); font-family: 'Arial Black', sans-serif; z-index: 20001; }
         .welcome-box { position: relative; width: 90%; max-width: 550px; padding: 40px; background: rgba(0, 0, 0, 0.85); border: 2px solid #d4af37; border-radius: 25px; color: white; text-align: center; box-shadow: 0 0 40px rgba(0,0,0,0.6); }
         .details-list { text-align: left; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin: 25px 0; font-size: 14px; border-left: 4px solid #d4af37; line-height: 1.6; }
         #enter-button { padding: 18px 60px; background: linear-gradient(135deg, #8b0000, #d4af37); color: white; border: 2px solid white; border-radius: 50px; font-size: 20px; font-weight: bold; cursor: pointer; transition: 0.3s; }
 
-        /* MENU */
+        /* Menu */
         .leaflet-container { background: transparent !important; }
-        .leaflet-control-layers { 
-            left: 20px !important; 
-            top: 20px !important; 
-            width: 180px !important; 
-            background: rgba(255, 255, 255, 0.98) !important; 
-            border-radius: 15px !important; 
-            padding: 8px !important; 
-            max-height: 85vh; 
-            overflow-y: auto !important; 
-            border: none !important; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important; 
-        }
-        
+        .leaflet-control-layers { left: 20px !important; top: 20px !important; width: 180px !important; background: rgba(255, 255, 255, 0.98) !important; border-radius: 15px !important; padding: 8px !important; max-height: 85vh; overflow-y: auto !important; border: none !important; box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important; }
         .accordion-title { color: white; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 5px; text-align: center; font-size: 11px; text-transform: uppercase; }
-        .title-pnj { background: #8b0000; } 
-        .title-bus { background: #2980b9; } 
-        .title-shop { background: #9b59b6; } 
-        .title-lieux { background: #27ae60; } 
-        .title-poisson { background: #f39c12; }
-        .title-insecte { background: #2ecc71; }
-        
+        .title-pnj { background: #8b0000; } .title-bus { background: #2980b9; } .title-shop { background: #9b59b6; } .title-lieux { background: #27ae60; } .title-poisson { background: #f39c12; } .title-insecte { background: #2ecc71; }
         .accordion-content { display: none; margin-bottom: 10px; background: #fff; }
         .accordion-content.active { display: block; }
         .menu-item { padding: 8px 10px; cursor: pointer; font-size: 12px; border-bottom: 1px solid #eee; color: #333; transition: background 0.2s; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .menu-item:hover { background: #f9f9f9; }
 
-        /* Légende */
+        /* Légende & Compteur */
         .ping-legend { position: fixed; right: 20px; top: 20px; width: 220px; background: rgba(0,0,0,0.9); border: 2px solid #d4af37; border-radius: 15px; padding: 15px; color: white; z-index: 1000; max-height: 65vh; display: flex; flex-direction: column; }
         #legend-list { overflow-y: auto; margin-top: 10px; flex-grow: 1; }
         .legend-item { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.1); margin-bottom: 5px; padding: 8px; border-radius: 6px; font-size: 12px; cursor: pointer; }
-
-        /* Zone du Compteur (Épurée) */
         .visit-counter { margin-top: 15px; padding-top: 10px; border-top: 1px solid #d4af37; text-align: center; }
         .visit-counter p { font-size: 9px; color: #d4af37; margin-bottom: 8px; letter-spacing: 1px; font-weight: bold; }
-        #compteur-container { display: inline-block; }
 
         /* Labels fixes */
         .label-ville { background: white !important; border: 2px solid #3498db !important; border-radius: 5px; padding: 2px 8px; font-weight: bold; font-size: 11px; color: #2980b9; white-space: nowrap; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .label-eau { background: rgba(41, 128, 185, 0.8) !important; border: 1px solid #fff !important; border-radius: 5px; padding: 2px 8px; font-size: 10px; color: white; font-weight: bold; white-space: nowrap; }
         .invisible-marker { background: transparent !important; border: none !important; }
 
-        /* Footer */
+        /* Footer & Discord */
         .footer-wiki { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; z-index: 3000; background: linear-gradient(90deg, #8b0000, #d4af37, #8b0000); display: flex; align-items: center; justify-content: center; border-top: 3px solid white; }
         .footer-wiki a { color: white; text-decoration: none; font-weight: 900; font-size: 20px; }
         #discord-link { position: fixed; bottom: 85px; right: 20px; z-index: 4000; }
         #discord-img { width: 60px; }
 
-        /* Infos card */
+        /* Info Overlay */
         #overlay-info { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 30000; display: none; align-items: center; justify-content: center; }
         .info-card { background: white; padding: 25px; border-radius: 20px; border: 3px solid #d4af37; width: 450px; text-align: center; }
         .info-card img { width: 100%; display: block; margin: 0 auto; }
@@ -81,27 +65,30 @@
 <audio id="main-audio"><source src="sonheartopia.mp4" type="audio/mp4"></audio>
 
 <div id="intro-screen">
-    <h1 class="heartopia-title">MAPTOPIA FR</h1>
+    <div class="lang-picker">
+        <span class="flag active" onclick="setLanguage('fr')" id="f-fr">🇫🇷</span>
+        <span class="flag" onclick="setLanguage('en')" id="f-en">🇬🇧</span>
+    </div>
+    <h1 class="heartopia-title">MAPTOPIA</h1>
     <div class="welcome-box">
-        <p>Explorez la carte interactive officielle de la communauté française.</p>
+        <p class="lang-txt" data-key="welcome">Explorez la carte interactive officielle de la communauté française.</p>
         <div class="details-list">
-            • <b>Navigation :</b> Utilisez le menu à gauche pour filtrer les éléments.<br>
-            • <b>Marqueurs :</b> Faites un <b>Clic Droit</b> pour préparer un repère, puis <b>Valider</b>.<br>
-            • <b>Infos :</b> Cliquez sur un poisson ou insecte pour voir ses détails.<br>
-            • <b>Sauvegarde :</b> Vos marqueurs personnels sont enregistrés sur votre navigateur.
+            • <b class="lang-txt" data-key="nav_title">Navigation :</b> <span class="lang-txt" data-key="tip1">Utilisez le menu à gauche pour filtrer les éléments.</span><br>
+            • <b class="lang-txt" data-key="mark_title">Marqueurs :</b> <span class="lang-txt" data-key="tip2">Faites un Clic Droit pour préparer un repère, puis Valider.</span><br>
+            • <b class="lang-txt" data-key="info_title">Infos :</b> <span class="lang-txt" data-key="tip3">Cliquez sur un poisson ou insecte pour voir ses détails.</span><br>
+            • <b class="lang-txt" data-key="save_title">Sauvegarde :</b> <span class="lang-txt" data-key="tip4">Vos marqueurs personnels sont enregistrés sur votre navigateur.</span>
         </div>
-        <button id="enter-button" onclick="startExperience()">ENTRER DANS LA CARTE</button>
+        <button id="enter-button" onclick="startExperience()" class="lang-txt" data-key="btn_enter">ENTRER DANS LA CARTE</button>
     </div>
 </div>
 
 <a href="https://discord.gg/dc8eZwf2jq" target="_blank" id="discord-link"><img src="Discord-Logo-PNG-Pic.png" id="discord-img"></a>
 
 <div class="ping-legend">
-    <div style="text-align:center; font-weight:bold; border-bottom:1px solid #d4af37; padding-bottom:5px;">📌 MES MARQUEURS</div>
+    <div style="text-align:center; font-weight:bold; border-bottom:1px solid #d4af37; padding-bottom:5px;" class="lang-txt" data-key="my_markers">📌 MES MARQUEURS</div>
     <div id="legend-list"></div>
-    
     <div class="visit-counter">
-        <p>AUDIENCE TOTALE</p>
+        <p class="lang-txt" data-key="counter_title">AUDIENCE TOTALE</p>
         <div id="compteur-container">
             <a href="https://www.freecounterstat.com" title="page counter">
                 <img src="https://counter11.optistats.ovh/private/freecounterstat.php?c=8e8vjwy4nxu9z2z9v7f9d8m6u1n8z9z9" border="0" title="page counter" alt="page counter">
@@ -117,15 +104,51 @@
         <h2 id="info-name" style="color:#333; margin-top:0;"></h2>
         <img id="info-main" class="info-img-main">
         <img id="info-cond">
-        <button onclick="document.getElementById('overlay-info').style.display='none'" style="margin-top:15px; padding:10px 20px; cursor:pointer; background:#8b0000; color:white; border:none; border-radius:5px; font-weight:bold;">FERMER</button>
+        <button onclick="document.getElementById('overlay-info').style.display='none'" style="margin-top:15px; padding:10px 20px; cursor:pointer; background:#8b0000; color:white; border:none; border-radius:5px; font-weight:bold;" class="lang-txt" data-key="close">FERMER</button>
     </div>
 </div>
 
-<div class="footer-wiki"><a href="https://jayibwi.wixsite.com/my-site-1" target="_blank">📖 WIKI FR COMPLET 📖</a></div>
+<div class="footer-wiki"><a href="https://jayibwi.wixsite.com/my-site-1" target="_blank" class="lang-txt" data-key="wiki">📖 WIKI FR COMPLET 📖</a></div>
 
 <script>
+    const translations = {
+        fr: {
+            welcome: "Explorez la carte interactive officielle de la communauté française.",
+            nav_title: "Navigation :", tip1: "Utilisez le menu à gauche pour filtrer les éléments.",
+            mark_title: "Marqueurs :", tip2: "Faites un Clic Droit pour préparer un repère, puis Valider.",
+            info_title: "Infos :", tip3: "Cliquez sur un poisson ou insecte pour voir ses détails.",
+            save_title: "Sauvegarde :", tip4: "Vos marqueurs personnels sont enregistrés sur votre navigateur.",
+            btn_enter: "ENTRER DANS LA CARTE", my_markers: "📌 MES MARQUEURS", close: "FERMER", wiki: "📖 WIKI FR COMPLET 📖",
+            counter_title: "AUDIENCE TOTALE", cat_pnj: "PNJ", cat_bus: "BUS", cat_shop: "MAGASINS", cat_lieux: "LIEUX", cat_fish: "POISSONS", cat_bug: "INSECTES",
+            pop_new: "Nouveau Marqueur", pop_val: "VALIDER", pop_can: "ANNULER", pop_del: "Supprimer"
+        },
+        en: {
+            welcome: "Explore the official community interactive map.",
+            nav_title: "Navigation:", tip1: "Use the left menu to filter elements.",
+            mark_title: "Markers:", tip2: "Right-click to place a marker, then Confirm.",
+            info_title: "Info:", tip3: "Click on fish or insects to see details.",
+            save_title: "Save:", tip4: "Your personal markers are saved in your browser.",
+            btn_enter: "ENTER THE MAP", my_markers: "📌 MY MARKERS", close: "CLOSE", wiki: "📖 FULL WIKI ONLINE 📖",
+            counter_title: "TOTAL AUDIENCE", cat_pnj: "NPC", cat_bus: "BUS", cat_shop: "SHOPS", cat_lieux: "PLACES", cat_fish: "FISH", cat_bug: "BUGS",
+            pop_new: "New Marker", pop_val: "CONFIRM", pop_can: "CANCEL", pop_del: "Delete"
+        }
+    };
+
+    let currentLang = 'fr';
     const colors = { rouge: '#e74c3c', bleu: '#3498db', vert: '#2ecc71', jaune: '#f1c40f', violet: '#9b59b6', orange: '#e67e22' };
     const icons = { note: '📌', fish: '🎣', bird: '🦜', bug: '🦋', wood: '🌲', stone: '⛰️' };
+
+    function setLanguage(lang) {
+        currentLang = lang;
+        document.querySelectorAll('.flag').forEach(f => f.classList.remove('active'));
+        document.getElementById('f-' + lang).classList.add('active');
+        document.querySelectorAll('.lang-txt').forEach(el => {
+            const key = el.getAttribute('data-key');
+            if (translations[lang][key]) el.innerText = translations[lang][key];
+        });
+        refreshMarkers();
+        initMenu();
+    }
 
     function startExperience() {
         document.getElementById('main-audio').play().catch(() => {});
@@ -136,7 +159,6 @@
 
     var bounds = [[-1000, 0], [0, 1000]];
     var map = L.map('map', { crs: L.CRS.Simple, minZoom: 0, maxZoom: 3, zoom: 1, zoomControl: false, maxBounds: bounds, maxBoundsViscosity: 1.0 });
-
     L.imageOverlay('carte.png', bounds).addTo(map);
     map.setView([-500, 500], 1);
 
@@ -147,7 +169,7 @@
     function createFinalMarker(p) {
         var markerHtml = `<div style="background:${colors[p.color]};width:28px;height:28px;border:2px solid white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;">${icons[p.icon]}</div>`;
         var marker = L.marker(p.latlng, {icon: L.divIcon({className:'', html:markerHtml, iconSize:[28,28], iconAnchor:[14,14]})}).addTo(map);
-        marker.bindPopup(`<b>${p.text}</b><br><button onclick="removeUserPing('${p.id}')" style="width:100%; background:#e74c3c; color:white; border:none; padding:5px; margin-top:5px; cursor:pointer; border-radius:3px;">Supprimer</button>`);
+        marker.bindPopup(`<b>${p.text}</b><br><button onclick="removeUserPing('${p.id}')" style="width:100%; background:#e74c3c; color:white; border:none; padding:5px; margin-top:5px; cursor:pointer; border-radius:3px;">${translations[currentLang].pop_del}</button>`);
         pingMarkers[p.id] = marker;
     }
 
@@ -159,7 +181,7 @@
         tempPingMarker.tempColor = 'bleu';
         var div = document.createElement('div');
         div.style.minWidth = "180px";
-        div.innerHTML = `<b style="display:block;margin-bottom:5px;text-align:center;">Nouveau Marqueur</b><input type="text" id="in-${mid}" placeholder="Nom..." style="width:100%; padding:5px; margin-bottom:10px; box-sizing:border-box;"><div style="display:flex; gap:5px; margin-bottom:10px; justify-content:center;">${Object.entries(colors).map(([k,v]) => `<div style="background:${v}; width:20px; height:20px; border-radius:50%; cursor:pointer; border:1px solid transparent;" onclick="selectPingColor('${k}', this)"></div>`).join('')}</div><button onclick="confirmPing('${mid}',${e.latlng.lat},${e.latlng.lng})" style="width:100%; background:#27ae60; color:white; border:none; padding:8px; cursor:pointer; border-radius:4px; font-weight:bold;">VALIDER</button><button onclick="cancelPing()" style="width:100%; background:#95a5a6; color:white; border:none; padding:5px; cursor:pointer; border-radius:4px; margin-top:5px; font-size:10px;">ANNULER</button>`;
+        div.innerHTML = `<b style="display:block;margin-bottom:5px;text-align:center;">${translations[currentLang].pop_new}</b><input type="text" id="in-${mid}" placeholder="Nom..." style="width:100%; padding:5px; margin-bottom:10px; box-sizing:border-box;"><div style="display:flex; gap:5px; margin-bottom:10px; justify-content:center;">${Object.entries(colors).map(([k,v]) => `<div style="background:${v}; width:20px; height:20px; border-radius:50%; cursor:pointer; border:1px solid transparent;" onclick="selectPingColor('${k}', this)"></div>`).join('')}</div><button onclick="confirmPing('${mid}',${e.latlng.lat},${e.latlng.lng})" style="width:100%; background:#27ae60; color:white; border:none; padding:8px; cursor:pointer; border-radius:4px; font-weight:bold;">${translations[currentLang].pop_val}</button><button onclick="cancelPing()" style="width:100%; background:#95a5a6; color:white; border:none; padding:5px; cursor:pointer; border-radius:4px; margin-top:5px; font-size:10px;">${translations[currentLang].pop_can}</button>`;
         tempPingMarker.bindPopup(div, {closeOnClick: false}).openPopup();
     });
 
@@ -191,99 +213,247 @@
     var dataStorage = { pnj:[], bus:[], shop:[], lieux:[] };
     var currentSingleMarker = null;
 
-    function register(cat, pos, name, img, opts = {}) {
-        let m;
-        if(opts.type) { m = L.marker(pos, { icon: L.divIcon({ className: 'invisible-marker', html: '', iconSize: [1, 1] }) }).bindTooltip(name, { permanent: true, direction: 'center', className: opts.type }); if(opts.startOn) m.addTo(map); }
-        else { m = L.marker(pos, { icon: L.icon({ iconUrl: img, iconSize: (cat=='bus'?[85,85]:[60,60]), iconAnchor: (cat=='bus'?[42,85]:[30,60]) }) }).bindPopup(`<b>${name}</b>`); if(opts.startOn) m.addTo(map); }
-        dataStorage[cat].push({name, pos, marker:m, category:cat});
+    function register(cat, pos, nameFr, nameEn, img, opts = {}) {
+        dataStorage[cat].push({ name: {fr: nameFr, en: nameEn}, pos: pos, img: img, opts: opts, marker: null, category:cat });
+    }
+
+    function refreshMarkers() {
+        Object.keys(dataStorage).forEach(cat => {
+            dataStorage[cat].forEach(item => {
+                if(item.marker) map.removeLayer(item.marker);
+                const name = item.name[currentLang];
+                if(item.opts.type) {
+                    item.marker = L.marker(item.pos, { icon: L.divIcon({ className: 'invisible-marker', html: '', iconSize: [1, 1] }) }).bindTooltip(name, { permanent: true, direction: 'center', className: item.opts.type });
+                } else {
+                    item.marker = L.marker(item.pos, { icon: L.icon({ iconUrl: item.img, iconSize: (cat=='bus'?[85,85]:[60,60]), iconAnchor: (cat=='bus'?[42,85]:[30,60]) }) }).bindPopup(`<b>${name}</b>`);
+                }
+                if(item.opts.startOn) item.marker.addTo(map);
+            });
+        });
     }
 
     // DONNÉES PNJ
-    [[-471,501,"Bob","pnj/bob.png"],[-526,499,"Atara","pnj/atara.png"],[-478,493,"Collectionneur","pnj/collectioneur.png"],[-469,488,"Dorothée","pnj/dorothée.png"],[-446,493,"Massimo","pnj/massimo.png"],[-412,418,"Ka Ching","pnj/ka ching.png"],[-399,591,"Andrew","pnj/andrew.png"],[-259,522,"Eric","pnj/eric.png"],[-456,549,"Vanya","pnj/vanya.png"],[-502,582,"Naniwa","pnj/niniwa.png"],[-502,519,"Joan","pnj/joa.png"],[-807,419,"Will","pnj/will.png"],[-355,809,"Patti","pnj/patti.png"],[-653,225,"Vernie","pnj/vernie.png"],[-498,526,"Bayley","pnj/bayley.png"]].forEach(d => register('pnj', [d[0],d[1]], d[2], d[3]));
-    [ ["Banlieue Ouest",[-533,340]], ["Banlieue Village",[-519,639]], ["Village Pêcheurs",[-654,479]], ["Champ Fleurs",[-532,218]], ["Montagne Thermale",[-222,512]], ["Banlieue Nord",[-373,480]], ["Place Centrale",[-497,481]], ["Forêt",[-500,798]]].forEach(b => register('bus', b[1], b[0], 'bus.png'));
-    [[-472,487,"Vêtements","vetement.png"],[-474,503,"Meubles","Meuble.png"],[-496,523,"Animaux","chien.png"],[-440,467,"Librairie","Librairie.png"]].forEach(s => register('shop', [s[0],s[1]], s[2], s[3]));
-    [
-        {pos:[-538,492], name:"Place Centrale", type:"label-ville", startOn:true},
-        {pos:[-692,506], name:"Village de Pêcheurs", type:"label-ville", startOn:true},
-        {pos:[-438,513], name:"Village", type:"label-ville", startOn:true},
-        {pos:[-649,185], name:"Champ de Fleurs", type:"label-ville", startOn:true},
-        {pos:[-440,184], name:"Montagne de Baleine", type:"label-ville", startOn:true},
-        {pos:[-184,291], name:"Les Ruines", type:"label-ville", startOn:true},
-        {pos:[-223,501], name:"Montagne Thermale", type:"label-ville", startOn:true},
-        {pos:[-228,627], name:"Falaise Rocheuse", type:"label-ville", startOn:true},
-        {pos:[-531,805], name:"Forêt de Chênes Spirituels", type:"label-ville", startOn:true},
-        {pos:[-494,429], name:"Rue des Arts", type:"label-ville", startOn:true},
-        {pos:[-510,558], name:"Rue du Jardin", type:"label-ville", startOn:true},
-        {pos:[-736,602], name:"Quai Oriental", type:"label-ville", startOn:true},
-        {pos:[-690,402], name:"Quai", type:"label-ville", startOn:true},
-        {pos:[-780,387], name:"Phare", type:"label-ville", startOn:true},
-        {pos:[-691,783], name:"Tremplin", type:"label-ville", startOn:true},
-        {pos:[-338,933], name:"Île de la Forêt", type:"label-ville", startOn:true},
-        {pos:[-587,406], name:"Banlieue", type:"label-ville", startOn:true},
-        {pos:[-725,208], name:"Plage Violette", type:"label-ville", startOn:true},
-        {pos:[-783,478], name:"Mer Calme", type:"label-eau", startOn:true},
-        {pos:[-534,92], name:"Mer de Baleine", type:"label-eau", startOn:true},
-        {pos:[-68,497], name:"Ancienne Mer", type:"label-eau", startOn:true},
-        {pos:[-536,232], name:"Lac dans la Prairie", type:"label-eau", startOn:true},
-        {pos:[-337,319], name:"Rivière Aurore", type:"label-eau", startOn:true},
-        {pos:[-176,394], name:"Lac Volcanique", type:"label-eau", startOn:true},
-        {pos:[-265,537], name:"Lac Thermale", type:"label-eau", startOn:true},
-        {pos:[-344,652], name:"Rivière Peu Profonde", type:"label-eau", startOn:true},
-        {pos:[-598,748], name:"Lac de la Forêt", type:"label-eau", startOn:true},
-        {pos:[-431,774], name:"Lac de la Forêt (Haut)", type:"label-eau", startOn:true},
-        {pos:[-608,481], name:"Lac de Banlieue", type:"label-eau", startOn:true},
-        {pos:[-669,368], name:"Rivière Calme", type:"label-eau", startOn:true},
-        {pos:[-674,627], name:"Fleuve d'Arbres Géants", type:"label-eau", startOn:true}
-    ].forEach(l => register('lieux', l.pos, l.name, '', {type:l.type, startOn:l.startOn}));
+    register('pnj', [-471,501], "Bob", "Bob", "pnj/bob.png");
+    register('pnj', [-526,499], "Atara", "Atara", "pnj/atara.png");
+    register('pnj', [-478,493], "Collectionneur", "Collector", "pnj/collectioneur.png");
+    register('pnj', [-469,488], "Dorothée", "Dorothee", "pnj/dorothée.png");
+    register('pnj', [-446,493], "Massimo", "Massimo", "pnj/massimo.png");
+    register('pnj', [-412,418], "Ka Ching", "Ka Ching", "pnj/ka ching.png");
+    register('pnj', [-399,591], "Andrew", "Andrew", "pnj/andrew.png");
+    register('pnj', [-259,522], "Eric", "Eric", "pnj/eric.png");
+    register('pnj', [-456,549], "Vanya", "Vanya", "pnj/vanya.png");
+    register('pnj', [-502,582], "Naniwa", "Naniwa", "pnj/niniwa.png");
+    register('pnj', [-502,519], "Joan", "Joan", "pnj/joa.png");
+    register('pnj', [-807,419], "Will", "Will", "pnj/will.png");
+    register('pnj', [-355,809], "Patti", "Patti", "pnj/patti.png");
+    register('pnj', [-653,225], "Vernie", "Vernie", "pnj/vernie.png");
+    register('pnj', [-498,526], "Bayley", "Bayley", "pnj/bayley.png");
 
-    const fishList = [{name:"Ablette", bg:"condition/AA1.png", cond:"condition/Lacs.png"}, {name:"Carpe argentée", bg:"condition/AA1.png", cond:"condition/Lacs.png"}, {name:"Grenouille européenne", bg:"condition/AA1.png", cond:"condition/Lacs.png"}, {name:"Langouste européenne", bg:"condition/LL1.png", cond:"condition/Lacs.png"}, {name:"Acantharchus pomotis", bg:"condition/AA2.png", cond:"condition/Lac_de_la_foret.png"}, {name:"Barbillon", bg:"condition/AA1.png", cond:"condition/Lac_de_la_foret.png"}, {name:"Ecrevisse noble", bg:"condition/AA1.png", cond:"condition/Lac_de_la_foret.png"}, {name:"Ecrevisse noble bleue", bg:"condition/AA1.png", cond:"condition/Lac_de_la_foret.png"}, {name:"Grand black-basse", bg:"condition/GG1.png", cond:"condition/Lac_de_la_foret.png"}, {name:"Grande huître perlière", bg:"condition/AA1.png", cond:"condition/Lac_de_la_foret.png"}, {name:"Tanche dorée", bg:"condition/AA1.png", cond:"condition/Lac_de_la_foret.png"}, {name:"Eperlan", bg:"condition/AA1.png", cond:"condition/Lac_dans_la_prairie.png"}, {name:"Poisson rouge", bg:"condition/AA1.png", cond:"condition/Lac_dans_la_prairie.png"}, {name:"Plie européenne", bg:"condition/LL1.png", cond:"condition/Ancienne_mer.png"}, {name:"Poisson-clown", bg:"condition/AA1.png", cond:"condition/Ancienne_mer.png"}, {name:"Poisson épineux", bg:"condition/AA1.png", cond:"condition/Ancienne_mer.png"}, {name:"Poisson-globe de rivière", bg:"condition/LL4.png", cond:"condition/Ancienne_mer.png"}, {name:"Aphyosemion striatum", bg:"condition/AA4.png", cond:"condition/Lacs_de_banlieue.png"}, {name:"Barbeau", bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"}, {name:"Carpe noire", bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"}, {name:"Loche des rochers", bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"}, {name:"Moule", bg:"condition/CC3.png", cond:"condition/Lacs_de_banlieue.png"}, {name:"Omble chevalier", bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"}, {name:"Ombrine", bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"}, {name:"Poisson à yeux rouges", bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"}, {name:"Loche des fleurs", bg:"condition/AA1.png", cond:"condition/Fleuve_darbres_geants.png"}, {name:"POISSON-TIGRE à ventre rouge", bg:"condition/AA1.png", cond:"condition/Fleuve_darbres_geants.png"}, {name:"Sandre blanc", bg:"condition/GG1.png", cond:"condition/Fleuve_darbres_geants.png"}, {name:"Perche de prunier", bg:"condition/LL4.png", cond:"condition/Lacs_montagne_thermale.png"}, {name:"Hippocampe", bg:"condition/HH1.png", cond:"condition/Mer_baleine.png"}, {name:"Maquereau atlantique", bg:"condition/AA1.png", cond:"condition/Mer_baleine.png"}, {name:"Saumon atlantique", bg:"condition/MM1.png", cond:"condition/Mer_baleine.png"}, {name:"Saurel", bg:"condition/AA1.png", cond:"condition/Mer_baleine.png"}, {name:"Pagellus bogaraveo", bg:"condition/AA1.png", cond:"condition/Mer_calme.png"}, {name:"Pieuvre naine atlantique", bg:"condition/AA1.png", cond:"condition/Mer_calme.png"}, {name:"Poisson ruban", bg:"condition/AA1.png", cond:"condition/Mer_calme.png"}, {name:"Bernard l'Hermite", bg:"condition/AA1.png", cond:"condition/Mer_de_lEst.png"}, {name:"Crevette de la mer", bg:"condition/AA1.png", cond:"condition/Mer_de_lEst.png"}, {name:"Eglefin", bg:"condition/AA1.png", cond:"condition/Mer_de_lEst.png"}, {name:"Gobie", bg:"condition/GG4.png", cond:"condition/Mer_de_lEst.png"}, {name:"Grondin perlon", bg:"condition/AA1.png", cond:"condition/Mer_de_lEst.png"}, {name:"Bonite", bg:"condition/AA1.png", cond:"condition/Ocean.png"}, {name:"Chimère argentée", bg:"condition/AA1.png", cond:"condition/Ocean.png"}, {name:"Perche de mer", bg:"condition/AA1.png", cond:"condition/Ocean.png"}, {name:"Sardine", bg:"condition/AA1.png", cond:"condition/Ocean.png"}, {name:"Baudroie", bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"}, {name:"Carpe Papillon", bg:"condition/CC3.png", cond:"condition/Peche_en_mer.png"}, {name:"Pieuvre", bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"}, {name:"Régalec", bg:"condition/GG4.png", cond:"condition/Peche_en_mer.png"}, {name:"Rouget barbet", bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"}, {name:"Roussette", bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"}, {name:"Seiche européenne", bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"}, {name:"Turbot", bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"}, {name:"Blennie de rivière", bg:"condition/AA1.png", cond:"condition/Riviere_Aurore.png"}, {name:"Carpe européenne", bg:"condition/CC2.png", cond:"condition/Riviere_Aurore.png"}, {name:"Zingel streber", bg:"condition/AA1.png", cond:"condition/Riviere_Aurore.png"}, {name:"Comète coussut", bg:"condition/AA1.png", cond:"condition/Riviere_calme.png"}, {name:"Lotte", bg:"condition/LL4.png", cond:"condition/Riviere_calme.png"}, {name:"Saumon kéta", bg:"condition/AA1.png", cond:"condition/Riviere_calme.png"}, {name:"Vairon", bg:"condition/AA1.png", cond:"condition/Riviere_calme.png"}, {name:"Epinoche", bg:"condition/AA1.png", cond:"condition/Riviere_peu_profonde.png"}, {name:"Crevette verte", bg:"condition/AA1.png", cond:"condition/Rivieres.png"}, {name:"Perche de rivière", bg:"condition/AA1.png", cond:"condition/Rivieres.png"}, {name:"Tilapia", bg:"condition/AA1.png", cond:"condition/Rivieres.png"}, {name:"Chabot", bg:"condition/AA1.png", cond:"condition/Source_et_montagne_thermale.png"}, {name:"Féra", bg:"condition/AA1.png", cond:"condition/Source_et_montagne_thermale.png"}, {name:"Têtard", bg:"condition/AA1.png", cond:"condition/Source_et_montagne_thermale.png"}];
+    // BUS
+    register('bus', [-533,340], "Banlieue Ouest", "West Suburb", "bus.png");
+    register('bus', [-519,639], "Banlieue Village", "Village Suburb", "bus.png");
+    register('bus', [-654,479], "Village Pêcheurs", "Fishermen Village", "bus.png");
+    register('bus', [-532,218], "Champ Fleurs", "Flower Field", "bus.png");
+    register('bus', [-222,512], "Montagne Thermale", "Thermal Mountain", "bus.png");
+    register('bus', [-373,480], "Banlieue Nord", "North Suburb", "bus.png");
+    register('bus', [-497,481], "Place Centrale", "Central Square", "bus.png");
+    register('bus', [-500,798], "Forêt", "Forest", "bus.png");
 
-    const bugList = [{name:"Actias neidhoederi", cond:"insecte/Banlieue.png", bg:"insecte/Actias%20neidhoederi2.png"}, {name:"Azuré de porcelaine", cond:"insecte/Centre%20ville.png", bg:"insecte/Azuré%20de%20porcelaine2.png"}, {name:"Bourdon", cond:"insecte/Champs%20de%20fleurs%20+%20Montagne%20de%20baleine.png", bg:"insecte/Bourdon2.png"}, {name:"Cétoine étoilée bleue", cond:"insecte/Pourtour%20parcelles.png", bg:"insecte/Cétoine%20étoilée%20bleue2.png"}, {name:"Cicindèle verte", cond:"insecte/Montagne%20thermale.png", bg:"insecte/Cicindèle%20verte2.png"}, {name:"Citron aspasia", cond:"insecte/Banlieue.png", bg:"insecte/Citron%20aspasia2.png"}, {name:"Coccinelle à sept points", cond:"insecte/Banlieue.png", bg:"insecte/Coccinelle%20à%20sept%20points2.png"}, {name:"Coccinelle asiatique", cond:"insecte/Tour%20du%20faon.png", bg:""}, {name:"Criocère de l'asperge", cond:"insecte/Champs%20de%20fleurs%20+%20Montagne%20de%20baleine.png", bg:"insecte/Criocère%20de%20l'asperge2.png"}, {name:"Criquet aux pattes massives", cond:"insecte/Village%20pêcheurs.png", bg:"insecte/Criquet%20aux%20pattes%20massives2.png"}, {name:"Grand agrion", cond:"insecte/Bords%20d'eau%20fréquent%20pour%20l'agroin.png", bg:"insecte/Grand%20agrion2.png"}, {name:"Libellule tachetée", cond:"insecte/Lacs%20de%20banlieue.png", bg:"insecte/Libellule%20tachetée2.png"}, {name:"Papillon à anneaux rouges", cond:"insecte/Event%20insect.png", bg:"insecte/Papillon%20à%20anneaux%20rouges2.png"}, {name:"Papillon à col rouge", cond:"insecte/Pourtour%20parcelles.png", bg:"insecte/Cétoine%20étoilée%20bleue2.png"}, {name:"Papillon blanc", cond:"insecte/Village%20pêcheurs.png", bg:"insecte/Papillon%20blanc2.png"}, {name:"Papillon doré", cond:"insecte/Forêt.png", bg:"insecte/Papillon%20doré2.png"}, {name:"Parnassien", cond:"insecte/Event%20insect.png", bg:"insecte/Parnassien2.png"}, {name:"Piéride du cresson", cond:"insecte/Centre%20ville.png", bg:"insecte/Piéride%20du%20cresson2.png"}, {name:"Punaise Picasso", cond:"insecte/Plage%20violette.png", bg:"insecte/Criquet%20aux%20pattes%20massives2.png"}, {name:"Pyrochroa", cond:"insecte/Source%20thermale.png", bg:"insecte/Pyrochroa2.png"}, {name:"Pyrrhocoris apterus", cond:"insecte/Pourtour%20parcelles.png", bg:"insecte/Pyrrhocoris%20apterus2.png"}, {name:"Sauterelle de l'oasis", cond:"insecte/Montagne%20thermale.png", bg:"insecte/Sauterelle%20de%20l'oasis2.png"}, {name:"Scarabée unicorne", cond:"insecte/Quai%20oriental.png", bg:"insecte/Azuré%20de%20porcelaine2.png"}];
+    // MAGASINS
+    register('shop', [-472,487], "Vêtements", "Clothes", "vetement.png");
+    register('shop', [-474,503], "Meubles", "Furniture", "Meuble.png");
+    register('shop', [-496,523], "Animaux", "Pets", "chien.png");
+    register('shop', [-440,467], "Librairie", "Bookstore", "Librairie.png");
+
+    // LIEUX
+    const lieuxData = [
+        {pos:[-538,492], fr:"Place Centrale", en:"Central Square", type:"label-ville"},
+        {pos:[-692,506], fr:"Village de Pêcheurs", en:"Fishermen Village", type:"label-ville"},
+        {pos:[-438,513], fr:"Village", en:"Village", type:"label-ville"},
+        {pos:[-649,185], fr:"Champ de Fleurs", en:"Flower Field", type:"label-ville"},
+        {pos:[-440,184], fr:"Montagne de Baleine", en:"Whale Mountain", type:"label-ville"},
+        {pos:[-184,291], fr:"Les Ruines", en:"The Ruins", type:"label-ville"},
+        {pos:[-223,501], fr:"Montagne Thermale", en:"Thermal Mountain", type:"label-ville"},
+        {pos:[-228,627], fr:"Falaise Rocheuse", en:"Rocky Cliff", type:"label-ville"},
+        {pos:[-531,805], fr:"Forêt de Chênes Spirituels", en:"Spiritual Oak Forest", type:"label-ville"},
+        {pos:[-494,429], fr:"Rue des Arts", en:"Arts Street", type:"label-ville"},
+        {pos:[-510,558], fr:"Rue du Jardin", en:"Garden Street", type:"label-ville"},
+        {pos:[-736,602], fr:"Quai Oriental", en:"Eastern Pier", type:"label-ville"},
+        {pos:[-690,402], fr:"Quai", en:"Pier", type:"label-ville"},
+        {pos:[-780,387], fr:"Phare", en:"Lighthouse", type:"label-ville"},
+        {pos:[-691,783], fr:"Tremplin", en:"Diving Board", type:"label-ville"},
+        {pos:[-338,933], fr:"Île de la Forêt", en:"Forest Island", type:"label-ville"},
+        {pos:[-587,406], fr:"Banlieue", en:"Suburb", type:"label-ville"},
+        {pos:[-725,208], fr:"Plage Violette", en:"Purple Beach", type:"label-ville"},
+        {pos:[-783,478], fr:"Mer Calme", en:"Calm Sea", type:"label-eau"},
+        {pos:[-534,92], fr:"Mer de Baleine", en:"Whale Sea", type:"label-eau"},
+        {pos:[-68,497], fr:"Ancienne Mer", en:"Ancient Sea", type:"label-eau"},
+        {pos:[-536,232], fr:"Lac dans la Prairie", en:"Meadow Lake", type:"label-eau"},
+        {pos:[-337,319], fr:"Rivière Aurore", en:"Aurora River", type:"label-eau"},
+        {pos:[-176,394], fr:"Lac Volcanique", en:"Volcanic Lake", type:"label-eau"},
+        {pos:[-265,537], fr:"Lac Thermale", en:"Thermal Lake", type:"label-eau"},
+        {pos:[-344,652], fr:"Rivière Peu Profonde", en:"Shallow River", type:"label-eau"},
+        {pos:[-598,748], fr:"Lac de la Forêt", en:"Forest Lake", type:"label-eau"},
+        {pos:[-431,774], fr:"Lac de la Forêt (Haut)", en:"Forest Lake (Upper)", type:"label-eau"},
+        {pos:[-608,481], fr:"Lac de Banlieue", en:"Suburb Lake", type:"label-eau"},
+        {pos:[-669,368], fr:"Rivière Calme", en:"Calm River", type:"label-eau"},
+        {pos:[-674,627], fr:"Fleuve d'Arbres Géants", en:"Giant Tree River", type:"label-eau"}
+    ];
+    lieuxData.forEach(l => register('lieux', l.pos, l.fr, l.en, '', {type:l.type, startOn:true}));
+
+    // POISSONS
+    const fishList = [
+        {name:{fr:"Ablette", en:"Bleak"}, bg:"condition/AA1.png", cond:"condition/Lacs.png"},
+        {name:{fr:"Carpe argentée", en:"Silver Carp"}, bg:"condition/AA1.png", cond:"condition/Lacs.png"},
+        {name:{fr:"Grenouille européenne", en:"European Frog"}, bg:"condition/AA1.png", cond:"condition/Lacs.png"},
+        {name:{fr:"Langouste européenne", en:"European Lobster"}, bg:"condition/LL1.png", cond:"condition/Lacs.png"},
+        {name:{fr:"Acantharchus pomotis", en:"Mud Sunfish"}, bg:"condition/AA2.png", cond:"condition/Lac_de_la_foret.png"},
+        {name:{fr:"Barbillon", en:"Barbel"}, bg:"condition/AA1.png", cond:"condition/Lac_de_la_foret.png"},
+        {name:{fr:"Ecrevisse noble", en:"Noble Crayfish"}, bg:"condition/AA1.png", cond:"condition/Lac_de_la_foret.png"},
+        {name:{fr:"Ecrevisse noble bleue", en:"Blue Noble Crayfish"}, bg:"condition/AA1.png", cond:"condition/Lac_de_la_foret.png"},
+        {name:{fr:"Grand black-basse", en:"Largemouth Bass"}, bg:"condition/GG1.png", cond:"condition/Lac_de_la_foret.png"},
+        {name:{fr:"Grande huître perlière", en:"Large Pearl Oyster"}, bg:"condition/AA1.png", cond:"condition/Lac_de_la_foret.png"},
+        {name:{fr:"Tanche dorée", en:"Golden Tench"}, bg:"condition/AA1.png", cond:"condition/Lac_de_la_foret.png"},
+        {name:{fr:"Eperlan", en:"Smelt"}, bg:"condition/AA1.png", cond:"condition/Lac_dans_la_prairie.png"},
+        {name:{fr:"Poisson rouge", en:"Goldfish"}, bg:"condition/AA1.png", cond:"condition/Lac_dans_la_prairie.png"},
+        {name:{fr:"Plie européenne", en:"European Plaice"}, bg:"condition/LL1.png", cond:"condition/Ancienne_mer.png"},
+        {name:{fr:"Poisson-clown", en:"Clownfish"}, bg:"condition/AA1.png", cond:"condition/Ancienne_mer.png"},
+        {name:{fr:"Poisson épineux", en:"Thornback Ray"}, bg:"condition/AA1.png", cond:"condition/Ancienne_mer.png"},
+        {name:{fr:"Poisson-globe de rivière", en:"River Puffer"}, bg:"condition/LL4.png", cond:"condition/Ancienne_mer.png"},
+        {name:{fr:"Aphyosemion striatum", en:"Five-banded Killifish"}, bg:"condition/AA4.png", cond:"condition/Lacs_de_banlieue.png"},
+        {name:{fr:"Barbeau", en:"Common Barbel"}, bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"},
+        {name:{fr:"Carpe noire", en:"Black Carp"}, bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"},
+        {name:{fr:"Loche des rochers", en:"Stone Loach"}, bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"},
+        {name:{fr:"Moule", en:"Mussel"}, bg:"condition/CC3.png", cond:"condition/Lacs_de_banlieue.png"},
+        {name:{fr:"Omble chevalier", en:"Arctic Char"}, bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"},
+        {name:{fr:"Ombrine", en:"Shi Drum"}, bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"},
+        {name:{fr:"Poisson à yeux rouges", en:"Red-eye Fish"}, bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"},
+        {name:{fr:"Loche des fleurs", en:"Flower Loach"}, bg:"condition/AA1.png", cond:"condition/Fleuve_darbres_geants.png"},
+        {name:{fr:"POISSON-TIGRE à ventre rouge", en:"Red-bellied Tigerfish"}, bg:"condition/AA1.png", cond:"condition/Fleuve_darbres_geants.png"},
+        {name:{fr:"Sandre blanc", en:"Zander"}, bg:"condition/GG1.png", cond:"condition/Fleuve_darbres_geants.png"},
+        {name:{fr:"Perche de prunier", en:"Plum Perch"}, bg:"condition/LL4.png", cond:"condition/Lacs_montagne_thermale.png"},
+        {name:{fr:"Hippocampe", en:"Seahorse"}, bg:"condition/HH1.png", cond:"condition/Mer_baleine.png"},
+        {name:{fr:"Maquereau atlantique", en:"Atlantic Mackerel"}, bg:"condition/AA1.png", cond:"condition/Mer_baleine.png"},
+        {name:{fr:"Saumon atlantique", en:"Atlantic Salmon"}, bg:"condition/MM1.png", cond:"condition/Mer_baleine.png"},
+        {name:{fr:"Saurel", en:"Horse Mackerel"}, bg:"condition/AA1.png", cond:"condition/Mer_baleine.png"},
+        {name:{fr:"Pagellus bogaraveo", en:"Blackspot Seabream"}, bg:"condition/AA1.png", cond:"condition/Mer_calme.png"},
+        {name:{fr:"Pieuvre naine atlantique", en:"Atlantic Dwarf Octopus"}, bg:"condition/AA1.png", cond:"condition/Mer_calme.png"},
+        {name:{fr:"Poisson ruban", en:"Ribbon Fish"}, bg:"condition/AA1.png", cond:"condition/Mer_calme.png"},
+        {name:{fr:"Bernard l'Hermite", en:"Hermit Crab"}, bg:"condition/AA1.png", cond:"condition/Mer_de_lEst.png"},
+        {name:{fr:"Crevette de la mer", en:"Sea Shrimp"}, bg:"condition/AA1.png", cond:"condition/Mer_de_lEst.png"},
+        {name:{fr:"Eglefin", en:"Haddock"}, bg:"condition/AA1.png", cond:"condition/Mer_de_lEst.png"},
+        {name:{fr:"Gobie", en:"Goby"}, bg:"condition/GG4.png", cond:"condition/Mer_de_lEst.png"},
+        {name:{fr:"Grondin perlon", bg:"condition/AA1.png", en:"Tub Gurnard"}, cond:"condition/Mer_de_lEst.png"},
+        {name:{fr:"Bonite", en:"Bonito"}, bg:"condition/AA1.png", cond:"condition/Ocean.png"},
+        {name:{fr:"Chimère argentée", en:"Rabbit Fish"}, bg:"condition/AA1.png", cond:"condition/Ocean.png"},
+        {name:{fr:"Perche de mer", en:"Sea Perch"}, bg:"condition/AA1.png", cond:"condition/Ocean.png"},
+        {name:{fr:"Sardine", en:"Sardine"}, bg:"condition/AA1.png", cond:"condition/Ocean.png"},
+        {name:{fr:"Baudroie", en:"Anglerfish"}, bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"},
+        {name:{fr:"Carpe Papillon", en:"Butterfly Carp"}, bg:"condition/CC3.png", cond:"condition/Peche_en_mer.png"},
+        {name:{fr:"Pieuvre", en:"Octopus"}, bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"},
+        {name:{fr:"Régalec", en:"Oarfish"}, bg:"condition/GG4.png", cond:"condition/Peche_en_mer.png"},
+        {name:{fr:"Rouget barbet", en:"Red Mullet"}, bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"},
+        {name:{fr:"Roussette", en:"Dogfish"}, bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"},
+        {name:{fr:"Seiche européenne", en:"European Cuttlefish"}, bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"},
+        {name:{fr:"Turbot", en:"Turbot"}, bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"},
+        {name:{fr:"Blennie de rivière", en:"River Blenny"}, bg:"condition/AA1.png", cond:"condition/Riviere_Aurore.png"},
+        {name:{fr:"Carpe européenne", en:"European Carp"}, bg:"condition/CC2.png", cond:"condition/Riviere_Aurore.png"},
+        {name:{fr:"Zingel streber", en:"Streber"}, bg:"condition/AA1.png", cond:"condition/Riviere_Aurore.png"},
+        {name:{fr:"Comète coussut", en:"Comet Fish"}, bg:"condition/AA1.png", cond:"condition/Riviere_calme.png"},
+        {name:{fr:"Lotte", en:"Burbot"}, bg:"condition/LL4.png", cond:"condition/Riviere_calme.png"},
+        {name:{fr:"Saumon kéta", en:"Chum Salmon"}, bg:"condition/AA1.png", cond:"condition/Riviere_calme.png"},
+        {name:{fr:"Vairon", en:"Minnow"}, bg:"condition/AA1.png", cond:"condition/Riviere_calme.png"},
+        {name:{fr:"Epinoche", en:"Stickleback"}, bg:"condition/AA1.png", cond:"condition/Riviere_peu_profonde.png"},
+        {name:{fr:"Crevette verte", en:"Green Shrimp"}, bg:"condition/AA1.png", cond:"condition/Rivieres.png"},
+        {name:{fr:"Perche de rivière", en:"River Perch"}, bg:"condition/AA1.png", cond:"condition/Rivieres.png"},
+        {name:{fr:"Tilapia", en:"Tilapia"}, bg:"condition/AA1.png", cond:"condition/Rivieres.png"},
+        {name:{fr:"Chabot", en:"Bullhead"}, bg:"condition/AA1.png", cond:"condition/Source_et_montagne_thermale.png"},
+        {name:{fr:"Féra", en:"Common Whitefish"}, bg:"condition/AA1.png", cond:"condition/Source_et_montagne_thermale.png"},
+        {name:{fr:"Têtard", en:"Tadpole"}, bg:"condition/AA1.png", cond:"condition/Source_et_montagne_thermale.png"}
+    ];
+
+    // INSECTES
+    const bugList = [
+        {name:{fr:"Actias neidhoederi", en:"Actias Moth"}, cond:"insecte/Banlieue.png", bg:"insecte/Actias%20neidhoederi2.png"},
+        {name:{fr:"Azuré de porcelaine", en:"Porcelain Blue"}, cond:"insecte/Centre%20ville.png", bg:"insecte/Azuré%20de%20porcelaine2.png"},
+        {name:{fr:"Bourdon", en:"Bumblebee"}, cond:"insecte/Champs%20de%20fleurs%20+%20Montagne%20de%20baleine.png", bg:"insecte/Bourdon2.png"},
+        {name:{fr:"Cétoine étoilée bleue", en:"Blue Star Chafer"}, cond:"insecte/Pourtour%20parcelles.png", bg:"insecte/Cétoine%20étoilée%20bleue2.png"},
+        {name:{fr:"Cicindèle verte", en:"Green Tiger Beetle"}, cond:"insecte/Montagne%20thermale.png", bg:"insecte/Cicindèle%20verte2.png"},
+        {name:{fr:"Citron aspasia", en:"Common Brimstone"}, cond:"insecte/Banlieue.png", bg:"insecte/Citron%20aspasia2.png"},
+        {name:{fr:"Coccinelle à sept points", en:"Seven-spot Ladybird"}, cond:"insecte/Banlieue.png", bg:"insecte/Coccinelle%20à%20sept%20points2.png"},
+        {name:{fr:"Coccinelle asiatique", en:"Asian Ladybeetle"}, cond:"insecte/Tour%20du%20faon.png", bg:""},
+        {name:{fr:"Criocère de l'asperge", en:"Asparagus Beetle"}, cond:"insecte/Champs%20de%20fleurs%20+%20Montagne%20de%20baleine.png", bg:"insecte/Criocère%20de%20l'asperge2.png"},
+        {name:{fr:"Criquet aux pattes massives", en:"Large-legged Grasshopper"}, cond:"insecte/Village%20pêcheurs.png", bg:"insecte/Criquet%20aux%20pattes%20massives2.png"},
+        {name:{fr:"Grand agrion", en:"Large Damselfly"}, cond:"insecte/Bords%20d'eau%20fréquent%20pour%20l'agroin.png", bg:"insecte/Grand%20agrion2.png"},
+        {name:{fr:"Libellule tachetée", en:"Spotted Dragonfly"}, cond:"insecte/Lacs%20de%20banlieue.png", bg:"insecte/Libellule%20tachetée2.png"},
+        {name:{fr:"Papillon à anneaux rouges", en:"Red-ringed Butterfly"}, cond:"insecte/Event%20insect.png", bg:"insecte/Papillon%20à%20anneaux%20rouges2.png"},
+        {name:{fr:"Papillon à col rouge", en:"Red-neck Butterfly"}, cond:"insecte/Pourtour%20parcelles.png", bg:"insecte/Cétoine%20étoilée%20bleue2.png"},
+        {name:{fr:"Papillon blanc", en:"White Butterfly"}, cond:"insecte/Village%20pêcheurs.png", bg:"insecte/Papillon%20blanc2.png"},
+        {name:{fr:"Papillon doré", en:"Golden Butterfly"}, cond:"insecte/Forêt.png", bg:"insecte/Papillon%20doré2.png"},
+        {name:{fr:"Parnassien", en:"Parnassian"}, cond:"insecte/Event%20insect.png", bg:"insecte/Parnassien2.png"},
+        {name:{fr:"Piéride du cresson", en:"Cress White"}, cond:"insecte/Centre%20ville.png", bg:"insecte/Piéride%20du%20cresson2.png"},
+        {name:{fr:"Punaise Picasso", en:"Picasso Bug"}, cond:"insecte/Plage%20violette.png", bg:"insecte/Criquet%20aux%20pattes%20massives2.png"},
+        {name:{fr:"Pyrochroa", en:"Fire-colored Beetle"}, cond:"insecte/Source%20thermale.png", bg:"insecte/Pyrochroa2.png"},
+        {name:{fr:"Pyrrhocoris apterus", en:"Firebug"}, cond:"insecte/Pourtour%20parcelles.png", bg:"insecte/Pyrrhocoris%20apterus2.png"},
+        {name:{fr:"Sauterelle de l'oasis", en:"Oasis Grasshopper"}, cond:"insecte/Montagne%20thermale.png", bg:"insecte/Sauterelle%20de%20l'oasis2.png"},
+        {name:{fr:"Scarabée unicorne", en:"Unicorn Beetle"}, cond:"insecte/Quai%20oriental.png", bg:"insecte/Azuré%20de%20porcelaine2.png"}
+    ];
 
     var menuCtrl = L.control({position: 'topleft'});
     menuCtrl.onAdd = function() {
         var div = L.DomUtil.create('div', 'leaflet-control-layers'); div.id = "main-menu";
-        div.innerHTML = `<div id="c-pnj"><div class="accordion-title title-pnj">PNJ</div><div class="accordion-content"></div></div><div id="c-bus"><div class="accordion-title title-bus">BUS</div><div class="accordion-content"></div></div><div id="c-shop"><div class="accordion-title title-shop">MAGASINS</div><div class="accordion-content"></div></div><div id="c-lieux"><div class="accordion-title title-lieux">LIEUX</div><div class="accordion-content"></div></div><div id="c-fish"><div class="accordion-title title-poisson">POISSONS</div><div class="accordion-content"></div></div><div id="c-bug"><div class="accordion-title title-insecte">INSECTES</div><div class="accordion-content"></div></div>`;
         return div;
     };
     menuCtrl.addTo(map);
 
     function initMenu() {
-        ['pnj','bus','shop','lieux'].forEach(cat => {
-            var box = document.getElementById('c-'+cat), content = box.querySelector('.accordion-content');
-            dataStorage[cat].forEach(item => {
-                var el = document.createElement('div'); el.className = 'menu-item'; el.innerHTML = item.name;
-                el.onclick = () => { 
-                    if(item.category !== 'lieux') { 
-                        if(item.category != 'bus' && currentSingleMarker) map.removeLayer(currentSingleMarker); 
-                        if(item.category != 'bus') currentSingleMarker = item.marker; 
-                        item.marker.addTo(map); 
-                    } 
-                    map.flyTo(item.pos, 2); 
-                };
-                content.appendChild(el);
-            });
-            box.querySelector('.accordion-title').onclick = () => content.classList.toggle('active');
-        });
+        const menu = document.getElementById('main-menu');
+        menu.innerHTML = "";
+        const cats = [
+            {id:'pnj', key:'cat_pnj', color:'title-pnj'},
+            {id:'bus', key:'cat_bus', color:'title-bus'},
+            {id:'shop', key:'cat_shop', color:'title-shop'},
+            {id:'lieux', key:'cat_lieux', color:'title-lieux'},
+            {id:'fish', key:'cat_fish', color:'title-poisson'},
+            {id:'bug', key:'cat_bug', color:'title-insecte'}
+        ];
 
-        var fCont = document.querySelector('#c-fish .accordion-content');
-        fishList.forEach(f => {
-            var el = document.createElement('div'); el.className = 'menu-item'; el.innerText = f.name;
-            el.onclick = () => { openOverlay(f.name, f.bg, f.cond); };
-            fCont.appendChild(el);
+        cats.forEach(c => {
+            const container = document.createElement('div');
+            container.innerHTML = `<div class="accordion-title ${c.color}">${translations[currentLang][c.key]}</div><div class="accordion-content"></div>`;
+            const content = container.querySelector('.accordion-content');
+            
+            if(c.id === 'fish') {
+                fishList.forEach(f => {
+                    let el = document.createElement('div'); el.className='menu-item'; el.innerText=f.name[currentLang];
+                    el.onclick=()=>openOverlay(f.name[currentLang], f.bg, f.cond);
+                    content.appendChild(el);
+                });
+            } else if(c.id === 'bug') {
+                bugList.forEach(b => {
+                    let el = document.createElement('div'); el.className='menu-item'; el.innerText=b.name[currentLang];
+                    el.onclick=()=>openOverlay(b.name[currentLang], b.bg, b.cond);
+                    content.appendChild(el);
+                });
+            } else {
+                dataStorage[c.id].forEach(item => {
+                    let el = document.createElement('div'); el.className='menu-item'; el.innerText=item.name[currentLang];
+                    el.onclick=()=>{ 
+                        if(item.category !== 'lieux') {
+                            if(item.category != 'bus' && currentSingleMarker) map.removeLayer(currentSingleMarker);
+                            if(item.category != 'bus') currentSingleMarker = item.marker;
+                            item.marker.addTo(map);
+                        }
+                        map.flyTo(item.pos, 2); 
+                    };
+                    content.appendChild(el);
+                });
+            }
+            container.querySelector('.accordion-title').onclick = () => content.classList.toggle('active');
+            menu.appendChild(container);
         });
-        document.querySelector('#c-fish .accordion-title').onclick = () => fCont.classList.toggle('active');
-
-        var bCont = document.querySelector('#c-bug .accordion-content');
-        bugList.forEach(b => {
-            var el = document.createElement('div'); el.className = 'menu-item'; el.innerText = b.name;
-            el.onclick = () => { openOverlay(b.name, b.bg, b.cond); };
-            bCont.appendChild(el);
-        });
-        document.querySelector('#c-bug .accordion-title').onclick = () => bCont.classList.toggle('active');
-
-        L.DomEvent.disableScrollPropagation(document.getElementById('main-menu'));
-        L.DomEvent.disableClickPropagation(document.getElementById('main-menu'));
+        L.DomEvent.disableScrollPropagation(menu);
+        L.DomEvent.disableClickPropagation(menu);
     }
 
     function openOverlay(name, mainImg, condImg) {
@@ -293,6 +463,7 @@
         document.getElementById('overlay-info').style.display = 'flex'; 
     }
 
+    refreshMarkers();
     userPings.forEach(p => createFinalMarker(p));
     updateUserLegend(); 
     setTimeout(initMenu, 300);
