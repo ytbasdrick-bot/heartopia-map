@@ -20,12 +20,12 @@
         .details-list { text-align: left; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin: 25px 0; font-size: 14px; border-left: 4px solid #d4af37; line-height: 1.6; }
         #enter-button { padding: 18px 60px; background: linear-gradient(135deg, #8b0000, #d4af37); color: white; border: 2px solid white; border-radius: 50px; font-size: 20px; font-weight: bold; cursor: pointer; transition: 0.3s; }
 
-        /* MENU RÉTRÉCI À 180PX */
+        /* MENU */
         .leaflet-container { background: transparent !important; }
         .leaflet-control-layers { 
             left: 20px !important; 
             top: 20px !important; 
-            width: 180px !important; /* Largeur réduite ici */
+            width: 180px !important; 
             background: rgba(255, 255, 255, 0.98) !important; 
             border-radius: 15px !important; 
             padding: 8px !important; 
@@ -41,31 +41,34 @@
         .title-shop { background: #9b59b6; } 
         .title-lieux { background: #27ae60; } 
         .title-poisson { background: #f39c12; }
+        .title-insecte { background: #2ecc71; }
         
         .accordion-content { display: none; margin-bottom: 10px; background: #fff; }
         .accordion-content.active { display: block; }
         .menu-item { padding: 8px 10px; cursor: pointer; font-size: 12px; border-bottom: 1px solid #eee; color: #333; transition: background 0.2s; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .menu-item:hover { background: #f9f9f9; }
 
-        /* Légende des marqueurs (Droite) */
+        /* Légende */
         .ping-legend { position: fixed; right: 20px; top: 20px; width: 220px; background: rgba(0,0,0,0.9); border: 2px solid #d4af37; border-radius: 15px; padding: 15px; color: white; z-index: 1000; max-height: 40vh; display: flex; flex-direction: column; }
         #legend-list { overflow-y: auto; margin-top: 10px; }
         .legend-item { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.1); margin-bottom: 5px; padding: 8px; border-radius: 6px; font-size: 12px; cursor: pointer; }
 
-        /* Labels fixes sur carte */
+        /* Labels fixes */
         .label-ville { background: white !important; border: 2px solid #3498db !important; border-radius: 5px; padding: 2px 8px; font-weight: bold; font-size: 11px; color: #2980b9; white-space: nowrap; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .label-eau { background: rgba(41, 128, 185, 0.8) !important; border: 1px solid #fff !important; border-radius: 5px; padding: 2px 8px; font-size: 10px; color: white; font-weight: bold; white-space: nowrap; }
         .invisible-marker { background: transparent !important; border: none !important; }
 
-        /* Footer et Discord */
+        /* Footer */
         .footer-wiki { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; z-index: 3000; background: linear-gradient(90deg, #8b0000, #d4af37, #8b0000); display: flex; align-items: center; justify-content: center; border-top: 3px solid white; }
         .footer-wiki a { color: white; text-decoration: none; font-weight: 900; font-size: 20px; }
         #discord-link { position: fixed; bottom: 85px; right: 20px; z-index: 4000; }
         #discord-img { width: 60px; }
 
-        /* Fenêtre Poissons */
-        #overlay-fish { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 30000; display: none; align-items: center; justify-content: center; }
-        .fish-card { background: white; padding: 25px; border-radius: 20px; border: 3px solid #d4af37; width: 450px; text-align: center; }
+        /* Infos card */
+        #overlay-info { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 30000; display: none; align-items: center; justify-content: center; }
+        .info-card { background: white; padding: 25px; border-radius: 20px; border: 3px solid #d4af37; width: 450px; text-align: center; }
+        .info-card img { width: 100%; display: block; margin: 0 auto; }
+        .info-img-main { mix-blend-mode: multiply; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -78,8 +81,8 @@
         <p>Explorez la carte interactive officielle de la communauté française.</p>
         <div class="details-list">
             • <b>Navigation :</b> Utilisez le menu à gauche pour filtrer les éléments.<br>
-            • <b>Marqueurs :</b> Faites un <b>Clic Droit</b> n'importe où pour poser un repère perso.<br>
-            • <b>Poissons :</b> Cliquez sur un poisson pour voir ses horaires et lieux.<br>
+            • <b>Marqueurs :</b> Faites un <b>Clic Droit</b> pour préparer un repère, puis <b>Valider</b>.<br>
+            • <b>Infos :</b> Cliquez sur un poisson ou insecte pour voir ses détails.<br>
             • <b>Sauvegarde :</b> Vos marqueurs personnels sont enregistrés sur votre navigateur.
         </div>
         <button id="enter-button" onclick="startExperience()">ENTRER DANS LA CARTE</button>
@@ -95,12 +98,12 @@
 
 <div id="map"></div>
 
-<div id="overlay-fish" onclick="this.style.display='none'">
-    <div class="fish-card" onclick="event.stopPropagation()">
-        <h2 id="fish-name" style="color:#333; margin-top:0;"></h2>
-        <img id="fish-main" style="width:100%; mix-blend-mode: multiply;">
-        <img id="fish-cond" style="width:100%;">
-        <button onclick="document.getElementById('overlay-fish').style.display='none'" style="margin-top:15px; padding:10px 20px; cursor:pointer; background:#8b0000; color:white; border:none; border-radius:5px; font-weight:bold;">FERMER</button>
+<div id="overlay-info" onclick="this.style.display='none'">
+    <div class="info-card" onclick="event.stopPropagation()">
+        <h2 id="info-name" style="color:#333; margin-top:0;"></h2>
+        <img id="info-main" class="info-img-main">
+        <img id="info-cond">
+        <button onclick="document.getElementById('overlay-info').style.display='none'" style="margin-top:15px; padding:10px 20px; cursor:pointer; background:#8b0000; color:white; border:none; border-radius:5px; font-weight:bold;">FERMER</button>
     </div>
 </div>
 
@@ -125,45 +128,70 @@
 
     var userPings = JSON.parse(localStorage.getItem('maptopia_pings')) || [];
     var pingMarkers = {};
-    var tempPing = null;
+    var tempPingMarker = null;
 
-    function createPing(latlng, text, color, icon, isNew, id) {
-        var mid = id || "temp_" + Date.now();
-        var markerHtml = `<div style="background:${colors[color]};width:28px;height:28px;border:2px solid white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;">${icons[icon]}</div>`;
-        var marker = L.marker(latlng, {icon: L.divIcon({className:'', html:markerHtml, iconSize:[28,28], iconAnchor:[14,14]})}).addTo(map);
-        
-        if (isNew) {
-            tempPing = marker;
-            var div = document.createElement('div');
-            div.style.minWidth = "180px";
-            div.innerHTML = `
-                <input type="text" id="in-${mid}" placeholder="Nom..." style="width:100%; padding:5px; margin-bottom:10px;">
-                <div style="display:flex; gap:5px; margin-bottom:10px; justify-content:center;">
-                    ${Object.entries(colors).map(([k,v]) => `<div style="background:${v}; width:20px; height:20px; border-radius:50%; cursor:pointer;" onclick="selectColor('${k}',this)"></div>`).join('')}
-                </div>
-                <button onclick="confirmPing('${mid}',${latlng.lat},${latlng.lng})" style="width:100%; background:#27ae60; color:white; border:none; padding:8px; cursor:pointer; border-radius:4px; font-weight:bold;">VALIDER</button>`;
-            marker.tempIcon = 'note'; marker.tempColor = 'bleu';
-            marker.bindPopup(div).openPopup();
-        } else {
-            pingMarkers[id] = marker;
-            marker.bindPopup(`<b>${text}</b><br><button onclick="removeUserPing('${id}')" style="width:100%; background:#e74c3c; color:white; border:none; padding:5px; margin-top:5px; cursor:pointer; border-radius:3px;">Supprimer</button>`);
-        }
+    // --- LOGIQUE DE PING AVEC VALIDATION OBLIGATOIRE ---
+    
+    function createFinalMarker(p) {
+        var markerHtml = `<div style="background:${colors[p.color]};width:28px;height:28px;border:2px solid white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;">${icons[p.icon]}</div>`;
+        var marker = L.marker(p.latlng, {icon: L.divIcon({className:'', html:markerHtml, iconSize:[28,28], iconAnchor:[14,14]})}).addTo(map);
+        marker.bindPopup(`<b>${p.text}</b><br><button onclick="removeUserPing('${p.id}')" style="width:100%; background:#e74c3c; color:white; border:none; padding:5px; margin-top:5px; cursor:pointer; border-radius:3px;">Supprimer</button>`);
+        pingMarkers[p.id] = marker;
     }
 
-    window.selectColor = (c, el) => { tempPing.tempColor = c; el.parentElement.querySelectorAll('div').forEach(d => d.style.transform='scale(1)'); el.style.transform='scale(1.3)'; };
-    
-    window.confirmPing = (t, lat, lng) => {
-        var v = document.getElementById('in-'+t).value || "Lieu";
-        var id = "id_"+Date.now();
-        userPings.push({id:id, latlng:{lat,lng}, text:v, color:tempPing.tempColor, icon:tempPing.tempIcon});
-        localStorage.setItem('maptopia_pings', JSON.stringify(userPings));
-        map.removeLayer(tempPing); 
-        createPing({lat,lng}, v, tempPing.tempColor, tempPing.tempIcon, false, id);
-        updateUserLegend(); 
-        tempPing = null;
+    map.on('contextmenu', (e) => {
+        if(tempPingMarker) map.removeLayer(tempPingMarker);
+        
+        var mid = "temp_" + Date.now();
+        // Marqueur gris temporaire pour montrer l'emplacement
+        var tempHtml = `<div style="background:gray;width:28px;height:28px;border:2px dashed white;border-radius:50%;display:flex;align-items:center;justify-content:center;opacity:0.7;">?</div>`;
+        tempPingMarker = L.marker(e.latlng, {icon: L.divIcon({className:'', html:tempHtml, iconSize:[28,28], iconAnchor:[14,14]})}).addTo(map);
+        
+        tempPingMarker.tempColor = 'bleu';
+        
+        var div = document.createElement('div');
+        div.style.minWidth = "180px";
+        div.innerHTML = `
+            <b style="display:block;margin-bottom:5px;text-align:center;">Nouveau Marqueur</b>
+            <input type="text" id="in-${mid}" placeholder="Nom..." style="width:100%; padding:5px; margin-bottom:10px; box-sizing:border-box;">
+            <div style="display:flex; gap:5px; margin-bottom:10px; justify-content:center;">
+                ${Object.entries(colors).map(([k,v]) => `<div style="background:${v}; width:20px; height:20px; border-radius:50%; cursor:pointer; border:1px solid transparent;" onclick="selectPingColor('${k}', this)"></div>`).join('')}
+            </div>
+            <button onclick="confirmPing('${mid}',${e.latlng.lat},${e.latlng.lng})" style="width:100%; background:#27ae60; color:white; border:none; padding:8px; cursor:pointer; border-radius:4px; font-weight:bold;">VALIDER</button>
+            <button onclick="cancelPing()" style="width:100%; background:#95a5a6; color:white; border:none; padding:5px; cursor:pointer; border-radius:4px; margin-top:5px; font-size:10px;">ANNULER</button>`;
+        
+        tempPingMarker.bindPopup(div, {closeOnClick: false}).openPopup();
+    });
+
+    window.selectPingColor = (c, el) => {
+        tempPingMarker.tempColor = c;
+        el.parentElement.querySelectorAll('div').forEach(d => d.style.borderColor='transparent');
+        el.style.borderColor='black';
     };
 
-    window.removeUserPing = (id) => { if(pingMarkers[id]) map.removeLayer(pingMarkers[id]); userPings = userPings.filter(p => p.id != id); localStorage.setItem('maptopia_pings', JSON.stringify(userPings)); updateUserLegend(); };
+    window.cancelPing = () => { if(tempPingMarker) { map.removeLayer(tempPingMarker); tempPingMarker = null; } };
+
+    window.confirmPing = (mid, lat, lng) => {
+        var v = document.getElementById('in-'+mid).value || "Lieu";
+        var id = "id_"+Date.now();
+        var newPing = {id:id, latlng:{lat,lng}, text:v, color:tempPingMarker.tempColor, icon:'note'};
+        
+        userPings.push(newPing);
+        localStorage.setItem('maptopia_pings', JSON.stringify(userPings));
+        
+        map.removeLayer(tempPingMarker);
+        tempPingMarker = null;
+        
+        createFinalMarker(newPing);
+        updateUserLegend();
+    };
+
+    window.removeUserPing = (id) => { 
+        if(pingMarkers[id]) map.removeLayer(pingMarkers[id]); 
+        userPings = userPings.filter(p => p.id != id); 
+        localStorage.setItem('maptopia_pings', JSON.stringify(userPings)); 
+        updateUserLegend(); 
+    };
     
     function updateUserLegend() {
         const list = document.getElementById('legend-list'); list.innerHTML = "";
@@ -174,7 +202,7 @@
         });
     }
 
-    map.on('contextmenu', (e) => { if(tempPing) map.removeLayer(tempPing); createPing(e.latlng, "", "bleu", "note", true); });
+    // --- DONNÉES ET INITIALISATION ---
 
     var dataStorage = { pnj:[], bus:[], shop:[], lieux:[] };
     var currentSingleMarker = null;
@@ -235,87 +263,14 @@
         {pos:[-674,627], name:"Fleuve d'Arbres Géants", type:"label-eau", startOn:true}
     ].forEach(l => register('lieux', l.pos, l.name, '', {type:l.type, startOn:l.startOn}));
 
-    // POISSONS
-    const fishList = [
-        {name:"Ablette", bg:"condition/AA1.png", cond:"condition/Lacs.png"},
-        {name:"Carpe argentée", bg:"condition/AA1.png", cond:"condition/Lacs.png"},
-        {name:"Grenouille européenne", bg:"condition/AA1.png", cond:"condition/Lacs.png"},
-        {name:"Langouste européenne", bg:"condition/LL1.png", cond:"condition/Lacs.png"},
-        {name:"Acantharchus pomotis", bg:"condition/AA2.png", cond:"condition/Lac_de_la_foret.png"},
-        {name:"Barbillon", bg:"condition/AA1.png", cond:"condition/Lac_de_la_foret.png"},
-        {name:"Ecrevisse noble", bg:"condition/AA1.png", cond:"condition/Lac_de_la_foret.png"},
-        {name:"Ecrevisse noble bleue", bg:"condition/AA1.png", cond:"condition/Lac_de_la_foret.png"},
-        {name:"Grand black-basse", bg:"condition/GG1.png", cond:"condition/Lac_de_la_foret.png"},
-        {name:"Grande huître perlière", bg:"condition/AA1.png", cond:"condition/Lac_de_la_foret.png"},
-        {name:"Tanche dorée", bg:"condition/AA1.png", cond:"condition/Lac_de_la_foret.png"},
-        {name:"Eperlan", bg:"condition/AA1.png", cond:"condition/Lac_dans_la_prairie.png"},
-        {name:"Poisson rouge", bg:"condition/AA1.png", cond:"condition/Lac_dans_la_prairie.png"},
-        {name:"Plie européenne", bg:"condition/LL1.png", cond:"condition/Ancienne_mer.png"},
-        {name:"Poisson-clown", bg:"condition/AA1.png", cond:"condition/Ancienne_mer.png"},
-        {name:"Poisson épineux", bg:"condition/AA1.png", cond:"condition/Ancienne_mer.png"},
-        {name:"Poisson-globe de rivière", bg:"condition/LL4.png", cond:"condition/Ancienne_mer.png"},
-        {name:"Aphyosemion striatum", bg:"condition/AA4.png", cond:"condition/Lacs_de_banlieue.png"},
-        {name:"Barbeau", bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"},
-        {name:"Carpe noire", bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"},
-        {name:"Loche des rochers", bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"},
-        {name:"Moule", bg:"condition/CC3.png", cond:"condition/Lacs_de_banlieue.png"},
-        {name:"Omble chevalier", bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"},
-        {name:"Ombrine", bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"},
-        {name:"Poisson à yeux rouges", bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"},
-        {name:"Loche des fleurs", bg:"condition/AA1.png", cond:"condition/Fleuve_darbres_geants.png"},
-        {name:"POISSON-TIGRE à ventre rouge", bg:"condition/AA1.png", cond:"condition/Fleuve_darbres_geants.png"},
-        {name:"Sandre blanc", bg:"condition/GG1.png", cond:"condition/Fleuve_darbres_geants.png"},
-        {name:"Perche de prunier", bg:"condition/LL4.png", cond:"condition/Lacs_montagne_thermale.png"},
-        {name:"Hippocampe", bg:"condition/HH1.png", cond:"condition/Mer_baleine.png"},
-        {name:"Maquereau atlantique", bg:"condition/AA1.png", cond:"condition/Mer_baleine.png"},
-        {name:"Saumon atlantique", bg:"condition/MM1.png", cond:"condition/Mer_baleine.png"},
-        {name:"Saurel", bg:"condition/AA1.png", cond:"condition/Mer_baleine.png"},
-        {name:"Pagellus bogaraveo", bg:"condition/AA1.png", cond:"condition/Mer_calme.png"},
-        {name:"Pieuvre naine atlantique", bg:"condition/AA1.png", cond:"condition/Mer_calme.png"},
-        {name:"Poisson ruban", bg:"condition/AA1.png", cond:"condition/Mer_calme.png"},
-        {name:"Bernard l'Hermite", bg:"condition/AA1.png", cond:"condition/Mer_de_lEst.png"},
-        {name:"Crevette de la mer", bg:"condition/AA1.png", cond:"condition/Mer_de_lEst.png"},
-        {name:"Eglefin", bg:"condition/AA1.png", cond:"condition/Mer_de_lEst.png"},
-        {name:"Gobie", bg:"condition/GG4.png", cond:"condition/Mer_de_lEst.png"},
-        {name:"Grondin perlon", bg:"condition/AA1.png", cond:"condition/Mer_de_lEst.png"},
-        {name:"Bonite", bg:"condition/AA1.png", cond:"condition/Ocean.png"},
-        {name:"Chimère argentée", bg:"condition/AA1.png", cond:"condition/Ocean.png"},
-        {name:"Perche de mer", bg:"condition/AA1.png", cond:"condition/Ocean.png"},
-        {name:"Sardine", bg:"condition/AA1.png", cond:"condition/Ocean.png"},
-        {name:"Baudroie", bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"},
-        {name:"Carpe Papillon", bg:"condition/CC3.png", cond:"condition/Peche_en_mer.png"},
-        {name:"Pieuvre", bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"},
-        {name:"Régalec", bg:"condition/GG4.png", cond:"condition/Peche_en_mer.png"},
-        {name:"Rouget barbet", bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"},
-        {name:"Roussette", bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"},
-        {name:"Seiche européenne", bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"},
-        {name:"Turbot", bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"},
-        {name:"Blennie de rivière", bg:"condition/AA1.png", cond:"condition/Riviere_Aurore.png"},
-        {name:"Carpe européenne", bg:"condition/CC2.png", cond:"condition/Riviere_Aurore.png"},
-        {name:"Zingel streber", bg:"condition/AA1.png", cond:"condition/Riviere_Aurore.png"},
-        {name:"Comète coussut", bg:"condition/AA1.png", cond:"condition/Riviere_calme.png"},
-        {name:"Lotte", bg:"condition/LL4.png", cond:"condition/Riviere_calme.png"},
-        {name:"Saumon kéta", bg:"condition/AA1.png", cond:"condition/Riviere_calme.png"},
-        {name:"Vairon", bg:"condition/AA1.png", cond:"condition/Riviere_calme.png"},
-        {name:"Epinoche", bg:"condition/AA1.png", cond:"condition/Riviere_peu_profonde.png"},
-        {name:"Crevette verte", bg:"condition/AA1.png", cond:"condition/Rivieres.png"},
-        {name:"Perche de rivière", bg:"condition/AA1.png", cond:"condition/Rivieres.png"},
-        {name:"Tilapia", bg:"condition/AA1.png", cond:"condition/Rivieres.png"},
-        {name:"Chabot", bg:"condition/AA1.png", cond:"condition/Source_et_montagne_thermale.png"},
-        {name:"Féra", bg:"condition/AA1.png", cond:"condition/Source_et_montagne_thermale.png"},
-        {name:"Têtard", bg:"condition/AA1.png", cond:"condition/Source_et_montagne_thermale.png"}
-    ];
+    const fishList = [{name:"Ablette", bg:"condition/AA1.png", cond:"condition/Lacs.png"}, {name:"Carpe argentée", bg:"condition/AA1.png", cond:"condition/Lacs.png"}, {name:"Grenouille européenne", bg:"condition/AA1.png", cond:"condition/Lacs.png"}, {name:"Langouste européenne", bg:"condition/LL1.png", cond:"condition/Lacs.png"}, {name:"Acantharchus pomotis", bg:"condition/AA2.png", cond:"condition/Lac_de_la_foret.png"}, {name:"Barbillon", bg:"condition/AA1.png", cond:"condition/Lac_de_la_foret.png"}, {name:"Ecrevisse noble", bg:"condition/AA1.png", cond:"condition/Lac_de_la_foret.png"}, {name:"Ecrevisse noble bleue", bg:"condition/AA1.png", cond:"condition/Lac_de_la_foret.png"}, {name:"Grand black-basse", bg:"condition/GG1.png", cond:"condition/Lac_de_la_foret.png"}, {name:"Grande huître perlière", bg:"condition/AA1.png", cond:"condition/Lac_de_la_foret.png"}, {name:"Tanche dorée", bg:"condition/AA1.png", cond:"condition/Lac_de_la_foret.png"}, {name:"Eperlan", bg:"condition/AA1.png", cond:"condition/Lac_dans_la_prairie.png"}, {name:"Poisson rouge", bg:"condition/AA1.png", cond:"condition/Lac_dans_la_prairie.png"}, {name:"Plie européenne", bg:"condition/LL1.png", cond:"condition/Ancienne_mer.png"}, {name:"Poisson-clown", bg:"condition/AA1.png", cond:"condition/Ancienne_mer.png"}, {name:"Poisson épineux", bg:"condition/AA1.png", cond:"condition/Ancienne_mer.png"}, {name:"Poisson-globe de rivière", bg:"condition/LL4.png", cond:"condition/Ancienne_mer.png"}, {name:"Aphyosemion striatum", bg:"condition/AA4.png", cond:"condition/Lacs_de_banlieue.png"}, {name:"Barbeau", bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"}, {name:"Carpe noire", bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"}, {name:"Loche des rochers", bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"}, {name:"Moule", bg:"condition/CC3.png", cond:"condition/Lacs_de_banlieue.png"}, {name:"Omble chevalier", bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"}, {name:"Ombrine", bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"}, {name:"Poisson à yeux rouges", bg:"condition/AA1.png", cond:"condition/Lacs_de_banlieue.png"}, {name:"Loche des fleurs", bg:"condition/AA1.png", cond:"condition/Fleuve_darbres_geants.png"}, {name:"POISSON-TIGRE à ventre rouge", bg:"condition/AA1.png", cond:"condition/Fleuve_darbres_geants.png"}, {name:"Sandre blanc", bg:"condition/GG1.png", cond:"condition/Fleuve_darbres_geants.png"}, {name:"Perche de prunier", bg:"condition/LL4.png", cond:"condition/Lacs_montagne_thermale.png"}, {name:"Hippocampe", bg:"condition/HH1.png", cond:"condition/Mer_baleine.png"}, {name:"Maquereau atlantique", bg:"condition/AA1.png", cond:"condition/Mer_baleine.png"}, {name:"Saumon atlantique", bg:"condition/MM1.png", cond:"condition/Mer_baleine.png"}, {name:"Saurel", bg:"condition/AA1.png", cond:"condition/Mer_baleine.png"}, {name:"Pagellus bogaraveo", bg:"condition/AA1.png", cond:"condition/Mer_calme.png"}, {name:"Pieuvre naine atlantique", bg:"condition/AA1.png", cond:"condition/Mer_calme.png"}, {name:"Poisson ruban", bg:"condition/AA1.png", cond:"condition/Mer_calme.png"}, {name:"Bernard l'Hermite", bg:"condition/AA1.png", cond:"condition/Mer_de_lEst.png"}, {name:"Crevette de la mer", bg:"condition/AA1.png", cond:"condition/Mer_de_lEst.png"}, {name:"Eglefin", bg:"condition/AA1.png", cond:"condition/Mer_de_lEst.png"}, {name:"Gobie", bg:"condition/GG4.png", cond:"condition/Mer_de_lEst.png"}, {name:"Grondin perlon", bg:"condition/AA1.png", cond:"condition/Mer_de_lEst.png"}, {name:"Bonite", bg:"condition/AA1.png", cond:"condition/Ocean.png"}, {name:"Chimère argentée", bg:"condition/AA1.png", cond:"condition/Ocean.png"}, {name:"Perche de mer", bg:"condition/AA1.png", cond:"condition/Ocean.png"}, {name:"Sardine", bg:"condition/AA1.png", cond:"condition/Ocean.png"}, {name:"Baudroie", bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"}, {name:"Carpe Papillon", bg:"condition/CC3.png", cond:"condition/Peche_en_mer.png"}, {name:"Pieuvre", bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"}, {name:"Régalec", bg:"condition/GG4.png", cond:"condition/Peche_en_mer.png"}, {name:"Rouget barbet", bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"}, {name:"Roussette", bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"}, {name:"Seiche européenne", bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"}, {name:"Turbot", bg:"condition/AA1.png", cond:"condition/Peche_en_mer.png"}, {name:"Blennie de rivière", bg:"condition/AA1.png", cond:"condition/Riviere_Aurore.png"}, {name:"Carpe européenne", bg:"condition/CC2.png", cond:"condition/Riviere_Aurore.png"}, {name:"Zingel streber", bg:"condition/AA1.png", cond:"condition/Riviere_Aurore.png"}, {name:"Comète coussut", bg:"condition/AA1.png", cond:"condition/Riviere_calme.png"}, {name:"Lotte", bg:"condition/LL4.png", cond:"condition/Riviere_calme.png"}, {name:"Saumon kéta", bg:"condition/AA1.png", cond:"condition/Riviere_calme.png"}, {name:"Vairon", bg:"condition/AA1.png", cond:"condition/Riviere_calme.png"}, {name:"Epinoche", bg:"condition/AA1.png", cond:"condition/Riviere_peu_profonde.png"}, {name:"Crevette verte", bg:"condition/AA1.png", cond:"condition/Rivieres.png"}, {name:"Perche de rivière", bg:"condition/AA1.png", cond:"condition/Rivieres.png"}, {name:"Tilapia", bg:"condition/AA1.png", cond:"condition/Rivieres.png"}, {name:"Chabot", bg:"condition/AA1.png", cond:"condition/Source_et_montagne_thermale.png"}, {name:"Féra", bg:"condition/AA1.png", cond:"condition/Source_et_montagne_thermale.png"}, {name:"Têtard", bg:"condition/AA1.png", cond:"condition/Source_et_montagne_thermale.png"}];
 
-    // MENU
+    const bugList = [{name:"Actias neidhoederi", cond:"insecte/Banlieue.png", bg:"insecte/Actias%20neidhoederi2.png"}, {name:"Azuré de porcelaine", cond:"insecte/Centre%20ville.png", bg:"insecte/Azuré%20de%20porcelaine2.png"}, {name:"Bourdon", cond:"insecte/Champs%20de%20fleurs%20+%20Montagne%20de%20baleine.png", bg:"insecte/Bourdon2.png"}, {name:"Cétoine étoilée bleue", cond:"insecte/Pourtour%20parcelles.png", bg:"insecte/Cétoine%20étoilée%20bleue2.png"}, {name:"Cicindèle verte", cond:"insecte/Montagne%20thermale.png", bg:"insecte/Cicindèle%20verte2.png"}, {name:"Citron aspasia", cond:"insecte/Banlieue.png", bg:"insecte/Citron%20aspasia2.png"}, {name:"Coccinelle à sept points", cond:"insecte/Banlieue.png", bg:"insecte/Coccinelle%20à%20sept%20points2.png"}, {name:"Coccinelle asiatique", cond:"insecte/Tour%20du%20faon.png", bg:""}, {name:"Criocère de l'asperge", cond:"insecte/Champs%20de%20fleurs%20+%20Montagne%20de%20baleine.png", bg:"insecte/Criocère%20de%20l'asperge2.png"}, {name:"Criquet aux pattes massives", cond:"insecte/Village%20pêcheurs.png", bg:"insecte/Criquet%20aux%20pattes%20massives2.png"}, {name:"Grand agrion", cond:"insecte/Bords%20d'eau%20fréquent%20pour%20l'agroin.png", bg:"insecte/Grand%20agrion2.png"}, {name:"Libellule tachetée", cond:"insecte/Lacs%20de%20banlieue.png", bg:"insecte/Libellule%20tachetée2.png"}, {name:"Papillon à anneaux rouges", cond:"insecte/Event%20insect.png", bg:"insecte/Papillon%20à%20anneaux%20rouges2.png"}, {name:"Papillon à col rouge", cond:"insecte/Pourtour%20parcelles.png", bg:"insecte/Cétoine%20étoilée%20bleue2.png"}, {name:"Papillon blanc", cond:"insecte/Village%20pêcheurs.png", bg:"insecte/Papillon%20blanc2.png"}, {name:"Papillon doré", cond:"insecte/Forêt.png", bg:"insecte/Papillon%20doré2.png"}, {name:"Parnassien", cond:"insecte/Event%20insect.png", bg:"insecte/Parnassien2.png"}, {name:"Piéride du cresson", cond:"insecte/Centre%20ville.png", bg:"insecte/Piéride%20du%20cresson2.png"}, {name:"Punaise Picasso", cond:"insecte/Plage%20violette.png", bg:"insecte/Criquet%20aux%20pattes%20massives2.png"}, {name:"Pyrochroa", cond:"insecte/Source%20thermale.png", bg:"insecte/Pyrochroa2.png"}, {name:"Pyrrhocoris apterus", cond:"insecte/Pourtour%20parcelles.png", bg:"insecte/Pyrrhocoris%20apterus2.png"}, {name:"Sauterelle de l'oasis", cond:"insecte/Montagne%20thermale.png", bg:"insecte/Sauterelle%20de%20l'oasis2.png"}, {name:"Scarabée unicorne", cond:"insecte/Quai%20oriental.png", bg:"insecte/Azuré%20de%20porcelaine2.png"}];
+
     var menuCtrl = L.control({position: 'topleft'});
     menuCtrl.onAdd = function() {
         var div = L.DomUtil.create('div', 'leaflet-control-layers'); div.id = "main-menu";
-        div.innerHTML = `
-            <div id="c-pnj"><div class="accordion-title title-pnj">PNJ</div><div class="accordion-content"></div></div>
-            <div id="c-bus"><div class="accordion-title title-bus">BUS</div><div class="accordion-content"></div></div>
-            <div id="c-shop"><div class="accordion-title title-shop">MAGASINS</div><div class="accordion-content"></div></div>
-            <div id="c-lieux"><div class="accordion-title title-lieux">LIEUX</div><div class="accordion-content"></div></div>
-            <div id="c-fish"><div class="accordion-title title-poisson">POISSONS</div><div class="accordion-content"></div></div>`;
+        div.innerHTML = `<div id="c-pnj"><div class="accordion-title title-pnj">PNJ</div><div class="accordion-content"></div></div><div id="c-bus"><div class="accordion-title title-bus">BUS</div><div class="accordion-content"></div></div><div id="c-shop"><div class="accordion-title title-shop">MAGASINS</div><div class="accordion-content"></div></div><div id="c-lieux"><div class="accordion-title title-lieux">LIEUX</div><div class="accordion-content"></div></div><div id="c-fish"><div class="accordion-title title-poisson">POISSONS</div><div class="accordion-content"></div></div><div id="c-bug"><div class="accordion-title title-insecte">INSECTES</div><div class="accordion-content"></div></div>`;
         return div;
     };
     menuCtrl.addTo(map);
@@ -341,21 +296,31 @@
         var fCont = document.querySelector('#c-fish .accordion-content');
         fishList.forEach(f => {
             var el = document.createElement('div'); el.className = 'menu-item'; el.innerText = f.name;
-            el.onclick = () => { 
-                document.getElementById('fish-name').innerText = f.name; 
-                document.getElementById('fish-main').src = f.bg; 
-                document.getElementById('fish-cond').src = f.cond; 
-                document.getElementById('overlay-fish').style.display = 'flex'; 
-            };
+            el.onclick = () => { openOverlay(f.name, f.bg, f.cond); };
             fCont.appendChild(el);
         });
         document.querySelector('#c-fish .accordion-title').onclick = () => fCont.classList.toggle('active');
+
+        var bCont = document.querySelector('#c-bug .accordion-content');
+        bugList.forEach(b => {
+            var el = document.createElement('div'); el.className = 'menu-item'; el.innerText = b.name;
+            el.onclick = () => { openOverlay(b.name, b.bg, b.cond); };
+            bCont.appendChild(el);
+        });
+        document.querySelector('#c-bug .accordion-title').onclick = () => bCont.classList.toggle('active');
 
         L.DomEvent.disableScrollPropagation(document.getElementById('main-menu'));
         L.DomEvent.disableClickPropagation(document.getElementById('main-menu'));
     }
 
-    userPings.forEach(p => createPing(p.latlng, p.text, p.color, p.icon, false, p.id));
+    function openOverlay(name, mainImg, condImg) {
+        document.getElementById('info-name').innerText = name; 
+        document.getElementById('info-main').src = mainImg; 
+        document.getElementById('info-cond').src = condImg; 
+        document.getElementById('overlay-info').style.display = 'flex'; 
+    }
+
+    userPings.forEach(p => createFinalMarker(p));
     updateUserLegend(); 
     setTimeout(initMenu, 300);
 </script>
