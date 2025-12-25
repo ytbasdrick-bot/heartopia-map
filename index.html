@@ -175,18 +175,20 @@
             Bienvenue sur <b>Maptopia</b>, votre compagnon de route pour explorer Heartopia !<br>
             
             <div class="details-list">
-                • <b>Navigation :</b> Menu à gauche (Bouton ☰ sur mobile).<br>
-                • <b>Marqueurs :</b> <b>Clic Droit</b> (ou <b>Appui Long</b> sur mobile) pour placer vos points.<br>
+                • <b>Navigation :</b> Menu compact à gauche pour filtrer.<br>
+                • <b>Marqueurs :</b> <b>Clic Droit</b> pour placer vos points.<br>
+                • <b>Nettoyage :</b> La carte reste propre automatiquement.<br>
                 • <b>Sauvegarde :</b> Vos données sont conservées ici.
             </div>
 
             <div class="welcome-note">
                 🐾 <b>NOTE SUR LES DÉPLACEMENTS :</b><br>
-                Les mouvements des animaux sont une simulation pour indiquer leurs zones d'habitat.
+                Les mouvements des animaux sur cette carte sont <b>fictifs</b> (simulation), mais ils vous indiquent précisément leurs véritables <b>zones d'habitat</b>.<br>
+                De même, <b>Albert Jr.</b> est simulée en train de faire le <b>tour du village</b> pour visualiser son itinéraire réel.
             </div>
 
             🛠️ <b>ÉTAT DU PROJET :</b><br>
-            Ce site est actuellement en développement.
+            Ce site est actuellement en développement. Des mises à jour régulières apporteront de nouvelles fonctionnalités et corrections.
         </div>
         <button class="btn-rex" onclick="closeWelcome()">J'AI COMPRIS, C'EST PARTI !</button>
     </div>
@@ -359,7 +361,7 @@
 
     function register(cat, pos, name, img, opts = {}) {
         let m;
-        // TAILLE ICONES : PNJ reduits a 35x35, BUS normalisé à 60x60
+        // TAILLE ICONES : PNJ [35,35] (Taille d'origine conservée)
         var iSize = (cat=='pnj' ? [35,35] : [60,60]);
         // ANCHOR : PNJ centré [17,17], BUS/SHOP centré bas [30,60]
         var iAnchor = (cat=='pnj' ? [17,17] : [30,60]);
@@ -453,11 +455,12 @@
                 el.onclick = () => { 
                     // CAS 1 : C'est un PNJ (Sauf Albert), un BUS ou un LIEU
                     if (cat === 'bus' || cat === 'lieux' || (cat === 'pnj' && item.name !== "Albert Jr.")) {
-                         map.flyTo(item.pos, 2, { animate: false });
+                         // NOUVEAU : ZOOM ACTIVÉ (Animation fluide vers le point)
+                         map.flyTo(item.pos, 3, { animate: true, duration: 1.5 });
                     }
                     // CAS 2 : Albert Jr.
                     else if (cat === 'pnj' && item.name === "Albert Jr.") {
-                         map.flyTo(item.marker.getLatLng(), 2, { animate: true });
+                         map.flyTo(item.marker.getLatLng(), 3, { animate: true });
                     }
                     // CAS 3 : Magasins et Animaux
                     else {
@@ -467,7 +470,7 @@
                         }
                         currentSingleMarker = item;
                         item.marker.setLatLng(item.pos).addTo(map);
-                        map.flyTo(item.pos, 2, { animate: false }); 
+                        map.flyTo(item.pos, 3, { animate: true }); 
                         if(item.marker._icon) {
                             item.marker._icon.classList.remove('smooth-move');
                             item.marker._icon.classList.remove('albert-walk');
@@ -475,7 +478,7 @@
                         if(cat === 'animal') setTimeout(() => triggerMovement(item), 500);
                     }
                     
-                    // Si on est sur mobile, on ferme le menu après un clic pour voir la carte
+                    // GESTION MOBILE : Fermer le menu après le clic pour voir le zoom
                     if(window.innerWidth <= 768) toggleMobileMenu();
                 };
                 content.appendChild(el);
