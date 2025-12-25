@@ -96,6 +96,7 @@
             height: 30px !important;
             max-width: 30px !important;
             max-height: 30px !important;
+            /* Rendu net */
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
             transition: width 0.3s, height 0.3s;
@@ -561,6 +562,11 @@
                     else if (cat === 'pnj' && item.name === "Albert Jr.") {
                          map.flyTo(item.marker.getLatLng(), 3, { animate: true });
                          item.marker.openPopup();
+                         
+                         // SI IL EST ARRETÉ, ON LE REDEMARRE
+                         if(!item.marker.moveTimer) {
+                             startAlbertPatrol(item.marker, 0); 
+                         }
                     }
                     // CAS 3 : Magasins et Animaux
                     else {
@@ -568,6 +574,15 @@
                              if(currentSingleMarker.moveTimer) clearTimeout(currentSingleMarker.moveTimer);
                              map.removeLayer(currentSingleMarker.marker);
                         }
+                        
+                        // --- NOUVEAU : ARRÊTER ALBERT POUR EVITER LE BUG ---
+                        let albert = dataStorage.pnj.find(i => i.name === "Albert Jr.");
+                        if(albert && albert.marker.moveTimer) {
+                             clearTimeout(albert.marker.moveTimer);
+                             albert.marker.moveTimer = null;
+                             if(albert.marker._icon) albert.marker._icon.classList.remove('albert-walk');
+                        }
+                        
                         currentSingleMarker = item;
                         item.marker.setLatLng(item.pos).addTo(map);
                         map.flyTo(item.pos, 3, { animate: true }); 
