@@ -90,12 +90,12 @@
         .invisible-marker { background: transparent !important; border: none !important; }
 
         /* --- TAILLE INTELLIGENTE DES PNJ --- */
-        /* PAR DÉFAUT (MOBILE) : Taille large pour le tactile */
+        /* PAR DÉFAUT (MOBILE) : Taille ajustée (45px) */
         .pnj-icon {
-            width: 55px !important;
-            height: 55px !important;
-            max-width: 55px !important;
-            max-height: 55px !important;
+            width: 45px !important;
+            height: 45px !important;
+            max-width: 45px !important;
+            max-height: 45px !important;
             /* Rendu net */
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
@@ -120,7 +120,7 @@
 
         /* --- MEDIA QUERIES : OPTIMISATION MOBILE --- */
         @media only screen and (min-width: 769px) {
-            /* SUR PC : On force une taille plus petite et précise */
+            /* SUR PC : On force une taille plus petite et précise (35px) */
             .pnj-icon {
                 width: 35px !important;
                 height: 35px !important;
