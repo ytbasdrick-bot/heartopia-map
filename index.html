@@ -65,9 +65,11 @@
         .label-eau { background: rgba(41, 128, 185, 0.8) !important; border: 1px solid #fff !important; border-radius: 5px; padding: 2px 8px; font-size: 10px; color: white; font-weight: bold; white-space: nowrap; }
         .invisible-marker { background: transparent !important; border: none !important; }
         
-        /* MOUVEMENTS */
+        /* MOUVEMENTS & FIX ZOOM */
         .smooth-move { transition: transform 7s linear !important; }
-        .albert-walk { transition: transform 10s linear !important; } /* Albert Ralenti (10s) */
+        .albert-walk { transition: transform 2s linear !important; } 
+        
+        .is-zooming .leaflet-marker-icon { transition: none !important; }
 
         /* Footer & Overlay */
         .footer-wiki { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; z-index: 3000; background: linear-gradient(90deg, #8b0000, #d4af37, #8b0000); display: flex; align-items: center; justify-content: center; border-top: 3px solid white; }
@@ -118,10 +120,9 @@
             Bienvenue sur <b>Maptopia</b>, votre compagnon de route pour explorer Heartopia !<br><br>
             
             <div class="welcome-note">
-                🐾 <b>IMPORTANT - ANIMAUX & PNJ :</b><br>
-                Les positions sont <b>dynamiques</b> !<br>
-                Comme les animaux, <b>Albert Jr.</b> se déplace réellement. Il fait sa ronde en ville, cherchez-le sur les routes !<br>
-                Les autres PNJs sont fixes.
+                🐾 <b>NOTE SUR LES DÉPLACEMENTS :</b><br>
+                Les mouvements des animaux sur cette carte sont <b>fictifs</b> (simulation), mais ils vous indiquent précisément leurs véritables <b>zones d'habitat</b>.<br>
+                De même, <b>Albert Jr.</b> est simulée en train de faire le <b>tour du village</b> pour visualiser son itinéraire réel.
             </div>
 
             🛠️ <b>ÉTAT DU PROJET :</b><br>
@@ -174,16 +175,7 @@
 
     // TRAJET ALBERT JR
     const albertPath = [
-        [-522.0, 645.5], [-536.5, 635.5], [-556.5, 638.0], [-574.5, 635.5],
-        [-593.0, 626.5], [-619.0, 610.0], [-632.5, 592.0], [-641.5, 582.5],
-        [-636.8, 567.3], [-633.3, 545.0], [-632.3, 516.8], [-630.0, 483.3],
-        [-631.5, 455.8], [-633.8, 428.5], [-632.0, 416.8], [-618.3, 402.8],
-        [-609.8, 396.5], [-615.3, 381.5], [-610.8, 365.3], [-579.8, 343.3],
-        [-547.3, 337.0], [-515.5, 341.3], [-483.5, 346.3], [-451.3, 336.8],
-        [-419.3, 325.0], [-387.0, 326.0], [-362.0, 340.0], [-346.3, 360.5],
-        [-339.8, 386.3], [-339.5, 414.0], [-346.3, 441.3], [-366.3, 481.3],
-        [-377.3, 524.0], [-374.8, 566.0], [-374.5, 599.3], [-386.0, 617.3],
-        [-410.0, 634.8], [-437.8, 644.8], [-516.5, 644.8], [-522.0, 645.5]
+      [-532.4, 634.8], [-538.4, 635.8], [-543.3, 636.4], [-548.4, 637.8], [-554.5, 638.1], [-559.1, 638.1], [-564.8, 637.8], [-568, 637.3], [-571.9, 636.4], [-576.3, 634.5], [-581.5, 632.5], [-585.8, 630.3], [-591, 627.9], [-593.6, 626], [-598, 623.9], [-602.5, 621.3], [-606.6, 618.8], [-610.5, 616.5], [-614.6, 614.3], [-618.4, 611.6], [-622.6, 608.4], [-625.9, 605.8], [-628.9, 603.4], [-631, 600.4], [-631.8, 597.1], [-633.3, 593.6], [-634.3, 589.9], [-637.3, 588.4], [-639.1, 586.5], [-640.6, 584], [-641.3, 581.4], [-640.9, 578], [-640.4, 575.6], [-639.3, 572.8], [-638.3, 570.1], [-636, 565.4], [-634.4, 562.1], [-633.5, 558.5], [-633.1, 555.9], [-633.3, 552.8], [-633.3, 549.1], [-633.3, 546.8], [-633.3, 543.3], [-633.4, 533.9], [-633, 526.6], [-632.6, 521.5], [-632.4, 516.8], [-631.9, 510.4], [-631.9, 505.5], [-631.5, 502], [-631.3, 497], [-631.1, 492], [-630.6, 487.1], [-630.6, 480.8], [-630.9, 473.1], [-631.1, 465.6], [-631.9, 458.1], [-632.3, 452.9], [-633.1, 447.4], [-633.4, 442], [-634, 436.3], [-634.1, 431.3], [-634.3, 428.4], [-634.1, 425.4], [-633.9, 422.1], [-633, 419.6], [-632.1, 417.5], [-629.4, 413.1], [-627.4, 411], [-625.3, 408.5], [-622.6, 406.4], [-620.6, 405], [-618.5, 403.3], [-616.1, 401.5], [-614, 399.9], [-612.1, 397.8], [-611.3, 396.6], [-612, 392.4], [-612.5, 391], [-613.9, 387.9], [-614.1, 385], [-614.6, 380.6], [-614.1, 376.8], [-613.4, 373.1], [-612.4, 369.9], [-610.8, 366], [-609.3, 363.9], [-607.3, 360.8], [-604.6, 358], [-602.9, 356], [-599.6, 353.8], [-596.8, 351.3], [-593.3, 349.5], [-590.8, 348], [-588, 346.8], [-585.6, 345.8], [-579.9, 343.5], [-571.5, 340.4], [-565.1, 339], [-561.1, 338.1], [-556.6, 337.5], [-553.5, 337], [-548, 336.6], [-544.3, 336.5], [-541, 337], [-536.4, 337.4], [-533.3, 337.6], [-529.1, 338.5], [-526.3, 338.8], [-523.1, 339.5], [-519.3, 340.3], [-513.6, 341.6], [-510, 342.4], [-504.4, 343.3], [-500, 344], [-497.6, 344.8], [-492.4, 345.1], [-487.9, 345.4], [-483.6, 345.8], [-480.1, 345.5], [-477.4, 345.5], [-471, 345], [-466, 344.4], [-462.4, 341.8], [-459, 340.3], [-456.1, 339], [-451.6, 337.4], [-448.5, 335.5], [-444.3, 332.9], [-438.4, 331.3], [-433.5, 329.6], [-428.6, 327.9], [-425.6, 326.9], [-420, 325.6], [-415.3, 324.6], [-407.6, 324.1], [-402.4, 324.1], [-397.6, 324.4], [-392.1, 324.9], [-388, 325.5], [-384, 327.1], [-380.5, 328.5], [-377.5, 330], [-374.3, 332], [-370.3, 334], [-366.1, 336.1], [-362.8, 339.1], [-359.5, 342.4], [-356.3, 345.8], [-353.6, 349.6], [-351, 352.5], [-349.3, 356.9], [-346.9, 361.3], [-345, 366], [-343.6, 370.1], [-341.9, 376.1], [-341.4, 380.8], [-340.8, 385.3], [-340.1, 390.9], [-339.5, 394.4], [-339.4, 400], [-339.5, 404], [-340.1, 409.9], [-340.9, 415.4], [-341.8, 420.5], [-342.5, 425.4], [-344.1, 432], [-345.4, 436.6], [-347.6, 441.6], [-350, 446], [-352.4, 450.5], [-354.4, 455], [-356.8, 459], [-359.1, 463.1], [-361.1, 468.3], [-363.5, 473.5], [-365, 477.1], [-367.3, 481.3], [-369.8, 487], [-370.9, 492.1], [-373.1, 498.4], [-374.6, 506.4], [-375.1, 511.3], [-375.6, 516.4], [-376.4, 522.8], [-376.9, 531], [-377, 537.1], [-377, 541.9], [-377, 548.3], [-376.6, 552.8], [-376.5, 557.5], [-376, 564.1], [-375, 571.3], [-374.8, 576.3], [-373.6, 581.1], [-373.9, 584.4], [-374.1, 590], [-374.4, 594.8], [-375.3, 599.3], [-376, 602.1], [-377.6, 605.5], [-379, 608.3], [-380.4, 610.4], [-382.1, 612.6], [-384.3, 615.8], [-387.1, 618.6], [-389.1, 620.8], [-391.6, 622.5], [-395.8, 626], [-400.3, 629], [-405, 631.8], [-409.6, 634.9], [-415, 637.1], [-419.8, 639.5], [-424.3, 641.5], [-426.5, 642.8], [-429.6, 643.6], [-432.8, 644.3], [-436.6, 645], [-439.6, 645.3], [-443.5, 645.4], [-448.5, 645.4], [-455.8, 645.3], [-461.4, 645], [-470.5, 645], [-476.3, 645.1], [-481.5, 644.9], [-485.6, 644.8], [-489.5, 644.8], [-493.6, 644.6], [-499.6, 645], [-503.5, 645], [-508.3, 645], [-512, 645], [-515.4, 645], [-518.1, 645], [-520.8, 644.8], [-523.9, 643.4], [-526.1, 642.5], [-527.8, 641], [-530, 638.6], [-530.6, 636.8], [-531.5, 635.6]
     ];
 
     function startExperience() {
@@ -205,6 +197,10 @@
 
     L.imageOverlay('carte.png', bounds).addTo(map);
     map.setView([-500, 500], 1);
+
+    // --- FIX ZOOM POUR ALBERT ---
+    map.on('zoomstart', () => { document.body.classList.add('is-zooming'); });
+    map.on('zoomend', () => { document.body.classList.remove('is-zooming'); });
 
     var userPings = JSON.parse(localStorage.getItem('maptopia_pings')) || [];
     var pingMarkers = {};
@@ -282,14 +278,15 @@
         
         marker.moveTimer = setTimeout(() => {
             startAlbertPatrol(marker, nextIndex);
-        }, 10000); // 10 secondes par segment
+        }, 2000); // 2 secondes par point pour fluidité
     }
 
     function register(cat, pos, name, img, opts = {}) {
         let m;
-        // TAILLE ICONES : PNJ reduits a 35x35
-        var iSize = (cat=='bus' ? [85,85] : (cat=='pnj' ? [35,35] : [60,60]));
-        var iAnchor = (cat=='bus' ? [42,85] : (cat=='pnj' ? [17,35] : [30,60]));
+        // TAILLE ICONES : PNJ reduits a 35x35, BUS normalisé à 60x60
+        var iSize = (cat=='pnj' ? [35,35] : [60,60]);
+        // ANCHOR : PNJ centré [17,17], BUS/SHOP centré bas [30,60]
+        var iAnchor = (cat=='pnj' ? [17,17] : [30,60]);
 
         if(opts.type) { 
             m = L.marker(pos, { icon: L.divIcon({ className: 'invisible-marker', html: '', iconSize: [1, 1] }) }).bindTooltip(name, { permanent: true, direction: 'center', className: opts.type }); 
@@ -299,14 +296,11 @@
             m = L.marker(pos, { icon: L.icon({ iconUrl: img, iconSize: iSize, iconAnchor: iAnchor }) });
             if(cat !== 'pnj' && cat !== 'bus' && cat !== 'shop') { m.bindPopup(`<b>${name}</b>`); }
             
-            // PNJ RESTENT AFFICHES
+            // LOGIQUE D'AFFICHAGE AU DEMARRAGE : SEULEMENT PNJ, BUS, LIEUX
             if(opts.startOn || cat === 'pnj') m.addTo(map); 
         }
         
         dataStorage[cat].push({name, pos, marker:m, category:cat, radius: opts.radius || 50, moveTimer: null});
-        
-        // Démarrage immédiat Albert
-        if(name === "Albert Jr.") startAlbertPatrol(m, 0);
     }
 
     // --- DONNÉES ---
@@ -318,7 +312,8 @@
         [-502,582,"Naniwa","pnj/niniwa.png"],[-502,519,"Joan","pnj/joa.png"],[-807,419,"Will","pnj/will.png"],
         [-355,809,"Patti","pnj/patti.png"],[-653,225,"Vernie","pnj/vernie.png"],[-498,526,"Bayley","pnj/bayley.png"],
         [-528.3,560.3,"Blanc","pnj/blanc.png"],[-499.8,499.0,"Annie","pnj/annie.png"],
-        [-522.0, 645.5, "Albert Jr.", "pnj/albert jr.png"] 
+        // Albert commence au premier point du trajet
+        [-532.4, 634.8, "Albert Jr.", "pnj/albert jr.png"] 
     ].forEach(d => register('pnj', [d[0],d[1]], d[2], d[3]));
     
     // 2. BUS
@@ -380,21 +375,36 @@
             dataStorage[cat].forEach(item => {
                 var el = document.createElement('div'); el.className = 'menu-item'; el.innerHTML = item.name;
                 el.onclick = () => { 
-                    if(cat !== 'bus' && cat !== 'lieux' && cat !== 'pnj') { 
+                    // CAS 1 : C'est un PNJ (Sauf Albert), un BUS ou un LIEU
+                    // ILS SONT DÉJÀ VISIBLES -> On zoome juste
+                    if (cat === 'bus' || cat === 'lieux' || (cat === 'pnj' && item.name !== "Albert Jr.")) {
+                         map.flyTo(item.pos, 2, { animate: false });
+                    }
+                    
+                    // CAS 2 : Albert Jr. (Déjà visible, mais bouge) -> On suit sa position
+                    else if (cat === 'pnj' && item.name === "Albert Jr.") {
+                         map.flyTo(item.marker.getLatLng(), 2, { animate: true });
+                    }
+
+                    // CAS 3 : Magasins et Animaux (CACHÉS AU DÉBUT) -> On affiche un par un
+                    else {
                         if(currentSingleMarker) {
                              if(currentSingleMarker.moveTimer) clearTimeout(currentSingleMarker.moveTimer);
                              map.removeLayer(currentSingleMarker.marker);
                         }
                         currentSingleMarker = item;
-                        item.marker.setLatLng(item.pos).addTo(map);
                         
+                        // Réinitialiser position (utile pour animaux qui ont bougé virtuellement ou pour centrer)
+                        // Pour les animaux, on les laisse là où ils sont sensés être
+                        item.marker.setLatLng(item.pos).addTo(map);
+                        map.flyTo(item.pos, 2, { animate: false }); 
+
                         if(item.marker._icon) {
                             item.marker._icon.classList.remove('smooth-move');
                             item.marker._icon.classList.remove('albert-walk');
                         }
                         if(cat === 'animal') setTimeout(() => triggerMovement(item), 500);
                     }
-                    map.flyTo(item.pos, 2, { animate: false }); 
                 };
                 content.appendChild(el);
             });
@@ -439,6 +449,11 @@
     userPings.forEach(p => createFinalMarker(p));
     updateUserLegend(); 
     setTimeout(initMenu, 300);
+
+    // Lancement automatique d'Albert (Il est visible)
+    let albert = dataStorage.pnj.find(i => i.name === "Albert Jr.");
+    if(albert) startAlbertPatrol(albert.marker, 0);
+
 </script>
 </body>
 </html>
