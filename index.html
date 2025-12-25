@@ -14,34 +14,16 @@
         body { margin: 0; padding: 0; background: url('Heartopia.jpg') no-repeat center center fixed; background-size: cover; overflow: hidden; font-family: 'Segoe UI', Roboto, sans-serif; }
         #map { height: 100vh; width: 100vw; opacity: 0; transition: opacity 2s ease; background: url('Heartopia.jpg') no-repeat center center !important; background-size: cover !important; }
         
+        /* --- UI DESKTOP (BASE) --- */
+
         /* ÉCRAN D'ACCUEIL */
         #intro-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: url('Heartopia.jpg') no-repeat center center; background-size: cover; z-index: 20000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1s ease; padding: 20px; overflow: hidden; }
         #intro-screen::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px); z-index: 1; }
         
-        /* NOUVEAU STYLE POUR LE LIEN OFFICIEL (REMPLACE LE LOGO) */
         .official-link-text {
-            position: relative;
-            z-index: 20002;
-            margin-bottom: 20px;
-            font-size: 18px;
-            color: #fff;
-            text-decoration: none;
-            font-weight: 900;
-            background: linear-gradient(135deg, rgba(0,0,0,0.8), rgba(50,50,50,0.8));
-            padding: 12px 25px;
-            border: 2px solid #d4af37;
-            border-radius: 50px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            position: relative; z-index: 20002; margin-bottom: 20px; font-size: 18px; color: #fff; text-decoration: none; font-weight: 900; background: linear-gradient(135deg, rgba(0,0,0,0.8), rgba(50,50,50,0.8)); padding: 12px 25px; border: 2px solid #d4af37; border-radius: 50px; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1.5px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); text-align: center;
         }
-        .official-link-text:hover {
-            background: #d4af37;
-            color: #3e2723;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
-            transform: scale(1.05);
-        }
+        .official-link-text:hover { background: #d4af37; color: #3e2723; box-shadow: 0 0 20px rgba(212, 175, 55, 0.6); transform: scale(1.05); }
 
         /* FENÊTRE DE BIENVENUE */
         #welcome-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 19000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(3px); animation: fadeIn 0.5s; }
@@ -49,10 +31,9 @@
         .welcome-header { font-size: 24px; font-weight: 900; color: #8b0000; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; border-bottom: 2px solid #d4af37; padding-bottom: 10px; }
         .welcome-text { text-align: left; font-size: 14px; line-height: 1.6; color: #333; margin-bottom: 10px; }
         .welcome-note { background: #fff3cd; border-left: 5px solid #d4af37; padding: 10px; margin: 10px 0; font-size: 13px; color: #856404; font-weight: bold; }
-        
         .details-list { text-align: left; background: #f8f9fa; padding: 15px; border-radius: 12px; margin: 15px 0; font-size: 13px; border-left: 4px solid #d4af37; line-height: 1.5; color: #333; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
-        /* Drapeaux */
+        /* INTERFACE GENERALE */
         .language-selector { display: flex; gap: 10px; align-items: center; justify-content: center; margin-bottom: 10px; }
         .intro-langs { position: absolute; top: 30px; right: 30px; z-index: 20005; }
         .lang-flag { width: 30px; height: 20px; cursor: pointer; border: 2px solid rgba(255,255,255,0.3); border-radius: 4px; transition: 0.3s; object-fit: cover; }
@@ -68,8 +49,12 @@
         .btn-rex { width: 100%; max-width: 320px; padding: 15px 20px; background: linear-gradient(135deg, #8b0000, #d4af37); color: white; border: 2px solid white; border-radius: 50px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
         .btn-rex:hover { transform: scale(1.02); box-shadow: 0 0 15px rgba(212, 175, 55, 0.5); }
 
-        /* MENU GAUCHE (145px) */
-        .leaflet-control-layers { left: 20px !important; top: 20px !important; width: 145px !important; background: rgba(255, 255, 255, 0.98) !important; border-radius: 15px !important; padding: 8px !important; max-height: 85vh; overflow-y: auto !important; border: none !important; box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important; }
+        /* MENU GAUCHE (145px) - MODIFIÉ POUR MOBILE */
+        .leaflet-control-layers { left: 20px !important; top: 20px !important; width: 145px !important; background: rgba(255, 255, 255, 0.98) !important; border-radius: 15px !important; padding: 8px !important; max-height: 85vh; overflow-y: auto !important; border: none !important; box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important; transition: transform 0.3s ease; }
+        
+        /* Bouton Hamburger pour Mobile (Caché sur PC) */
+        #mobile-menu-toggle { display: none; position: fixed; top: 10px; left: 10px; z-index: 5000; background: #8b0000; color: white; border: 2px solid #d4af37; border-radius: 8px; padding: 10px; font-size: 24px; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+
         .accordion-title { color: white; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 5px; text-align: center; font-size: 11px; text-transform: uppercase; }
         .title-pnj { background: #8b0000; } .title-bus { background: #2980b9; } .title-shop { background: #9b59b6; } .title-lieux { background: #27ae60; } .title-poisson { background: #f39c12; } .title-insecte { background: #2ecc71; } .title-animal { background: #6d4c41; }
         
@@ -79,7 +64,10 @@
         .menu-item:hover { background: #f9f9f9; }
 
         /* LÉGENDE DROITE */
-        .ping-legend { position: fixed; right: 20px; top: 20px; width: 220px; background: rgba(0,0,0,0.9); border: 2px solid #d4af37; border-radius: 15px; padding: 15px; color: white; z-index: 1000; max-height: 65vh; display: flex; flex-direction: column; }
+        .ping-legend { position: fixed; right: 20px; top: 20px; width: 220px; background: rgba(0,0,0,0.9); border: 2px solid #d4af37; border-radius: 15px; padding: 15px; color: white; z-index: 1000; max-height: 65vh; display: flex; flex-direction: column; transition: transform 0.3s ease; }
+        /* Bouton toggle légende Mobile */
+        #mobile-legend-toggle { display: none; position: fixed; top: 10px; right: 10px; z-index: 5000; background: #d4af37; color: #333; border: 2px solid white; border-radius: 50%; width: 40px; height: 40px; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+
         .legend-langs { border-bottom: 1px solid #d4af37; padding-bottom: 10px; margin-bottom: 10px; }
         #legend-list { overflow-y: auto; margin-top: 10px; flex-grow: 1; }
         .legend-item { display: flex; flex-direction: column; background: rgba(255,255,255,0.1); margin-bottom: 5px; padding: 8px; border-radius: 6px; font-size: 12px; }
@@ -92,28 +80,70 @@
         .label-eau { background: rgba(41, 128, 185, 0.8) !important; border: 1px solid #fff !important; border-radius: 5px; padding: 2px 8px; font-size: 10px; color: white; font-weight: bold; white-space: nowrap; }
         .invisible-marker { background: transparent !important; border: none !important; }
         
-        /* MOUVEMENTS & FIX ZOOM */
-        .smooth-move { transition: transform 7s linear !important; }
-        .albert-walk { transition: transform 2s linear !important; } 
-        
-        .is-zooming .leaflet-marker-icon { transition: none !important; }
-
         /* Footer & Overlay */
         .footer-wiki { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; z-index: 3000; background: linear-gradient(90deg, #8b0000, #d4af37, #8b0000); display: flex; align-items: center; justify-content: center; border-top: 3px solid white; }
         .footer-wiki a { color: white; text-decoration: none; font-weight: 900; font-size: 20px; }
         #discord-link { position: fixed; bottom: 85px; right: 20px; z-index: 4000; }
         #discord-img { width: 60px; }
         #overlay-info { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 30000; display: none; align-items: center; justify-content: center; }
-        .info-card { background: white; padding: 25px; border-radius: 20px; border: 3px solid #d4af37; width: 450px; text-align: center; }
+        .info-card { background: white; padding: 25px; border-radius: 20px; border: 3px solid #d4af37; width: 450px; text-align: center; max-width: 95%; }
         .info-card img { width: 100%; display: block; margin: 0 auto; }
         .info-img-main { mix-blend-mode: multiply; margin-bottom: 10px; }
         
+        /* MOUVEMENTS */
+        .smooth-move { transition: transform 7s linear !important; }
+        .albert-walk { transition: transform 2s linear !important; } 
+        .is-zooming .leaflet-marker-icon { transition: none !important; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- MEDIA QUERIES : OPTIMISATION MOBILE --- */
+        @media only screen and (max-width: 768px) {
+            /* 1. Écran d'accueil adapté */
+            .heartopia-title { font-size: 32px; letter-spacing: 2px; }
+            .welcome-box { padding: 20px; width: 90%; }
+            .official-link-text { font-size: 14px; padding: 10px 15px; width: 90%; display: inline-block; }
+            
+            /* 2. Menu Gauche : Caché par défaut, toggle via bouton */
+            #mobile-menu-toggle { display: block; }
+            .leaflet-control-layers { 
+                transform: translateX(-200%); /* Caché à gauche */
+                width: 220px !important; /* Plus large pour les doigts */
+                top: 60px !important; 
+                left: 10px !important;
+                max-height: 70vh;
+            }
+            .leaflet-control-layers.mobile-visible { transform: translateX(0); }
+            .menu-item { padding: 12px 10px; font-size: 14px; } /* Zones tactiles plus grandes */
+            .accordion-title { padding: 12px; font-size: 13px; }
+
+            /* 3. Légende Droite : Cachée par défaut */
+            #mobile-legend-toggle { display: flex; }
+            .ping-legend {
+                transform: translateX(150%); /* Caché à droite */
+                width: 250px;
+                top: 60px;
+                right: 10px;
+            }
+            .ping-legend.mobile-visible { transform: translateX(0); }
+
+            /* 4. Footer & Discord */
+            .footer-wiki { height: 50px; }
+            .footer-wiki a { font-size: 14px; }
+            #discord-link { bottom: 60px; right: 10px; }
+            #discord-img { width: 45px; }
+
+            /* 5. Welcome Modal */
+            .welcome-content { padding: 15px; width: 95%; }
+            .welcome-header { font-size: 20px; }
+        }
     </style>
 </head>
 <body>
 
 <audio id="main-audio"><source src="sonheartopia.mp4" type="audio/mp4"></audio>
+
+<button id="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
+<button id="mobile-legend-toggle" onclick="toggleMobileLegend()">📌</button>
 
 <div id="intro-screen">
     <div class="language-selector intro-langs">
@@ -145,20 +175,18 @@
             Bienvenue sur <b>Maptopia</b>, votre compagnon de route pour explorer Heartopia !<br>
             
             <div class="details-list">
-                • <b>Navigation :</b> Menu compact à gauche pour filtrer.<br>
-                • <b>Marqueurs :</b> <b>Clic Droit</b> pour placer vos points.<br>
-                • <b>Nettoyage :</b> La carte reste propre automatiquement.<br>
+                • <b>Navigation :</b> Menu à gauche (Bouton ☰ sur mobile).<br>
+                • <b>Marqueurs :</b> <b>Clic Droit</b> (ou <b>Appui Long</b> sur mobile) pour placer vos points.<br>
                 • <b>Sauvegarde :</b> Vos données sont conservées ici.
             </div>
 
             <div class="welcome-note">
                 🐾 <b>NOTE SUR LES DÉPLACEMENTS :</b><br>
-                Les mouvements des animaux sur cette carte sont <b>fictifs</b> (simulation), mais ils vous indiquent précisément leurs véritables <b>zones d'habitat</b>.<br>
-                De même, <b>Albert Jr.</b> est simulée en train de faire le <b>tour du village</b> pour visualiser son itinéraire réel.
+                Les mouvements des animaux sont une simulation pour indiquer leurs zones d'habitat.
             </div>
 
             🛠️ <b>ÉTAT DU PROJET :</b><br>
-            Ce site est actuellement en développement. Des mises à jour régulières apporteront de nouvelles fonctionnalités et corrections.
+            Ce site est actuellement en développement.
         </div>
         <button class="btn-rex" onclick="closeWelcome()">J'AI COMPRIS, C'EST PARTI !</button>
     </div>
@@ -166,7 +194,7 @@
 
 <a href="https://discord.gg/dc8eZwf2jq" target="_blank" id="discord-link"><img src="Discord-Logo-PNG-Pic.png" id="discord-img"></a>
 
-<div class="ping-legend">
+<div class="ping-legend" id="legend-box">
     <div class="language-selector legend-langs">
         <img src="https://flagcdn.com/w80/fr.png" class="lang-flag active" style="width:25px; height:16px;">
         <a href="https://ytbasdrick-bot.github.io/heartopia-en/"><img src="https://flagcdn.com/w80/gb.png" class="lang-flag" style="width:25px; height:16px;"></a>
@@ -199,6 +227,25 @@
 <div class="footer-wiki"><a href="https://jayibwi.wixsite.com/my-site-1" target="_blank">📖 ACCÉDER AU WIKI BY JUNE 📖</a></div>
 
 <script>
+    // --- GESTION MOBILE ---
+    function toggleMobileMenu() {
+        const menu = document.getElementById('main-menu');
+        menu.classList.toggle('mobile-visible');
+        // Si on ouvre le menu, on ferme la légende pour éviter le chevauchement
+        if(menu.classList.contains('mobile-visible')) {
+            document.getElementById('legend-box').classList.remove('mobile-visible');
+        }
+    }
+
+    function toggleMobileLegend() {
+        const legend = document.getElementById('legend-box');
+        legend.classList.toggle('mobile-visible');
+        // Inversement
+        if(legend.classList.contains('mobile-visible')) {
+            document.getElementById('main-menu').classList.remove('mobile-visible');
+        }
+    }
+
     const colors = { rouge: '#e74c3c', bleu: '#3498db', vert: '#2ecc71', jaune: '#f1c40f', violet: '#9b59b6', orange: '#e67e22' };
     const icons = { note: '📌', fish: '🎣', bird: '🦜', bug: '🦋', wood: '🌲', stone: '⛰️' };
 
@@ -405,35 +452,31 @@
                 var el = document.createElement('div'); el.className = 'menu-item'; el.innerHTML = item.name;
                 el.onclick = () => { 
                     // CAS 1 : C'est un PNJ (Sauf Albert), un BUS ou un LIEU
-                    // ILS SONT DÉJÀ VISIBLES -> On zoome juste
                     if (cat === 'bus' || cat === 'lieux' || (cat === 'pnj' && item.name !== "Albert Jr.")) {
                          map.flyTo(item.pos, 2, { animate: false });
                     }
-                    
-                    // CAS 2 : Albert Jr. (Déjà visible, mais bouge) -> On suit sa position
+                    // CAS 2 : Albert Jr.
                     else if (cat === 'pnj' && item.name === "Albert Jr.") {
                          map.flyTo(item.marker.getLatLng(), 2, { animate: true });
                     }
-
-                    // CAS 3 : Magasins et Animaux (CACHÉS AU DÉBUT) -> On affiche un par un
+                    // CAS 3 : Magasins et Animaux
                     else {
                         if(currentSingleMarker) {
                              if(currentSingleMarker.moveTimer) clearTimeout(currentSingleMarker.moveTimer);
                              map.removeLayer(currentSingleMarker.marker);
                         }
                         currentSingleMarker = item;
-                        
-                        // Réinitialiser position (utile pour animaux qui ont bougé virtuellement ou pour centrer)
-                        // Pour les animaux, on les laisse là où ils sont sensés être
                         item.marker.setLatLng(item.pos).addTo(map);
                         map.flyTo(item.pos, 2, { animate: false }); 
-
                         if(item.marker._icon) {
                             item.marker._icon.classList.remove('smooth-move');
                             item.marker._icon.classList.remove('albert-walk');
                         }
                         if(cat === 'animal') setTimeout(() => triggerMovement(item), 500);
                     }
+                    
+                    // Si on est sur mobile, on ferme le menu après un clic pour voir la carte
+                    if(window.innerWidth <= 768) toggleMobileMenu();
                 };
                 content.appendChild(el);
             });
@@ -459,7 +502,11 @@
 
             list.forEach(item => {
                 let el = document.createElement('div'); el.className = 'menu-item'; el.innerText = item.name;
-                el.onclick = () => { openOverlay(item.name, item.bg, item.cond); };
+                el.onclick = () => { 
+                    openOverlay(item.name, item.bg, item.cond); 
+                    // Fermer menu sur mobile
+                    if(window.innerWidth <= 768) toggleMobileMenu();
+                };
                 content.appendChild(el);
             });
         });
