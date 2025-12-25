@@ -89,17 +89,19 @@
         .label-eau { background: rgba(41, 128, 185, 0.8) !important; border: 1px solid #fff !important; border-radius: 5px; padding: 2px 8px; font-size: 10px; color: white; font-weight: bold; white-space: nowrap; }
         .invisible-marker { background: transparent !important; border: none !important; }
 
-        /* --- CORRECTIF AFFICHAGE PNJ IDENTIQUE PC/MOBILE --- */
-        .force-pc-icon {
-            width: 35px !important;
-            height: 35px !important;
-            /* Empêche le navigateur mobile de faire des ajustements automatiques */
-            max-width: 35px !important;
-            max-height: 35px !important;
-            -webkit-backface-visibility: hidden; /* Rend l'image plus nette sur iOS */
+        /* --- TAILLE INTELLIGENTE DES PNJ --- */
+        /* PAR DÉFAUT (MOBILE) : Taille large pour le tactile */
+        .pnj-icon {
+            width: 55px !important;
+            height: 55px !important;
+            max-width: 55px !important;
+            max-height: 55px !important;
+            /* Rendu net */
+            -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
+            transition: width 0.3s, height 0.3s;
         }
-        
+
         /* Footer & Overlay */
         .footer-wiki { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; z-index: 3000; background: linear-gradient(90deg, #8b0000, #d4af37, #8b0000); display: flex; align-items: center; justify-content: center; border-top: 3px solid white; }
         .footer-wiki a { color: white; text-decoration: none; font-weight: 900; font-size: 20px; }
@@ -117,6 +119,16 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         /* --- MEDIA QUERIES : OPTIMISATION MOBILE --- */
+        @media only screen and (min-width: 769px) {
+            /* SUR PC : On force une taille plus petite et précise */
+            .pnj-icon {
+                width: 35px !important;
+                height: 35px !important;
+                max-width: 35px !important;
+                max-height: 35px !important;
+            }
+        }
+
         @media only screen and (max-width: 768px) {
             /* 0. CACHER ELEMENTS PC */
             .pc-only { display: none !important; }
@@ -396,13 +408,19 @@
     function register(cat, pos, name, img, opts = {}) {
         let m;
         // --- RESTAURATION TAILLE ORIGINALE PC ---
-        // PNJ = 35x35 (Cadrage parfait sur PC et Mobile)
+        // PNJ = 35x35 (Cadrage parfait sur PC)
         var iSize = (cat=='pnj' ? [35,35] : [60,60]);
         // ANCHOR : PNJ centré [17,17] (Moitié de 35 pour centrage exact)
         var iAnchor = (cat=='pnj' ? [17,17] : [30,60]);
 
-        // MODIFICATION ICI: On ajoute une classe pour FORCER la taille PC
-        var customClass = (cat === 'pnj') ? 'force-pc-icon' : '';
+        // MODIFICATION ICI: On ajoute une classe intelligente pour changer la taille
+        var customClass = (cat === 'pnj') ? 'pnj-icon' : '';
+
+        // --- NOUVEAU : DETECTION DU DOSSIER 'pnjmobil' ---
+        // Si c'est un PNJ et qu'on est sur mobile (écran < 768px), on change le dossier
+        if(cat === 'pnj' && window.innerWidth <= 768) {
+            img = img.replace('pnj/', 'pnjmobil/');
+        }
 
         if(opts.type) { 
             m = L.marker(pos, { icon: L.divIcon({ className: 'invisible-marker', html: '', iconSize: [1, 1] }) }).bindTooltip(name, { permanent: true, direction: 'center', className: opts.type }); 
