@@ -18,11 +18,30 @@
         #intro-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: url('Heartopia.jpg') no-repeat center center; background-size: cover; z-index: 20000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1s ease; padding: 20px; overflow: hidden; }
         #intro-screen::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px); z-index: 1; }
         
-        /* LOGO OFFICIEL DU JEU */
-        .game-logo-container { z-index: 20002; margin-bottom: 20px; position: relative; transition: transform 0.3s ease; }
-        .game-logo-container:hover { transform: scale(1.05); }
-        /* Logo légèrement plus grand maintenant qu'il est seul */
-        .game-logo { width: 200px; max-width: 60vw; height: auto; filter: drop-shadow(0 0 20px rgba(255,255,255,0.3)); cursor: pointer; border-radius: 35px; }
+        /* NOUVEAU STYLE POUR LE LIEN OFFICIEL (REMPLACE LE LOGO) */
+        .official-link-text {
+            position: relative;
+            z-index: 20002;
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 900;
+            background: linear-gradient(135deg, rgba(0,0,0,0.8), rgba(50,50,50,0.8));
+            padding: 12px 25px;
+            border: 2px solid #d4af37;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .official-link-text:hover {
+            background: #d4af37;
+            color: #3e2723;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+            transform: scale(1.05);
+        }
 
         /* FENÊTRE DE BIENVENUE */
         #welcome-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 19000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(3px); animation: fadeIn 0.5s; }
@@ -102,8 +121,8 @@
         <a href="https://ytbasdrick-bot.github.io/heartopia-en/"><img src="https://flagcdn.com/w80/gb.png" class="lang-flag" title="Switch to English"></a>
     </div>
 
-    <a href="https://play.google.com/store/apps/details?id=com.fungame.heartopia" target="_blank" class="game-logo-container" title="Télécharger sur Google Play">
-        <img src="https://play-lh.googleusercontent.com/eN_JqA6Bq5l9c4Zq48z48z5182856683745864564320457087476272345832647623=w512-h512" alt="Heartopia Logo Officiel" class="game-logo">
+    <a href="https://www.bing.com/ck/a?!&&p=feead564f1a66d5b990cee8a81c335dc375a5a2ccf03f0b81b57e86f43fb78d6JmltdHM9MTc2NjYyMDgwMA&ptn=3&ver=2&hsh=4&fclid=1f20cbc0-80cd-6841-3094-dda5810e69a2&psq=heartopioa&u=a1aHR0cHM6Ly9oZWFydG9waWEueGQuY29tL2Zy" target="_blank" class="official-link-text" title="Site Officiel Heartopia">
+        LIEN OFFICIEL DE HEARTOPIA
     </a>
 
     <h1 class="heartopia-title">MAPTOPIA FR</h1>
