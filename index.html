@@ -88,15 +88,6 @@
         .label-ville { background: white !important; border: 2px solid #3498db !important; border-radius: 5px; padding: 2px 8px; font-weight: bold; font-size: 11px; color: #2980b9; white-space: nowrap; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .label-eau { background: rgba(41, 128, 185, 0.8) !important; border: 1px solid #fff !important; border-radius: 5px; padding: 2px 8px; font-size: 10px; color: white; font-weight: bold; white-space: nowrap; }
         .invisible-marker { background: transparent !important; border: none !important; }
-
-        /* --- STYLES PNJ (CADRE ROND NOIR) --- */
-        .pnj-icon-style {
-            border-radius: 50%;       /* Rond */
-            border: 2px solid #000;   /* Bordure noire */
-            background-color: #000;   /* Fond noir si transparent */
-            box-shadow: 0 0 5px rgba(0,0,0,0.5); /* Ombre légère pour le relief */
-            object-fit: cover;
-        }
         
         /* Footer & Overlay */
         .footer-wiki { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; z-index: 3000; background: linear-gradient(90deg, #8b0000, #d4af37, #8b0000); display: flex; align-items: center; justify-content: center; border-top: 3px solid white; }
@@ -394,27 +385,17 @@
     function register(cat, pos, name, img, opts = {}) {
         let m;
         // --- RESTAURATION TAILLE ORIGINALE PC ---
-        // PNJ = 35x35
+        // PNJ = 35x35 (Cadrage parfait sur PC et Mobile)
         var iSize = (cat=='pnj' ? [35,35] : [60,60]);
-        // ANCHOR : PNJ centré [17,17] (Centrage exact)
+        // ANCHOR : PNJ centré [17,17] (Moitié de 35 pour centrage exact)
         var iAnchor = (cat=='pnj' ? [17,17] : [30,60]);
-        
-        // APPLICATION DE LA CLASSE CSS PNJ
-        var extraClass = (cat === 'pnj') ? 'pnj-icon-style' : '';
 
         if(opts.type) { 
             m = L.marker(pos, { icon: L.divIcon({ className: 'invisible-marker', html: '', iconSize: [1, 1] }) }).bindTooltip(name, { permanent: true, direction: 'center', className: opts.type }); 
             if(opts.startOn) m.addTo(map); 
         }
         else { 
-            m = L.marker(pos, { 
-                icon: L.icon({ 
-                    iconUrl: img, 
-                    iconSize: iSize, 
-                    iconAnchor: iAnchor,
-                    className: extraClass // <--- ICI on applique le cadre rond noir
-                }) 
-            });
+            m = L.marker(pos, { icon: L.icon({ iconUrl: img, iconSize: iSize, iconAnchor: iAnchor }) });
             if(cat !== 'pnj' && cat !== 'bus' && cat !== 'shop') { m.bindPopup(`<b>${name}</b>`); }
             
             // LOGIQUE D'AFFICHAGE AU DEMARRAGE : SEULEMENT PNJ, BUS, LIEUX
