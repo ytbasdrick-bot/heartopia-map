@@ -69,10 +69,16 @@
         #mobile-legend-toggle { display: none; position: fixed; top: 10px; right: 10px; z-index: 5000; background: #d4af37; color: #333; border: 2px solid white; border-radius: 50%; width: 40px; height: 40px; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
 
         .legend-langs { border-bottom: 1px solid #d4af37; padding-bottom: 10px; margin-bottom: 10px; }
-        #legend-list { overflow-y: auto; margin-top: 10px; flex-grow: 1; }
+        #legend-list { overflow-y: auto; margin-top: 10px; flex-grow: 1; min-height: 50px; }
         .legend-item { display: flex; flex-direction: column; background: rgba(255,255,255,0.1); margin-bottom: 5px; padding: 8px; border-radius: 6px; font-size: 12px; }
         .coord-box { background: rgba(0,0,0,0.5); padding: 4px; border-radius: 4px; font-family: monospace; font-size: 10px; color: #d4af37; border: 1px solid #555; user-select: all; text-align: center; margin-top: 5px; }
-        .visit-counter { margin-top: 15px; padding-top: 10px; border-top: 1px solid #d4af37; text-align: center; }
+        
+        /* Guide en bas de légende */
+        .legend-guide { margin-top: 15px; padding-top: 10px; border-top: 1px solid #d4af37; }
+        .guide-row { display: flex; align-items: center; margin-bottom: 5px; font-size: 11px; color: #ccc; }
+        .guide-icon { font-size: 14px; margin-right: 8px; width: 20px; text-align: center; }
+        
+        .visit-counter { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #555; text-align: center; }
         .visit-counter p { font-size: 9px; color: #d4af37; margin-bottom: 8px; letter-spacing: 1px; font-weight: bold; }
 
         /* Styles Carte */
@@ -205,6 +211,17 @@
     <div style="text-align:center; font-weight:bold; border-bottom:1px solid #d4af37; padding-bottom:5px; font-size:12px;">📌 MES MARQUEURS</div>
     <div id="legend-list"></div>
     
+    <div class="legend-guide">
+        <div class="guide-row">
+            <span class="guide-icon">🖥️</span>
+            <span><b>PC :</b> Clic Droit = Point</span>
+        </div>
+        <div class="guide-row">
+            <span class="guide-icon">📱</span>
+            <span><b>Tel :</b> Menu haut gauche</span>
+        </div>
+    </div>
+
     <div class="visit-counter">
         <p>VISITEURS TOTAUX</p>
         <div id="compteur-container">
@@ -361,10 +378,10 @@
 
     function register(cat, pos, name, img, opts = {}) {
         let m;
-        // TAILLE ICONES : PNJ [35,35] (Taille d'origine conservée)
-        var iSize = (cat=='pnj' ? [35,35] : [60,60]);
-        // ANCHOR : PNJ centré [17,17], BUS/SHOP centré bas [30,60]
-        var iAnchor = (cat=='pnj' ? [17,17] : [30,60]);
+        // --- MODIFICATION REX : TAILLE PNJ = 32x32 (PC Style) ---
+        var iSize = (cat=='pnj' ? [32,32] : [60,60]);
+        // ANCHOR : PNJ centré [16,16], BUS/SHOP centré bas [30,60]
+        var iAnchor = (cat=='pnj' ? [16,16] : [30,60]);
 
         if(opts.type) { 
             m = L.marker(pos, { icon: L.divIcon({ className: 'invisible-marker', html: '', iconSize: [1, 1] }) }).bindTooltip(name, { permanent: true, direction: 'center', className: opts.type }); 
