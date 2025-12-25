@@ -78,6 +78,9 @@
         .guide-row { display: flex; align-items: center; margin-bottom: 5px; font-size: 11px; color: #ccc; }
         .guide-icon { font-size: 14px; margin-right: 8px; width: 20px; text-align: center; }
         
+        /* Masquer éléments PC sur mobile */
+        .pc-only { display: block; }
+
         .visit-counter { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #555; text-align: center; }
         .visit-counter p { font-size: 9px; color: #d4af37; margin-bottom: 8px; letter-spacing: 1px; font-weight: bold; }
 
@@ -104,6 +107,9 @@
 
         /* --- MEDIA QUERIES : OPTIMISATION MOBILE --- */
         @media only screen and (max-width: 768px) {
+            /* 0. CACHER ELEMENTS PC */
+            .pc-only { display: none !important; }
+
             /* 1. Écran d'accueil adapté */
             .heartopia-title { font-size: 32px; letter-spacing: 2px; }
             .welcome-box { padding: 20px; width: 90%; }
@@ -182,7 +188,7 @@
             
             <div class="details-list">
                 • <b>Navigation :</b> Menu compact à gauche pour filtrer.<br>
-                • <b>Marqueurs :</b> <b>Clic Droit</b> pour placer vos points.<br>
+                <span class="pc-only">• <b>Marqueurs :</b> <b>Clic Droit</b> pour placer vos points.<br></span>
                 • <b>Nettoyage :</b> La carte reste propre automatiquement.<br>
                 • <b>Sauvegarde :</b> Vos données sont conservées ici.
             </div>
@@ -212,7 +218,7 @@
     <div id="legend-list"></div>
     
     <div class="legend-guide">
-        <div class="guide-row">
+        <div class="guide-row pc-only">
             <span class="guide-icon">🖥️</span>
             <span><b>PC :</b> Clic Droit = Point</span>
         </div>
@@ -378,9 +384,9 @@
 
     function register(cat, pos, name, img, opts = {}) {
         let m;
-        // --- MODIFICATION REX : TAILLE PNJ = 32x32 (PC Style) ---
+        // --- MODIFICATION : Taille PNJ 32x32 partout (comme PC) ---
         var iSize = (cat=='pnj' ? [32,32] : [60,60]);
-        // ANCHOR : PNJ centré [16,16], BUS/SHOP centré bas [30,60]
+        // ANCHOR : PNJ centré [16,16]
         var iAnchor = (cat=='pnj' ? [16,16] : [30,60]);
 
         if(opts.type) { 
