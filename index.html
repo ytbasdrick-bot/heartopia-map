@@ -96,10 +96,38 @@
             height: 30px !important;
             max-width: 30px !important;
             max-height: 30px !important;
-            /* Rendu net */
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
             transition: width 0.3s, height 0.3s;
+        }
+
+        /* --- POPUP STYLE HEARTOPIA --- */
+        .heartopia-popup .leaflet-popup-content-wrapper {
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid #d4af37;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            padding: 0;
+            text-align: center;
+        }
+        .heartopia-popup .leaflet-popup-content {
+            margin: 8px 12px;
+            font-weight: 900;
+            color: #8b0000;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .heartopia-popup .leaflet-popup-tip {
+            background: #d4af37;
+            width: 12px;
+            height: 12px;
+            margin: -6px auto 0;
+            box-shadow: none;
+        }
+        .heartopia-popup a.leaflet-popup-close-button {
+            display: none; /* Pas de bouton croix moche, on clique ailleurs pour fermer */
         }
 
         /* Footer & Overlay */
@@ -428,7 +456,17 @@
         }
         else { 
             m = L.marker(pos, { icon: L.icon({ iconUrl: img, iconSize: iSize, iconAnchor: iAnchor, className: customClass }) });
-            if(cat !== 'pnj' && cat !== 'bus' && cat !== 'shop') { m.bindPopup(`<b>${name}</b>`); }
+            
+            // --- LOGIQUE POPUP PNJ STYLER ---
+            if(cat === 'pnj') {
+                var popupContent = `<div class='stylish-popup-content'>${name}</div>`;
+                var customOptions = { className: 'heartopia-popup', closeButton: false, offset: [0, -10] };
+                m.bindPopup(popupContent, customOptions);
+            }
+            // Autres popups (Bus, Shops exclus car déjà explicites ou gérés autrement)
+            else if(cat !== 'bus' && cat !== 'shop') { 
+                m.bindPopup(`<b>${name}</b>`); 
+            }
             
             // LOGIQUE D'AFFICHAGE AU DEMARRAGE : SEULEMENT PNJ, BUS, LIEUX
             if(opts.startOn || cat === 'pnj') m.addTo(map); 
@@ -513,10 +551,16 @@
                     if (cat === 'bus' || cat === 'lieux' || (cat === 'pnj' && item.name !== "Albert Jr.")) {
                          // NOUVEAU : ZOOM ACTIVÉ (Animation fluide vers le point)
                          map.flyTo(item.pos, 3, { animate: true, duration: 1.5 });
+                         
+                         // OUVRIR POPUP AUTOMATIQUEMENT SI C'EST UN PNJ
+                         if(cat === 'pnj') {
+                             item.marker.openPopup();
+                         }
                     }
                     // CAS 2 : Albert Jr.
                     else if (cat === 'pnj' && item.name === "Albert Jr.") {
                          map.flyTo(item.marker.getLatLng(), 3, { animate: true });
+                         item.marker.openPopup();
                     }
                     // CAS 3 : Magasins et Animaux
                     else {
