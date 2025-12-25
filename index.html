@@ -78,7 +78,7 @@
         .guide-row { display: flex; align-items: center; margin-bottom: 5px; font-size: 11px; color: #ccc; }
         .guide-icon { font-size: 14px; margin-right: 8px; width: 20px; text-align: center; }
         
-        /* Masquer éléments PC sur mobile */
+        /* Classe utilitaire pour cacher les infos PC sur mobile */
         .pc-only { display: block; }
 
         .visit-counter { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #555; text-align: center; }
@@ -384,10 +384,11 @@
 
     function register(cat, pos, name, img, opts = {}) {
         let m;
-        // --- MODIFICATION : Taille PNJ 32x32 partout (comme PC) ---
-        var iSize = (cat=='pnj' ? [32,32] : [60,60]);
-        // ANCHOR : PNJ centré [16,16]
-        var iAnchor = (cat=='pnj' ? [16,16] : [30,60]);
+        // --- RESTAURATION TAILLE ORIGINALE PC ---
+        // PNJ = 35x35 (Cadrage parfait sur PC et Mobile)
+        var iSize = (cat=='pnj' ? [35,35] : [60,60]);
+        // ANCHOR : PNJ centré [17,17] (Moitié de 35 pour centrage exact)
+        var iAnchor = (cat=='pnj' ? [17,17] : [30,60]);
 
         if(opts.type) { 
             m = L.marker(pos, { icon: L.divIcon({ className: 'invisible-marker', html: '', iconSize: [1, 1] }) }).bindTooltip(name, { permanent: true, direction: 'center', className: opts.type }); 
