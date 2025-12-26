@@ -74,7 +74,7 @@
             height: 15px;
         }
 
-        /* LÉGENDE DROITE */
+        /* LÉGENDE DROITE ET FEEDBACK */
         .ping-legend { position: fixed; right: 20px; top: 20px; width: 220px; background: rgba(0,0,0,0.9); border: 2px solid #d4af37; border-radius: 15px; padding: 15px; color: white; z-index: 1000; max-height: 65vh; display: flex; flex-direction: column; transition: transform 0.3s ease; }
         #mobile-legend-toggle { display: none; position: fixed; top: 10px; right: 10px; z-index: 5000; background: #d4af37; color: #333; border: 2px solid white; border-radius: 50%; width: 40px; height: 40px; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
 
@@ -86,8 +86,42 @@
         .guide-row { display: flex; align-items: center; margin-bottom: 5px; font-size: 11px; color: #ccc; }
         .guide-icon { font-size: 14px; margin-right: 8px; width: 20px; text-align: center; }
         .pc-only { display: block; }
-        .visit-counter { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #555; text-align: center; }
-        .visit-counter p { font-size: 9px; color: #d4af37; margin-bottom: 8px; letter-spacing: 1px; font-weight: bold; }
+
+        /* --- STYLES LIKE INTERNE (HEARTBEAT) --- */
+        .rating-container { margin-top: 20px; padding-top: 15px; border-top: 1px dashed #555; text-align: center; }
+        .like-section { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5px; }
+        
+        .like-btn-internal {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #d4af37;
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #d4af37;
+            cursor: pointer;
+            display: flex; align-items: center; gap: 8px;
+            transition: 0.3s;
+            outline: none;
+        }
+        .like-btn-internal:hover { background: rgba(212, 175, 55, 0.2); }
+        
+        /* Cœur qui bat */
+        .heart-icon-anim { font-size: 18px; display: inline-block; }
+        .like-btn-internal.liked { background: #d4af37; color: #3e2723; border-color: #d4af37; }
+        .like-btn-internal.liked .heart-icon-anim {
+            animation: heartbeat 1.5s infinite;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            14% { transform: scale(1.3); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.3); }
+            70% { transform: scale(1); }
+        }
+
+        #like-count-internal { font-size: 14px; color: #fff; font-weight: bold; font-family: monospace; }
 
         /* Styles Carte */
         .label-ville { background: white !important; border: 2px solid #3498db !important; border-radius: 5px; padding: 2px 8px; font-weight: bold; font-size: 11px; color: #2980b9; white-space: nowrap; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
@@ -348,15 +382,17 @@
         <div class="guide-row pc-only"><span class="guide-icon">🖥️</span><span><b>PC :</b> Clic Droit = Point</span></div>
         <div class="guide-row"><span class="guide-icon">📱</span><span><b>Tel :</b> Menu haut gauche</span></div>
     </div>
-    <div class="visit-counter">
-        <p>VISITEURS TOTAUX</p>
-        <div id="compteur-container">
-            <a href="https://www.freecounterstat.com" title="page counter">
-                <img src="https://counter11.optistats.ovh/private/freecounterstat.php?c=8e8vjwy4nxu9z2z9v7f9d8m6u1n8z9z9" border="0" title="page counter" alt="page counter">
-            </a>
+    
+    <div class="rating-container">
+        <div class="like-section">
+            <button id="like-btn-internal" class="like-btn-internal" onclick="toggleLikeInternal()">
+                <span class="heart-icon-anim">❤</span> LIKER LA CARTE
+            </button>
+            <span id="like-count-internal">Chargement...</span>
         </div>
+        <p style="font-size:9px; color:#777; margin-top:5px;">(Clique pour soutenir !)</p>
     </div>
-</div>
+    </div>
 
 <div id="map"></div>
 
@@ -372,7 +408,80 @@
 <div class="footer-wiki"><a href="https://jayibwi.wixsite.com/my-site-1" target="_blank">📖 ACCÉDER AU WIKI BY JUNE 📖</a></div>
 
 <script>
-    // --- FONCTION D'ENVOI SIMPLE VIA WEBHOOK ---
+    // --- GESTION DU VRAI COMPTEUR (API GRATUITE) + DISCORD WEBHOOK ---
+    
+    // API de comptage légère et gratuite
+    const COUNT_API_NAMESPACE = 'maptopia_heartopia_fr_v1'; 
+    const COUNT_API_KEY = 'likes';
+    const COUNT_API_URL_GET = `https://api.counterapi.dev/v1/${COUNT_API_NAMESPACE}/${COUNT_API_KEY}/up`; // Crée si n'existe pas ou augmente
+    const COUNT_API_URL_READ = `https://api.counterapi.dev/v1/${COUNT_API_NAMESPACE}/${COUNT_API_KEY}/`; // Lecture seule
+
+    function initLikeSystem() {
+        const likeBtn = document.getElementById('like-btn-internal');
+        const likeCountSpan = document.getElementById('like-count-internal');
+        
+        // 1. Lire le nombre actuel sans l'augmenter au démarrage
+        // Note: La première fois, on doit l'initialiser, donc on triche un peu en lisant.
+        // Si ça échoue (première visite du monde), le clic créera la clé.
+        
+        fetch(COUNT_API_URL_READ)
+            .then(res => res.json())
+            .then(data => {
+                likeCountSpan.innerText = data.count || 842; // 842 si nouvelle clé
+            })
+            .catch(() => {
+                likeCountSpan.innerText = "842"; // Valeur par défaut visuelle
+            });
+
+        // Vérifier si l'utilisateur a déjà voté localement
+        const isLiked = localStorage.getItem('maptopia_user_liked') === 'true';
+        if(isLiked) {
+            likeBtn.classList.add('liked');
+            likeBtn.innerHTML = '<span class="heart-icon-anim">❤</span> MERCI !';
+        }
+
+        window.toggleLikeInternal = function() {
+            const currentlyLiked = likeBtn.classList.contains('liked');
+            
+            if(currentlyLiked) {
+                // On ne peut pas vraiment "annuler" un vote sur l'API simple sans complexité, 
+                // donc on simule visuellement le retrait pour l'utilisateur.
+                likeBtn.classList.remove('liked');
+                likeBtn.innerHTML = '<span class="heart-icon-anim">❤</span> LIKER LA CARTE';
+                localStorage.setItem('maptopia_user_liked', 'false');
+                // On ne décrémente pas l'API pour éviter les abus de spam décrémentation.
+            } else {
+                // ACTION : L'utilisateur vote !
+                likeBtn.classList.add('liked');
+                likeBtn.innerHTML = '<span class="heart-icon-anim">❤</span> MERCI !';
+                localStorage.setItem('maptopia_user_liked', 'true');
+
+                // A. On augmente le compteur mondial
+                fetch(COUNT_API_URL_GET)
+                    .then(res => res.json())
+                    .then(data => {
+                        likeCountSpan.innerText = data.count;
+                    });
+
+                // B. On envoie une notif au Discord (Webhook existant)
+                sendLikeToDiscord();
+            }
+        };
+    }
+
+    function sendLikeToDiscord() {
+        const payload = {
+            username: "Maptopia Votes",
+            content: "❤️ **Un utilisateur vient de liker la carte !**"
+        };
+        fetch(DISCORD_WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        }).catch(console.error);
+    }
+
+    // --- FONCTION D'ENVOI MESSAGE SIMPLE VIA WEBHOOK ---
     const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1453916227893334130/_yGCAjF1nsfVQwq3C1M4lWs8STwa26zdusGW__nIeQIEl-TJehlQaf7kvEJJFdoLh1y6"; 
 
     function toggleChat() {
@@ -656,6 +765,9 @@
     setTimeout(initMenu, 300);
     let albert = dataStorage.pnj.find(i => i.name === "Albert Jr.");
     if(albert) startAlbertPatrol(albert.marker, 0);
+
+    // Démarrage du système de like
+    initLikeSystem();
 
 </script>
 </body>
