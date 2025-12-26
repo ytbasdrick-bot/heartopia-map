@@ -55,7 +55,7 @@
         
         /* STYLE DES ITEMS DE MENU (AVEC CHECKBOX) */
         .menu-item { 
-            display: flex; /* Aligner Checkbox et Texte */
+            display: flex; 
             align-items: center;
             padding: 8px 5px; 
             cursor: pointer; 
@@ -66,10 +66,9 @@
         }
         .menu-item:hover { background: #f9f9f9; }
         
-        /* Style des checkbox collection */
         .collection-check {
             margin-right: 10px;
-            accent-color: #d4af37; /* Couleur dorée */
+            accent-color: #d4af37;
             cursor: pointer;
             width: 15px;
             height: 15px;
@@ -130,10 +129,8 @@
             font-size: 30px; color: white; cursor: pointer;
             box-shadow: 0 4px 10px rgba(0,0,0,0.6);
             transition: all 0.3s;
-            /* ORDRE FLEXBOX : 1 = Gauche, 2 = Droite */
             order: 1; 
         }
-        /* Lien Discord à droite */
         #discord-link-wrapper { order: 2; }
 
         #contact-trigger:hover { transform: scale(1.1); background: #d4af37; color: #8b0000; }
@@ -196,7 +193,6 @@
 
         #chat-status { text-align: center; font-size: 12px; margin-top: 10px; color: #aaa; }
         
-        /* LIEN EMAIL DANS CHAT */
         .chat-footer-mail {
             text-align: center;
             margin-top: 15px;
@@ -260,6 +256,7 @@
     <div class="language-selector intro-langs">
         <img src="https://flagcdn.com/w80/fr.png" class="lang-flag active" title="Français">
         <a href="https://ytbasdrick-bot.github.io/heartopia-en/"><img src="https://flagcdn.com/w80/gb.png" class="lang-flag" title="Switch to English"></a>
+        <a href="https://ytbasdrick-bot.github.io/heartopia-map-es/"><img src="https://flagcdn.com/w80/es.png" class="lang-flag" title="Versión Española"></a>
     </div>
 
     <a href="https://www.bing.com/ck/a?!&&p=feead564f1a66d5b990cee8a81c335dc375a5a2ccf03f0b81b57e86f43fb78d6JmltdHM9MTc2NjYyMDgwMA&ptn=3&ver=2&hsh=4&fclid=1f20cbc0-80cd-6841-3094-dda5810e69a2&psq=heartopioa&u=a1aHR0cHM6Ly9oZWFydG9waWEueGQuY29tL2Zy" target="_blank" class="official-link-text" title="Site Officiel Heartopia">
@@ -287,7 +284,7 @@
                 • <b>Navigation :</b> Menu compact à gauche pour filtrer.<br>
                 <span class="pc-only">• <b>Marqueurs :</b> <b>Clic Droit</b> pour placer vos points.<br></span>
                 • <b>Collection :</b> Cochez les cases dans les menus "Poissons" et "Insectes" pour suivre votre progression.<br>
-                • <b>Contact :</b> Utilisez la bulle 💬 en bas à droite pour discuter avec l'équipe.<br>
+                • <b>Contact :</b> Utilisez la bulle 💬 en bas à droite pour envoyer un message privé à l'équipe.<br>
                 • <b>Email :</b> Vous pouvez aussi nous écrire à <b>maptopiafr@gmail.com</b>.<br>
                 • <b>Sauvegarde :</b> Vos données sont conservées ici.
             </div>
@@ -335,6 +332,7 @@
     <div class="language-selector legend-langs">
         <img src="https://flagcdn.com/w80/fr.png" class="lang-flag active" style="width:25px; height:16px;">
         <a href="https://ytbasdrick-bot.github.io/heartopia-en/"><img src="https://flagcdn.com/w80/gb.png" class="lang-flag" style="width:25px; height:16px;"></a>
+        <a href="https://ytbasdrick-bot.github.io/heartopia-map-es/"><img src="https://flagcdn.com/w80/es.png" class="lang-flag" style="width:25px; height:16px;"></a>
     </div>
     <div style="text-align:center; font-weight:bold; border-bottom:1px solid #d4af37; padding-bottom:5px; font-size:12px;">📌 MES MARQUEURS</div>
     <div id="legend-list"></div>
@@ -367,7 +365,6 @@
 
 <script>
     // --- FONCTION D'ENVOI SIMPLE VIA WEBHOOK ---
-    // URL MISE À JOUR AVEC LE LIEN COMPLET
     const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1453916227893334130/_yGCAjF1nsfVQwq3C1M4lWs8STwa26zdusGW__nIeQIEl-TJehlQaf7kvEJJFdoLh1y6"; 
 
     function toggleChat() {
