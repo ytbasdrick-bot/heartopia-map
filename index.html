@@ -52,8 +52,28 @@
         
         .accordion-content { display: none; margin-bottom: 10px; background: #fff; }
         .accordion-content.active { display: block; }
-        .menu-item { padding: 8px 5px; cursor: pointer; font-size: 11px; border-bottom: 1px solid #eee; color: #333; transition: background 0.2s; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        
+        /* STYLE DES ITEMS DE MENU (AVEC CHECKBOX) */
+        .menu-item { 
+            display: flex; /* Aligner Checkbox et Texte */
+            align-items: center;
+            padding: 8px 5px; 
+            cursor: pointer; 
+            font-size: 11px; 
+            border-bottom: 1px solid #eee; 
+            color: #333; 
+            transition: background 0.2s; 
+        }
         .menu-item:hover { background: #f9f9f9; }
+        
+        /* Style des checkbox collection */
+        .collection-check {
+            margin-right: 10px;
+            accent-color: #d4af37; /* Couleur dorée */
+            cursor: pointer;
+            width: 15px;
+            height: 15px;
+        }
 
         /* LÉGENDE DROITE */
         .ping-legend { position: fixed; right: 20px; top: 20px; width: 220px; background: rgba(0,0,0,0.9); border: 2px solid #d4af37; border-radius: 15px; padding: 15px; color: white; z-index: 1000; max-height: 65vh; display: flex; flex-direction: column; transition: transform 0.3s ease; }
@@ -266,8 +286,9 @@
             <div class="details-list">
                 • <b>Navigation :</b> Menu compact à gauche pour filtrer.<br>
                 <span class="pc-only">• <b>Marqueurs :</b> <b>Clic Droit</b> pour placer vos points.<br></span>
-                • <b>Contact :</b> Utilisez la bulle 💬 en bas à droite pour envoyer un message privé à l'équipe.<br>
-                • <b>Nettoyage :</b> La carte reste propre automatiquement.<br>
+                • <b>Collection :</b> Cochez les cases dans les menus "Poissons" et "Insectes" pour suivre votre progression.<br>
+                • <b>Contact :</b> Utilisez la bulle 💬 en bas à droite pour discuter avec l'équipe.<br>
+                • <b>Email :</b> Vous pouvez aussi nous écrire à <b>maptopiafr@gmail.com</b>.<br>
                 • <b>Sauvegarde :</b> Vos données sont conservées ici.
             </div>
             <div class="welcome-note">
@@ -537,6 +558,7 @@
     menuCtrl.addTo(map);
 
     function initMenu() {
+        // --- 1. Gestion des catégories "Standards" (PNJ, Animaux, Bus, Shops, Lieux) ---
         ['pnj','animal','bus','shop','lieux'].forEach(cat => {
             var box = document.getElementById('c-'+cat), content = box.querySelector('.accordion-content');
             box.querySelector('.accordion-title').onclick = () => {
@@ -562,12 +584,61 @@
                 content.appendChild(el);
             });
         });
+
+        // --- 2. Gestion des catégories "Collections" avec Checkbox (Poissons, Insectes) ---
+        // Chargement de la sauvegarde locale
+        let savedCollection = JSON.parse(localStorage.getItem('maptopia_collection')) || {};
+
         ['fish', 'bug'].forEach(type => {
             let box = document.getElementById('c-'+type), content = box.querySelector('.accordion-content');
             let list = (type === 'fish' ? fishList : bugList);
-            box.querySelector('.accordion-title').onclick = () => { const isOpening = !content.classList.contains('active'); document.querySelectorAll('.accordion-content').forEach(c => c.classList.remove('active')); if(isOpening) { content.classList.add('active'); if(currentSingleMarker) { if(currentSingleMarker.moveTimer) clearTimeout(currentSingleMarker.moveTimer); map.removeLayer(currentSingleMarker.marker); currentSingleMarker = null; } } };
-            list.forEach(item => { let el = document.createElement('div'); el.className = 'menu-item'; el.innerText = item.name; el.onclick = () => { openOverlay(item.name, item.bg, item.cond); if(window.innerWidth <= 768) toggleMobileMenu(); }; content.appendChild(el); });
+            
+            box.querySelector('.accordion-title').onclick = () => { 
+                const isOpening = !content.classList.contains('active'); 
+                document.querySelectorAll('.accordion-content').forEach(c => c.classList.remove('active')); 
+                if(isOpening) { 
+                    content.classList.add('active'); 
+                    if(currentSingleMarker) { if(currentSingleMarker.moveTimer) clearTimeout(currentSingleMarker.moveTimer); map.removeLayer(currentSingleMarker.marker); currentSingleMarker = null; } 
+                } 
+            };
+
+            list.forEach(item => { 
+                let el = document.createElement('div'); 
+                el.className = 'menu-item'; 
+                
+                // CRÉATION DE LA CASE À COCHER
+                let chk = document.createElement('input');
+                chk.type = 'checkbox';
+                chk.className = 'collection-check';
+                if (savedCollection[item.name]) chk.checked = true; // Restaurer l'état
+                
+                // LOGIQUE DE SAUVEGARDE
+                chk.onclick = (e) => {
+                    e.stopPropagation(); // Empêche d'ouvrir le popup quand on coche
+                    savedCollection[item.name] = chk.checked;
+                    localStorage.setItem('maptopia_collection', JSON.stringify(savedCollection));
+                };
+
+                // NOM DE L'ITEM
+                let span = document.createElement('span');
+                span.innerText = item.name;
+                span.style.flexGrow = "1";
+
+                el.appendChild(chk);
+                el.appendChild(span);
+
+                // CLIC SUR LA LIGNE (Ouvre l'info)
+                el.onclick = (e) => { 
+                    // Si on a cliqué sur la checkbox, ne rien faire (géré par chk.onclick)
+                    if(e.target.type === 'checkbox') return;
+                    
+                    openOverlay(item.name, item.bg, item.cond); 
+                    if(window.innerWidth <= 768) toggleMobileMenu(); 
+                }; 
+                content.appendChild(el); 
+            });
         });
+
         L.DomEvent.disableScrollPropagation(document.getElementById('main-menu'));
         L.DomEvent.disableClickPropagation(document.getElementById('main-menu'));
     }
