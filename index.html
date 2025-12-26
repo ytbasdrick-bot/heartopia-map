@@ -405,17 +405,23 @@
 </div>
 
 <div class="ping-legend" id="legend-box">
-    <div class="language-selector legend-langs">
-        <!-- Le français est actif (pas de lien <a>) -->
-        <img src="https://flagcdn.com/w80/fr.png" class="lang-flag active" style="width:25px; height:16px;">
+    <div class="language-selector legend-langs" style="margin-bottom: 10px; display: flex; gap: 8px; justify-content: center;">
+        
+        <img src="https://flagcdn.com/w80/fr.png" alt="Français" class="lang-flag active" style="width:25px; height:16px; cursor: default; opacity: 1;">
 
-            <!-- Lien vers le site Anglais -->
-            <a href="https://ytbasdrick-bot.github.io/heartopia-en/"><img src="https://flagcdn.com/w80/gb.png" class="lang-flag" style="width:25px; height:16px;"></a>
+        <a href="index-en.html">
+            <img src="https://flagcdn.com/w80/gb.png" alt="English" class="lang-flag" style="width:25px; height:16px; opacity: 0.7; transition: 0.3s;">
+        </a>
 
-            <!-- Lien vers le site Espagnol -->
-            <a href="https://ytbasdrick-bot.github.io/heartopia-map-es/"><img src="https://flagcdn.com/w80/es.png" class="lang-flag" style="width:25px; height:16px;"></a>
+        <a href="index-es.html">
+            <img src="https://flagcdn.com/w80/es.png" alt="Español" class="lang-flag" style="width:25px; height:16px; opacity: 0.7; transition: 0.3s;">
+        </a>
+        
     </div>
-    <div style="text-align:center; font-weight:bold; border-bottom:1px solid #d4af37; padding-bottom:5px; font-size:12px;">📌 MES MARQUEURS</div>
+
+    <div style="text-align:center; font-weight:bold; border-bottom:1px solid #d4af37; padding-bottom:5px; font-size:12px;">
+        📌 MES MARQUEURS
+    </div>
     //
     <div style="text-align:center; font-weight:bold; border-bottom:1px solid #d4af37; padding-bottom:5px; font-size:12px;">📌 MES MARQUEURS</div>
     <div id="legend-list"></div>
@@ -1083,4 +1089,5 @@
     }</script>
 </body>
 </html>
+
 
