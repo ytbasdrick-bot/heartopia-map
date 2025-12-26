@@ -108,17 +108,18 @@
         
         /* Cœur qui bat */
         .heart-icon-anim { font-size: 18px; display: inline-block; }
-        .like-btn-internal.liked { background: #d4af37; color: #3e2723; border-color: #d4af37; }
-        .like-btn-internal.liked .heart-icon-anim {
-            animation: heartbeat 1.5s infinite;
+        /* Style quand c'est liké */
+        .like-btn-internal.liked { 
+            background: #d4af37; 
+            color: #3e2723; 
+            border-color: #d4af37; 
+            cursor: default; /* Curseur qui indique qu'on ne peut plus cliquer */
+            opacity: 0.8;
         }
-
-        @keyframes heartbeat {
-            0% { transform: scale(1); }
-            14% { transform: scale(1.3); }
-            28% { transform: scale(1); }
-            42% { transform: scale(1.3); }
-            70% { transform: scale(1); }
+        .like-btn-internal.liked:hover { transform: none; box-shadow: none; }
+        
+        .like-btn-internal.liked .heart-icon-anim {
+            animation: none; /* On arrête l'animation heartbeat une fois voté */
         }
 
         #like-count-internal { font-size: 14px; color: #fff; font-weight: bold; font-family: monospace; }
@@ -410,63 +411,59 @@
 <script>
     // --- GESTION DU VRAI COMPTEUR (API GRATUITE) + DISCORD WEBHOOK ---
     
-    // API de comptage légère et gratuite
     const COUNT_API_NAMESPACE = 'maptopia_heartopia_fr_v1'; 
     const COUNT_API_KEY = 'likes';
-    const COUNT_API_URL_GET = `https://api.counterapi.dev/v1/${COUNT_API_NAMESPACE}/${COUNT_API_KEY}/up`; // Crée si n'existe pas ou augmente
-    const COUNT_API_URL_READ = `https://api.counterapi.dev/v1/${COUNT_API_NAMESPACE}/${COUNT_API_KEY}/`; // Lecture seule
+    const COUNT_API_URL_GET = `https://api.counterapi.dev/v1/${COUNT_API_NAMESPACE}/${COUNT_API_KEY}/up`; 
+    const COUNT_API_URL_READ = `https://api.counterapi.dev/v1/${COUNT_API_NAMESPACE}/${COUNT_API_KEY}/`; 
 
     function initLikeSystem() {
         const likeBtn = document.getElementById('like-btn-internal');
         const likeCountSpan = document.getElementById('like-count-internal');
         
         // 1. Lire le nombre actuel sans l'augmenter au démarrage
-        // Note: La première fois, on doit l'initialiser, donc on triche un peu en lisant.
-        // Si ça échoue (première visite du monde), le clic créera la clé.
-        
         fetch(COUNT_API_URL_READ)
             .then(res => res.json())
             .then(data => {
-                likeCountSpan.innerText = data.count || 842; // 842 si nouvelle clé
+                likeCountSpan.innerText = data.count || 842; 
             })
             .catch(() => {
-                likeCountSpan.innerText = "842"; // Valeur par défaut visuelle
+                likeCountSpan.innerText = "842"; 
             });
 
-        // Vérifier si l'utilisateur a déjà voté localement
+        // 2. Vérifier si l'utilisateur a DÉJÀ voté localement
         const isLiked = localStorage.getItem('maptopia_user_liked') === 'true';
         if(isLiked) {
-            likeBtn.classList.add('liked');
-            likeBtn.innerHTML = '<span class="heart-icon-anim">❤</span> MERCI !';
+            // S'il a déjà voté, on verrouille immédiatement le bouton
+            lockLikeButton(likeBtn);
         }
 
+        // Fonction du clic
         window.toggleLikeInternal = function() {
-            const currentlyLiked = likeBtn.classList.contains('liked');
-            
-            if(currentlyLiked) {
-                // On ne peut pas vraiment "annuler" un vote sur l'API simple sans complexité, 
-                // donc on simule visuellement le retrait pour l'utilisateur.
-                likeBtn.classList.remove('liked');
-                likeBtn.innerHTML = '<span class="heart-icon-anim">❤</span> LIKER LA CARTE';
-                localStorage.setItem('maptopia_user_liked', 'false');
-                // On ne décrémente pas l'API pour éviter les abus de spam décrémentation.
-            } else {
-                // ACTION : L'utilisateur vote !
-                likeBtn.classList.add('liked');
-                likeBtn.innerHTML = '<span class="heart-icon-anim">❤</span> MERCI !';
-                localStorage.setItem('maptopia_user_liked', 'true');
+            // Double sécurité : Si le bouton a déjà la classe 'liked', on ne fait RIEN.
+            if (likeBtn.classList.contains('liked')) return;
 
-                // A. On augmente le compteur mondial
-                fetch(COUNT_API_URL_GET)
-                    .then(res => res.json())
-                    .then(data => {
-                        likeCountSpan.innerText = data.count;
-                    });
+            // ACTION : L'utilisateur vote pour la première fois
+            lockLikeButton(likeBtn); // On verrouille visuellement tout de suite
+            localStorage.setItem('maptopia_user_liked', 'true'); // On sauvegarde
 
-                // B. On envoie une notif au Discord (Webhook existant)
-                sendLikeToDiscord();
-            }
+            // A. On augmente le compteur mondial
+            fetch(COUNT_API_URL_GET)
+                .then(res => res.json())
+                .then(data => {
+                    likeCountSpan.innerText = data.count;
+                });
+
+            // B. On envoie une notif au Discord
+            sendLikeToDiscord();
         };
+    }
+
+    // Fonction utilitaire pour verrouiller le bouton
+    function lockLikeButton(btn) {
+        btn.classList.add('liked');
+        btn.innerHTML = '<span class="heart-icon-anim">❤</span> MERCI !';
+        btn.title = "Vous avez déjà voté !";
+        btn.style.cursor = "default";
     }
 
     function sendLikeToDiscord() {
@@ -481,7 +478,7 @@
         }).catch(console.error);
     }
 
-    // --- FONCTION D'ENVOI MESSAGE SIMPLE VIA WEBHOOK ---
+    // --- FONCTION D'ENVOI SIMPLE VIA WEBHOOK ---
     const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1453916227893334130/_yGCAjF1nsfVQwq3C1M4lWs8STwa26zdusGW__nIeQIEl-TJehlQaf7kvEJJFdoLh1y6"; 
 
     function toggleChat() {
