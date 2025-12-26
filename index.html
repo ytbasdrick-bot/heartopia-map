@@ -316,17 +316,22 @@
 <audio id="main-audio"><source src="sonheartopia.mp4" type="audio/mp4"></audio>
 
 <button id="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
-<<button id="mobile-legend-toggle" onclick="toggleMobileLegend()">📌</button>
+<button id="mobile-legend-toggle" onclick="toggleMobileLegend()">📌</button>
 
 <div id="intro-screen">
     <div class="language-selector intro-langs">
-        <img src="https://flagcdn.com/w80/fr.png" class="lang-flag active" title="Français">
-        <a href="index-en.html"><img src="https://flagcdn.com/w80/gb.png" class="lang-flag" title="English Version"></a>
-        <a href="index-es.html"><img src="https://flagcdn.com/w80/es.png" class="lang-flag" title="Versión Española"></a>
+        <!-- Lien vers le Français -->
+        <a href="index.html"><img src="https://flagcdn.com/w80/fr.png" class="lang-flag" title="French Version"></a>
+
+        <!-- Drapeau Anglais (Actif, pas de lien) -->
+        <img src="https://flagcdn.com/w80/gb.png" class="lang-flag active" title="English">
+
+        <!-- Lien vers l'Espagnol -->
+        <a href="index-es.html"><img src="https://flagcdn.com/w80/es.png" class="lang-flag" title="Spanish Version"></a>
     </div>
 
-    <a href="https://heartopia.xd.com/fr" target="_blank" class="official-link-text" title="Site Officiel Heartopia">
-        LIEN OFFICIEL DE HEARTOPIA
+    <a href="https://heartopia.xd.com/en" target="_blank" class="official-link-text" title="Heartopia Official Site">
+        HEARTOPIA OFFICIAL LINK
     </a>
 
     <h1 class="heartopia-title">MAPTOPIA FR</h1>
@@ -401,10 +406,17 @@
 
 <div class="ping-legend" id="legend-box">
     <div class="language-selector legend-langs">
+        <!-- Le français est actif (pas de lien <a>) -->
         <img src="https://flagcdn.com/w80/fr.png" class="lang-flag active" style="width:25px; height:16px;">
+
+        <!-- L'anglais doit avoir un lien vers index-en.html -->
         <a href="index-en.html"><img src="https://flagcdn.com/w80/gb.png" class="lang-flag" style="width:25px; height:16px;"></a>
+
+        <!-- L'espagnol doit avoir un lien vers index-es.html -->
         <a href="index-es.html"><img src="https://flagcdn.com/w80/es.png" class="lang-flag" style="width:25px; height:16px;"></a>
     </div>
+    <div style="text-align:center; font-weight:bold; border-bottom:1px solid #d4af37; padding-bottom:5px; font-size:12px;">📌 MES MARQUEURS</div>
+    //
     <div style="text-align:center; font-weight:bold; border-bottom:1px solid #d4af37; padding-bottom:5px; font-size:12px;">📌 MES MARQUEURS</div>
     <div id="legend-list"></div>
     <div class="legend-guide">
