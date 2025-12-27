@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Raleway:wght@300&display=swap" rel="stylesheet">
 
     <style>
+        /* --- BASES --- */
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #000; font-family: 'Raleway', sans-serif; }
         
         #container {
@@ -17,63 +18,104 @@
             overflow: hidden; perspective: 1000px;
         }
 
-        /* --- VIDEO --- */
+        /* --- 1. VIDEO DE FOND --- */
         #video-wrapper {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
-            transition: transform 3s cubic-bezier(0.55, 0.055, 0.675, 0.19); /* Courbe d'accélération */
+            transition: transform 3s cubic-bezier(0.55, 0.055, 0.675, 0.19);
             transform-origin: center center;
         }
-        video { width: 100%; height: 100%; object-fit: cover; }
-        #video-wrapper.zoomed { transform: scale(20) rotate(180deg); } /* Zoom encore plus fort */
+        #video-wrapper video { width: 100%; height: 100%; object-fit: cover; }
+        #video-wrapper.zoomed { transform: scale(20) rotate(180deg); }
 
-        /* --- ELEMENTS VISUELS --- */
+
+        /* --- 2. PARTICULES --- */
+        .particles-container { position: absolute; width: 100%; height: 100%; z-index: 6; pointer-events: none; }
+        .particle { position: absolute; background: rgba(255,255,255,0.6); border-radius: 50%; width: 4px; height: 4px; animation: float 10s infinite linear; }
+        .p1 { left: 10%; top: 100%; animation-duration: 12s; } .p2 { left: 90%; top: 100%; animation-duration: 15s; animation-delay: -5s; }
+        @keyframes float { to { transform: translateY(-120vh); } }
+
+
+        /* --- 3. VIDEO PERSONNAGES (TAILLE 40%) --- */
+        #char-wrapper {
+            position: absolute; 
+            bottom: 0; 
+            left: 50%; 
+            transform: translateX(-50%);
+            
+            width: 100%; 
+            height: 40%; /* <-- RÉGLÉ À 40% COMME DEMANDÉ */
+            
+            z-index: 8; 
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            mix-blend-mode: screen; 
+            
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        #char-wrapper video {
+            width: auto; 
+            height: 100%; 
+            max-width: 100%; 
+            object-fit: contain; 
+        }
+        
+        body.animating #char-wrapper { opacity: 0; }
+
+
+        /* --- 4. FX & UI --- */
         .vignette-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 9;
             background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.8) 100%);
             pointer-events: none; transition: opacity 0.5s ease;
         }
 
-        /* --- LE FLASH BLANC DE TRANSITION --- */
         #white-flash {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: white;
-            z-index: 100; /* Tout au dessus */
-            opacity: 0;
-            pointer-events: none;
-            /* Le flash arrive doucement à la fin de l'animation */
+            background-color: white; z-index: 100; opacity: 0; pointer-events: none;
             transition: opacity 1.5s ease-in; 
         }
-        /* Quand on anime, le flash devient visible */
         body.animating #white-flash { opacity: 1; }
 
-
-        /* --- TEXTE & UI --- */
         #main-header {
             position: relative; z-index: 20; text-align: center; color: white; margin-bottom: 60px;
-            transition: opacity 0.5s ease;
-            padding: 0 20px; /* Sécurité pour ne pas toucher les bords */
+            transition: opacity 0.5s ease, transform 0.1s ease-out;
+            padding: 0 20px;
         }
+
+        @keyframes shine {
+            0%, 100% { text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 215, 0, 0.3); }
+            50% { text-shadow: 0 0 30px rgba(255, 255, 255, 1), 0 0 60px rgba(255, 215, 0, 0.8), 0 0 80px rgba(255, 255, 255, 0.6); color: #fffced; }
+        }
+
         .hero-title {
             font-family: 'Cinzel Decorative', serif; font-size: 5rem; margin: 0; letter-spacing: 10px; text-transform: uppercase;
             text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 215, 0, 0.3);
+            animation: shine 4s ease-in-out infinite alternate;
         }
+
         .welcome-subtitle {
             font-family: 'Raleway', sans-serif; font-size: 1.5rem; font-weight: 300; margin-top: 20px; letter-spacing: 3px;
             text-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
+        .gold-text { color: #ffd700; font-weight: bold; }
 
+        /* BOUTONS */
         #ui-layer {
-            position: relative; z-index: 10; display: flex; gap: 40px; align-items: center; transition: opacity 0.5s ease;
+            position: relative; z-index: 30;
+            display: flex; gap: 40px; align-items: center; 
+            transition: opacity 0.5s ease, transform 0.1s ease-out;
         }
 
-        /* DISPARITION AU CLIC */
         body.animating #ui-layer,
         body.animating .vignette-overlay,
         body.animating #main-header {
             opacity: 0; pointer-events: none;
+            transform: translate(0,0) !important;
         }
 
-        /* --- BOUTONS --- */
         .lang-card {
             position: relative; text-decoration: none; color: white; font-size: 20px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px;
             width: 200px; padding: 20px 0; text-align: center; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(8px);
@@ -83,69 +125,43 @@
         .lang-card::after { content: ''; position: absolute; top: 4px; left: 4px; right: 4px; bottom: 4px; border: 1px solid rgba(255, 255, 255, 0.1); pointer-events: none; }
         .lang-card:hover { background: rgba(255, 255, 255, 0.15); border-color: #fff; transform: scale(1.1); box-shadow: 0 0 40px rgba(255, 255, 255, 0.15); }
         
-        /* PARTICULES SIMPLIFIÉES */
-        .particles-container { position: absolute; width: 100%; height: 100%; z-index: 6; pointer-events: none; }
-        .particle { position: absolute; background: rgba(255,255,255,0.6); border-radius: 50%; width: 4px; height: 4px; animation: float 10s infinite linear; }
-        .p1 { left: 10%; top: 100%; animation-duration: 12s; } .p2 { left: 90%; top: 100%; animation-duration: 15s; animation-delay: -5s; }
-        @keyframes float { to { transform: translateY(-120vh); } }
 
-
-        /* ========================================= */
-        /* === OPTIMISATION MOBILE (Max 768px) === */
-        /* ========================================= */
+        /* === OPTIMISATION MOBILE === */
         @media only screen and (max-width: 768px) {
+            #ui-layer { flex-direction: column; gap: 20px; width: 100%; }
+            .hero-title { font-size: 2.5rem; letter-spacing: 5px; line-height: 1.2; }
+            .welcome-subtitle { font-size: 1rem; margin-top: 10px; padding: 0 10px; }
+            #main-header { margin-bottom: 30px; }
+            .lang-card { width: 80%; max-width: 250px; padding: 15px 0; }
             
-            /* On empile les boutons verticalement */
-            #ui-layer {
-                flex-direction: column; /* Colonne au lieu de ligne */
-                gap: 20px; /* Moins d'espace entre les boutons */
-                width: 100%; /* Utilise toute la largeur disponible */
-            }
-
-            /* On réduit la taille du gros titre */
-            .hero-title {
-                font-size: 2.5rem; /* Beaucoup plus petit pour tenir */
-                letter-spacing: 5px; /* Espacement réduit */
-                line-height: 1.2;
-            }
-
-            /* On ajuste le sous-titre */
-            .welcome-subtitle {
-                font-size: 1rem;
-                margin-top: 10px;
-            }
-
-            /* On remonte un peu le header pour laisser place aux boutons */
-            #main-header {
-                margin-bottom: 30px;
-            }
-
-            /* On s'assure que les boutons ne sont pas trop larges */
-            .lang-card {
-                width: 80%; /* 80% de la largeur de l'écran */
-                max-width: 250px; /* Mais pas plus de 250px */
-                padding: 15px 0; /* Un peu moins haut */
-            }
+            /* Sur mobile, un poil plus petit pour l'équilibre */
+            #char-wrapper { height: 35%; }
         }
-
     </style>
 </head>
 <body>
 
     <div id="container">
         <div id="video-wrapper">
-            <video id="myVideo" src="op.mp4" autoplay loop muted playsinline></video>
+            <video id="bgVideo" src="op.mp4" autoplay muted playsinline></video>
         </div>
-        <div class="vignette-overlay"></div>
+        
         <div class="particles-container">
             <div class="particle p1"></div><div class="particle p2"></div>
         </div>
-        
+
+        <div id="char-wrapper">
+            <video src="fondvert.mp4" autoplay loop muted playsinline></video>
+        </div>
+
+        <div class="vignette-overlay"></div>
         <div id="white-flash"></div>
 
         <header id="main-header">
             <h1 class="hero-title">HEARTOPIA</h1>
-            <p class="welcome-subtitle">Bienvenue sur la carte interactive</p>
+            <p class="welcome-subtitle">
+                Ne regardez pas seulement la carte. Vivez le <span class="gold-text">voyage</span>.
+            </p>
         </header>
 
         <div id="ui-layer">
@@ -155,24 +171,94 @@
         </div>
     </div>
 
+    <audio id="hover-sound" src="hover.mp3" preload="auto"></audio>
+    <audio id="click-sound" src="click.mp3" preload="auto"></audio>
+    <audio id="bg-music" src="musique.mp3" loop preload="auto"></audio>
+
     <script>
         const wrapper = document.getElementById('video-wrapper');
+        const bgVideo = document.getElementById('bgVideo'); // La vidéo de fond
         const cards = document.querySelectorAll('.lang-card');
         const body = document.body;
+        
+        const header = document.getElementById('main-header');
+        const uiLayer = document.getElementById('ui-layer');
+        
+        const hoverSound = document.getElementById('hover-sound');
+        const clickSound = document.getElementById('click-sound');
+        const bgMusic = document.getElementById('bg-music');
 
+        hoverSound.volume = 0.3;
+        clickSound.volume = 0.8;
+        bgMusic.volume = 0.5;
+
+        // --- MUSIQUE ---
+        let musicStarted = false;
+        function startAtmosphere() {
+            if (!musicStarted) {
+                bgMusic.play().then(() => {
+                    musicStarted = true;
+                    document.removeEventListener('click', startAtmosphere);
+                    document.removeEventListener('mousemove', startAtmosphere);
+                    document.removeEventListener('touchstart', startAtmosphere);
+                }).catch(e => {});
+            }
+        }
+        document.addEventListener('click', startAtmosphere);
+        document.addEventListener('mousemove', startAtmosphere);
+        document.addEventListener('touchstart', startAtmosphere);
+
+        // --- NOUVEAU : AUTO-ENTRÉE À LA FIN DE LA VIDÉO ---
+        bgVideo.addEventListener('ended', function() {
+            // On déclenche la transition vers le FR
+            triggerTransition('indexfr.html');
+        });
+
+        // Fonction centralisée pour lancer l'animation
+        function triggerTransition(destination) {
+            // On tente de jouer le son de clic (si autorisé par le navigateur)
+            clickSound.play().catch(() => {});
+            startAtmosphere(); // Lance la musique si pas encore fait
+
+            body.classList.add('animating');
+            wrapper.classList.add('zoomed');   
+
+            // Fade out musique
+            let fadeAudio = setInterval(function () {
+                if (bgMusic.volume > 0.1) {
+                    bgMusic.volume -= 0.1;
+                } else {
+                    clearInterval(fadeAudio);
+                }
+            }, 200);
+
+            setTimeout(() => {
+                window.location.href = destination;
+            }, 2800);
+        }
+
+        // --- EFFET PARALLAXE ---
+        if (window.innerWidth > 768) {
+            document.addEventListener('mousemove', (e) => {
+                if(body.classList.contains('animating')) return;
+                let x = (window.innerWidth / 2 - e.clientX) / 40;
+                let y = (window.innerHeight / 2 - e.clientY) / 40;
+                header.style.transform = `translate(${x * 0.5}px, ${y * 0.5}px)`;
+                uiLayer.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        }
+
+        // --- BOUTONS ---
         cards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+               hoverSound.currentTime = 0; 
+               hoverSound.play().catch(() => {}); 
+            });
+
             card.addEventListener('click', function(e) {
                 e.preventDefault();
                 const destination = this.getAttribute('href');
-                
-                body.classList.add('animating'); // Déclenche le zoom ET le flash blanc
-                wrapper.classList.add('zoomed');   
-
-                // On attend 2.8s (juste avant la fin) pour changer de page
-                // L'écran sera tout blanc à ce moment là
-                setTimeout(() => {
-                    window.location.href = destination;
-                }, 2800);
+                triggerTransition(destination);
             });
         });
     </script>
