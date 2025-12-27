@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heartopia - Accueil</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Raleway:wght@300&display=swap" rel="stylesheet">
+
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #000; font-family: 'Raleway', sans-serif; }
+        
+        #container {
+            position: relative; width: 100vw; height: 100vh;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            overflow: hidden; perspective: 1000px;
+        }
+
+        /* --- VIDEO --- */
+        #video-wrapper {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
+            transition: transform 3s cubic-bezier(0.55, 0.055, 0.675, 0.19); /* Courbe d'accélération */
+            transform-origin: center center;
+        }
+        video { width: 100%; height: 100%; object-fit: cover; }
+        #video-wrapper.zoomed { transform: scale(20) rotate(180deg); } /* Zoom encore plus fort */
+
+        /* --- ELEMENTS VISUELS --- */
+        .vignette-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5;
+            background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.8) 100%);
+            pointer-events: none; transition: opacity 0.5s ease;
+        }
+
+        /* --- LE FLASH BLANC DE TRANSITION --- */
+        #white-flash {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: white;
+            z-index: 100; /* Tout au dessus */
+            opacity: 0;
+            pointer-events: none;
+            /* Le flash arrive doucement à la fin de l'animation */
+            transition: opacity 1.5s ease-in; 
+        }
+        /* Quand on anime, le flash devient visible */
+        body.animating #white-flash { opacity: 1; }
+
+
+        /* --- TEXTE & UI --- */
+        #main-header {
+            position: relative; z-index: 20; text-align: center; color: white; margin-bottom: 60px;
+            transition: opacity 0.5s ease;
+        }
+        .hero-title {
+            font-family: 'Cinzel Decorative', serif; font-size: 5rem; margin: 0; letter-spacing: 10px; text-transform: uppercase;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 215, 0, 0.3);
+        }
+        .welcome-subtitle {
+            font-family: 'Raleway', sans-serif; font-size: 1.5rem; font-weight: 300; margin-top: 20px; letter-spacing: 3px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        #ui-layer {
+            position: relative; z-index: 10; display: flex; gap: 40px; align-items: center; transition: opacity 0.5s ease;
+        }
+
+        /* DISPARITION AU CLIC */
+        body.animating #ui-layer,
+        body.animating .vignette-overlay,
+        body.animating #main-header {
+            opacity: 0; pointer-events: none;
+        }
+
+        /* --- BOUTONS --- */
+        .lang-card {
+            position: relative; text-decoration: none; color: white; font-size: 20px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px;
+            width: 200px; padding: 20px 0; text-align: center; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
+            transition: all 0.4s ease; cursor: pointer; overflow: hidden; border-radius: 4px;
+        }
+        .lang-card::after { content: ''; position: absolute; top: 4px; left: 4px; right: 4px; bottom: 4px; border: 1px solid rgba(255, 255, 255, 0.1); pointer-events: none; }
+        .lang-card:hover { background: rgba(255, 255, 255, 0.15); border-color: #fff; transform: scale(1.1); box-shadow: 0 0 40px rgba(255, 255, 255, 0.15); }
+        
+        /* PARTICULES SIMPLIFIÉES */
+        .particles-container { position: absolute; width: 100%; height: 100%; z-index: 6; pointer-events: none; }
+        .particle { position: absolute; background: rgba(255,255,255,0.6); border-radius: 50%; width: 4px; height: 4px; animation: float 10s infinite linear; }
+        .p1 { left: 10%; top: 100%; animation-duration: 12s; } .p2 { left: 90%; top: 100%; animation-duration: 15s; animation-delay: -5s; }
+        @keyframes float { to { transform: translateY(-120vh); } }
+
+    </style>
+</head>
+<body>
+
+    <div id="container">
+        <div id="video-wrapper">
+            <video id="myVideo" src="op.mp4" autoplay loop muted playsinline></video>
+        </div>
+        <div class="vignette-overlay"></div>
+        <div class="particles-container">
+            <div class="particle p1"></div><div class="particle p2"></div>
+        </div>
+        
+        <div id="white-flash"></div>
+
+        <header id="main-header">
+            <h1 class="hero-title">HEARTOPIA</h1>
+            <p class="welcome-subtitle">Bienvenue sur la carte interactive</p>
+        </header>
+
+        <div id="ui-layer">
+            <a href="indexen.html" class="lang-card">English</a>
+            <a href="indexfr.html" class="lang-card fr">Français</a>
+            <a href="indexes.html" class="lang-card">Español</a>
+        </div>
+    </div>
+
+    <script>
+        const wrapper = document.getElementById('video-wrapper');
+        const cards = document.querySelectorAll('.lang-card');
+        const body = document.body;
+
+        cards.forEach(card => {
+            card.addEventListener('click', function(e) {
+                e.preventDefault();
+                const destination = this.getAttribute('href');
+                
+                body.classList.add('animating'); // Déclenche le zoom ET le flash blanc
+                wrapper.classList.add('zoomed');   
+
+                // On attend 2.8s (juste avant la fin) pour changer de page
+                // L'écran sera tout blanc à ce moment là
+                setTimeout(() => {
+                    window.location.href = destination;
+                }, 2800);
+            });
+        });
+    </script>
+</body>
+</html>
