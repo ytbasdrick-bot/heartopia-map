@@ -51,6 +51,7 @@
         #main-header {
             position: relative; z-index: 20; text-align: center; color: white; margin-bottom: 60px;
             transition: opacity 0.5s ease;
+            padding: 0 20px; /* Sécurité pour ne pas toucher les bords */
         }
         .hero-title {
             font-family: 'Cinzel Decorative', serif; font-size: 5rem; margin: 0; letter-spacing: 10px; text-transform: uppercase;
@@ -87,6 +88,45 @@
         .particle { position: absolute; background: rgba(255,255,255,0.6); border-radius: 50%; width: 4px; height: 4px; animation: float 10s infinite linear; }
         .p1 { left: 10%; top: 100%; animation-duration: 12s; } .p2 { left: 90%; top: 100%; animation-duration: 15s; animation-delay: -5s; }
         @keyframes float { to { transform: translateY(-120vh); } }
+
+
+        /* ========================================= */
+        /* === OPTIMISATION MOBILE (Max 768px) === */
+        /* ========================================= */
+        @media only screen and (max-width: 768px) {
+            
+            /* On empile les boutons verticalement */
+            #ui-layer {
+                flex-direction: column; /* Colonne au lieu de ligne */
+                gap: 20px; /* Moins d'espace entre les boutons */
+                width: 100%; /* Utilise toute la largeur disponible */
+            }
+
+            /* On réduit la taille du gros titre */
+            .hero-title {
+                font-size: 2.5rem; /* Beaucoup plus petit pour tenir */
+                letter-spacing: 5px; /* Espacement réduit */
+                line-height: 1.2;
+            }
+
+            /* On ajuste le sous-titre */
+            .welcome-subtitle {
+                font-size: 1rem;
+                margin-top: 10px;
+            }
+
+            /* On remonte un peu le header pour laisser place aux boutons */
+            #main-header {
+                margin-bottom: 30px;
+            }
+
+            /* On s'assure que les boutons ne sont pas trop larges */
+            .lang-card {
+                width: 80%; /* 80% de la largeur de l'écran */
+                max-width: 250px; /* Mais pas plus de 250px */
+                padding: 15px 0; /* Un peu moins haut */
+            }
+        }
 
     </style>
 </head>
